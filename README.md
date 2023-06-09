@@ -16,20 +16,10 @@ And head over to http://localhost:8000/
 
 #### Running commands
 
-Any management commands that need to be run against the database can be run with:
+Any management commands can be run with:
 
 ```
-docker exec -it grammargrove-web-1 poetry run ./manage.py {command}
+./scripts/manage {command}
 ```
 
-Any management commands that don't need database access (makemigrations included) can also be run with that or simply:
-
-```
-poetry run ./manage.py {command}
-```
-
-## TODO
-
-- [X] Getting postgres database working
-- [X] Run webserver with uWSGI
-- [X] User model
+This is merely a convenience around `docker exec -it grammargrove-web-1 poetry run ./manage.py {command}`, which needs to be used to interact with the database.

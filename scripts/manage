@@ -1,0 +1,2 @@
+#!/bin/bash
+docker exec -it grammargrove-web-1 poetry run ./manage.py "$@"
