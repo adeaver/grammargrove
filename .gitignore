@@ -161,3 +161,4 @@ cython_debug/
 
 node_modules/**
 api/static/**
+api/migrations/data/**

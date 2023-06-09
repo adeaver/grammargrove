@@ -1,2 +1,32 @@
-#!/bin/sh
+#!/bin/bash
+
+# Function to check if the database is running
+check_database_running() {
+    PGPASSWORD=$DATABASE_PASSWORD psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d "$DATABASE_NAME" -c "SELECT 1;" > /dev/null 2>&1
+    [ $? -eq 0 ]
+}
+
+# Attempt to check if the database is running for 10 times
+attempts=10
+current_attempt=1
+
+while [ $current_attempt -le $attempts ]; do
+    echo "Attempt $current_attempt:"
+    if check_database_running; then
+        echo "The database is running."
+        break
+    else
+        echo "The database is not running."
+        echo "Waiting for 1 second before the next attempt..."
+        sleep 1
+    fi
+    ((current_attempt++))
+
+done
+
+if [ $current_attempt -gt $attempts ]; then
+    echo "Maximum number of attempts reached. The database is still not running."
+    exit 1
+fi
+
 poetry run ./manage.py runserver 0.0.0.0:8000

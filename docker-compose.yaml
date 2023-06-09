@@ -9,6 +9,13 @@ services:
       - 8000:8000
     environment:
       - ENV=dev
+      - DATABASE_HOST=database
+      - DATABASE_POST=5432
+      - DATABASE_NAME=appdb
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=password
+    depends_on:
+      - database
     command: scripts/runserver
   frontend:
     build:
@@ -18,3 +25,12 @@ services:
       - ./api/static:/usr/app/dist
       - ./frontend:/usr/app
       - /usr/app/node_modules
+  database:
+    build:
+      dockerfile: ./api/migrations/Dockerfile.dev
+      context: ./
+    volumes:
+      - ./api/migrations/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
