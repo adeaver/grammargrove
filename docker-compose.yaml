@@ -1,0 +1,20 @@
+version: '3'
+services:
+  web:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app
+    ports:
+      - 8000:8000
+    environment:
+      - ENV=dev
+    command: scripts/runserver
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+    volumes:
+      - ./api/static:/usr/app/dist
+      - ./frontend:/usr/app
+      - /usr/app/node_modules
