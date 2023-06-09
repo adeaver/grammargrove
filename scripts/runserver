@@ -29,4 +29,5 @@ if [ $current_attempt -gt $attempts ]; then
     exit 1
 fi
 
-poetry run ./manage.py runserver 0.0.0.0:8000
+poetry run uwsgi --ini uwsgi.ini --py-autoreload 1
+

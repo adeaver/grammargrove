@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./:/app
+      - ./grammargrove/log:/var/log/uwsgi
     ports:
       - 8000:8000
     environment:

@@ -17,5 +17,5 @@ And head over to http://localhost:8000/
 ## TODO
 
 - [X] Getting postgres database working
-- [ ] Run webserver with uWSGI
+- [X] Run webserver with uWSGI
 - [ ] User model
