@@ -1,0 +1,12 @@
+FROM python:3.10.12-bullseye
+
+WORKDIR /app
+
+RUN pip3 install poetry
+
+COPY pyproject.toml .
+COPY poetry.lock .
+
+RUN poetry install
+
+RUN [ "/bin/sh" ]
