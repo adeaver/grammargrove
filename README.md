@@ -13,3 +13,9 @@ docker-compose up --build
 ```
 
 And head over to http://localhost:8000/
+
+## TODO
+
+- [ ] Getting postgres database working
+- [ ] Run webserver with uWSGI
+- [ ] User model
