@@ -1,3 +1,22 @@
+function getCookie(name: string): string | null {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+export function getCSRFToken(): string | null {
+    return getCookie("csrftoken");
+}
+
 export function makePostRequest<T, U>(
     url: string,
     body: T,
@@ -10,6 +29,7 @@ export function makePostRequest<T, U>(
         headers: {
             'Content-Type': 'application/json',
             'cache': 'no-cache',
+            'X-CSRFToken': getCSRFToken() || "",
         },
         body: JSON.stringify(body),
     })

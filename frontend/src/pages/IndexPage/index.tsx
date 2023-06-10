@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 
 import Input, { InputType } from '../../components/Input';
 import Button from '../../components/Button';
+import { getCSRFToken } from '../../util/gfetch';
 
 import {
     searchByEmail,
@@ -46,6 +47,7 @@ const IndexPage = () => {
                     <Input
                         type={InputType.Email}
                         value={email}
+                        name="email"
                         placeholder="Email Address"
                         onChange={setEmail} />
                     <Button onClick={handleClick}>
@@ -57,18 +59,26 @@ const IndexPage = () => {
     } else if (action == SearchByEmailAction.Redirect) {
 
     } else if (action == SearchByEmailAction.RequireLogin) {
+        const csrfToken = getCSRFToken();
         return (
             <div className="w-full grid grid-cols-3">
                 <div className="col-span-1">
-                    <form method="POST" action="/login">
+                    <form method="POST" action="/login/">
+                        <Input
+                            type={InputType.Hidden}
+                            value={csrfToken || ""}
+                            name="csrfmiddlewaretoken"
+                            onChange={() => {}} />
                         <Input
                             type={InputType.Email}
                             value={email}
+                            name="email"
                             placeholder="Email Address"
                             onChange={setEmail} />
                         <Input
                             type={InputType.Password}
                             value={password}
+                            name="password"
                             placeholder="Password"
                             onChange={setPassword} />
                         <Button isSubmit>
@@ -93,6 +103,7 @@ const IndexPage = () => {
                     <Input
                         type={InputType.Email}
                         value={email}
+                        name="email"
                         placeholder="Email Address"
                         onChange={setEmail} />
                     <Button onClick={handleClick}>

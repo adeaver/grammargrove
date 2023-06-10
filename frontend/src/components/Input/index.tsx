@@ -1,14 +1,16 @@
 export enum InputType {
     Password = 'password',
     Email = 'email',
-    Text = 'text'
+    Text = 'text',
+    Hidden = 'hidden'
 }
 
 type InputProps = {
     type: InputType;
     value: string;
     onChange: (v: string) => void;
-    placeholder: string;
+    name: string;
+    placeholder?: string;
 }
 
 const Input = (props: InputProps) => {
@@ -22,7 +24,8 @@ const Input = (props: InputProps) => {
             className="p-2 text-xl border border-slate-600 rounded-md"
             type={props.type}
             value={props.value}
-            placeholder={props.placeholder}
+            name={props.name}
+            placeholder={props.placeholder || ""}
             onChange={handleChange} />
     )
 }

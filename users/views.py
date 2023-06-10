@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 
 from django.contrib.auth import logout
@@ -16,7 +17,7 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def search_by_email(self, request: HttpRequest) -> JsonResponse:
-        email = request.POST["email"]
+        email = request.data["email"]
         user = User.objects.filter(email=email)[0]
         action = SearchEmailAction.RequireLogin
         if not user:
