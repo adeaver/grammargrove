@@ -2,4 +2,12 @@ import { render } from 'preact'
 import IndexPage from './pages/IndexPage'
 import './index.css'
 
-render(<IndexPage />, document.getElementById('app') as HTMLElement)
+const App = () => {
+    return (
+        <div>
+            <IndexPage />
+        </div>
+    );
+}
+
+render(<App />, document.getElementById('app') as HTMLElement)

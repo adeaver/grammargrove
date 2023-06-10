@@ -3,6 +3,7 @@ import { useState } from 'preact/hooks';
 import Input, { InputType } from '../../components/Input';
 import Button from '../../components/Button';
 import { getCSRFToken } from '../../util/gfetch';
+import { setLocation } from '../../util/window';
 
 import {
     searchByEmail,
@@ -57,7 +58,8 @@ const IndexPage = () => {
             </div>
         );
     } else if (action == SearchByEmailAction.Redirect) {
-
+        setLocation("/dashboard/");
+        return <div />;
     } else if (action == SearchByEmailAction.RequireLogin) {
         const csrfToken = getCSRFToken();
         return (
