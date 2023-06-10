@@ -6,7 +6,7 @@ from enum import Enum
 from typing import Optional
 from django.db import IntegrityError
 
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from rest_framework.decorators import action
@@ -24,7 +24,7 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=True, methods=['get'])
     def verify(self, request: HttpRequest, pk: Optional[str] = None) -> HttpResponse:
         user_login_email_id = uuid.UUID(pk)
-        emails = User.objects.filter(pk=user_id)
+        emails = UserLoginEmail.objects.filter(pk=user_login_email_id)
         if not emails:
             return HttpResponseBadRequest()
         elif len(emails) > 1:
@@ -37,13 +37,14 @@ class UserViewSet(viewsets.ViewSet):
         user = User.objects.get(pk=email.user.id)
         user.status = UserStatus.VERIFIED
         user.save()
+        login(request, user)
         return redirect("/dashboard/")
 
 
     @action(detail=True, methods=['get'])
     def login(self, request: HttpRequest, pk: Optional[str] = None) -> HttpResponse:
         user_login_email_id = uuid.UUID(pk)
-        emails = User.objects.filter(pk=user_id)
+        emails = UserLoginEmail.objects.filter(pk=user_login_email_id)
         if not emails:
             return HttpResponseBadRequest()
         elif len(emails) > 1:
@@ -54,11 +55,10 @@ class UserViewSet(viewsets.ViewSet):
             logging.warning(f"User Login Email ID {user_login_email_id} is expired")
             return redirect("/?error=expired_auth")
         user = User.objects.get(pk=email.user.id)
-        user = authenticate(username=user.email)
-        if user:
-            email.expires_at = datetime.now()
-            return redirect("/dashboard/")
-        return redirect("/?error=bad_auth")
+        login(request, user)
+        email.expires_at = datetime.datetime.now()
+        email.save()
+        return redirect("/dashboard/")
 
 
     @action(detail=True, methods=['get'])
@@ -86,8 +86,7 @@ class UserViewSet(viewsets.ViewSet):
             if request.user:
                 logout(request)
             action = SearchEmailAction.RequireSignup
-            new_user = User(email=email)
-            new_user.save()
+            new_user = User.objects.create_user(email=email)
             login_email = UserLoginEmail(user=new_user, email_type=UserLoginEmailType.VERIFICATION)
             try:
                 login_email.save()

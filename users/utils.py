@@ -119,7 +119,7 @@ def send_login_email_to_user(login_email: UserLoginEmail) -> bool:
     login_link = f"{base_url}/{login_email.id}/login/"
     html_message = render_to_string('login-email.html', {
         'unsubscribe_link': unsubscribe_link,
-        'login_link': verification_link,
+        'login_link': login_link,
     })
     source = _get_sender_email_format("GrammarGrove Accounts")
     return _send_email_to_user(

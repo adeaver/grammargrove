@@ -34,24 +34,27 @@ def send_login_email(login_email_id: str):
     import uwsgi
     from users.utils import send_login_email_to_user, send_verifcation_email_to_user
     from users.models import UserLoginEmail, UserLoginEmailType
-    login_emails = UserLoginEmail.objects.filter(pk=uuid.UUID(login_email_id))
-    retryable = False
-    if not login_emails:
-        logging.info(f"{login_email_id} is invalid, skipping")
+    try:
+        login_emails = UserLoginEmail.objects.filter(pk=uuid.UUID(login_email_id))
+        retryable = False
+        if not login_emails:
+            logging.info(f"{login_email_id} is invalid, skipping")
+            return uwsgi.SPOOL_OK
+        email = login_emails[0]
+        if email.is_expired():
+            logging.info(f"UserLoginEmail {login_email_id} is expired, skipping")
+            return uwsgi.SPOOL_OK
+        elif email.is_fulfilled():
+            logging.info(f"UserLoginEmail {login_email_id} is already fulfilled, skipping")
+            return uwsgi.SPOOL_OK
+        elif email.email_type == UserLoginEmailType.LOGIN:
+            retryable = send_login_email_to_user(email)
+        elif email.email_type == UserLoginEmailType.VERIFICATION:
+            retryable = send_verifcation_email_to_user(email)
+        if retryable:
+            return uwsgi.SPOOL_RETRY
+        email.fulfilled = True
+        email.save()
         return uwsgi.SPOOL_OK
-    email = login_emails[0]
-    if email.is_expired():
-        logging.info(f"UserLoginEmail {login_email_id} is expired, skipping")
-        return uwsgi.SPOOL_OK
-    elif email.is_fulfilled():
-        logging.info(f"UserLoginEmail {login_email_id} is already fulfilled, skipping")
-        return uwsgi.SPOOL_OK
-    elif email.email_type == UserLoginEmailType.LOGIN:
-        retryable = send_login_email_to_user(email)
-    elif email.email_type == UserLoginEmailType.VERIFICATION:
-        retryable = send_verifcation_email_to_user(email)
-    if retryable:
+    except:
         return uwsgi.SPOOL_RETRY
-    email.fulfilled = True
-    email.save()
-    return uwsgi.SPOOL_OK
