@@ -8,6 +8,7 @@ type InputProps = {
     type: InputType;
     value: string;
     onChange: (v: string) => void;
+    placeholder: string;
 }
 
 const Input = (props: InputProps) => {
@@ -18,8 +19,10 @@ const Input = (props: InputProps) => {
 
     return (
         <input
+            className="p-2 text-xl border border-slate-600 rounded-md"
             type={props.type}
             value={props.value}
+            placeholder={props.placeholder}
             onChange={handleChange} />
     )
 }

@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import { App } from './app.tsx'
+import IndexPage from './pages/IndexPage'
 import './index.css'
 
-render(<App />, document.getElementById('app') as HTMLElement)
+render(<IndexPage />, document.getElementById('app') as HTMLElement)
