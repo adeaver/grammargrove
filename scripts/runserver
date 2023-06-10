@@ -7,7 +7,7 @@ check_database_running() {
 }
 
 # Attempt to check if the database is running for 10 times
-attempts=10
+attempts=60
 current_attempt=1
 
 while [ $current_attempt -le $attempts ]; do

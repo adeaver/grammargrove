@@ -29,10 +29,10 @@ This is merely a convenience around `docker exec -it grammargrove-web-1 poetry r
 #### Support
 
 - [ ] render dashboard
-- [ ] frontend route switch without taking over the page
-- [ ] spooler
-- [ ] ability to send emails to login
-- [ ] user_ids should be UUIDs
+- [X] frontend route switch without taking over the page
+- [X] ability to send emails to login
+- [X] spooler
+- [X] user_ids should be UUIDs
 - [ ] style pages
 
 #### Allow users to add words to their list
@@ -60,3 +60,17 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 #### Add Stripe Payments
 
 - [ ] redirect to Stripe payment dashboard
+
+#### Deployment
+
+- [ ] create production Dockerfile
+- [ ] create production uwsgi config
+- [ ] app platform
+
+## 06/10/2023
+
+- [X] frontend route switch without taking over the page
+- [X] user_ids should be UUIDs
+- [X] spooler
+- [X] ability to send emails to login and verify
+

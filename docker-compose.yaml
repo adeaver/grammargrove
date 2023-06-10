@@ -15,6 +15,10 @@ services:
       - DATABASE_NAME=appdb
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=password
+      - SES_ACCESS_KEY_ID=$SES_ACCESS_KEY
+      - SES_SECRET_ACCESS_KEY=$SES_ACCESS_SECRET
+      - SES_REGION=us-east-1
+      - SES_DEFAULT_SENDER_ADDRESS=andrew@indieorchard.com
     depends_on:
       - database
     command: scripts/runserver
