@@ -22,10 +22,16 @@ def _get_sender_email_format(
 
 def _send_email_to_user(
     to_address: str,
-    source_address: str
+    source_address: str,
     subject: str,
     html_message: str,
 ) -> bool:
+    client = boto3.client(
+        'ses',
+        region_name=os.environ.get("SES_REGION", "us-east-1"),
+        aws_access_key_id=os.environ["SES_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["SES_SECRET_ACCESS_KEY"]
+    )
     try:
         response = client.send_email(
             Destination={
@@ -93,12 +99,6 @@ def send_verifcation_email_to_user(login_email: UserLoginEmail) -> bool:
 
 def send_login_email_to_user(login_email: UserLoginEmail) -> bool:
     """Takes in a user and returns whether or not this send is retryable"""
-    client = boto3.client(
-        'ses',
-        region_name=os.environ.get("SES_REGION", "us-east-1"),
-        aws_access_key_id=os.environ["SES_ACCESS_KEY_ID"],
-        aws_secret_access_key=os.environ["SES_SECRET_ACCESS_KEY"]
-    )
     user_id = login_email.user.id
     users = User.objects.filter(pk=user_id)
     if not users:

@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from rest_framework.decorators import action
 from rest_framework import viewsets
-from .models import User, UserStatus, UserLoginEmail
+from .models import User, UserStatus, UserLoginEmail, UserLoginEmailType
 from grammargrove.tasks import send_login_email
 
 class SearchEmailAction(Enum):
@@ -100,7 +100,7 @@ class UserViewSet(viewsets.ViewSet):
             action = SearchEmailAction.RequireLogin
             if user.status == UserStatus.UNVERIFIED:
                 action = SearchEmailAction.RequireSignup
-                login_email = UserLoginEmail(user=new_user, email_type=UserLoginEmailType.VERIFICATION)
+                login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.VERIFICATION)
                 try:
                     login_email.save()
                     send_login_email(str(login_email.id))
@@ -108,7 +108,7 @@ class UserViewSet(viewsets.ViewSet):
                     logging.info("User already has a login email, skipping")
             elif not user.has_usable_password():
                 action = SearchEmailAction.RequireSignup
-                login_email = UserLoginEmail(user=new_user, email_type=UserLoginEmailType.LOGIN)
+                login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.LOGIN)
                 try:
                     login_email.save()
                     send_login_email(str(login_email.id))
@@ -120,7 +120,7 @@ class UserViewSet(viewsets.ViewSet):
             action = SearchEmailAction.RequireLogin
             if user.status == UserStatus.UNVERIFIED:
                 action = SearchEmailAction.RequireSignup
-                login_email = UserLoginEmail(user=new_user, email_type=UserLoginEmailType.VERIFICATION)
+                login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.VERIFICATION)
                 try:
                     login_email.save()
                     send_login_email(str(login_email.id))
@@ -128,7 +128,7 @@ class UserViewSet(viewsets.ViewSet):
                     logging.info("User already has a login email, skipping")
             elif not user.has_usable_password():
                 action = SearchEmailAction.RequireSignup
-                login_email = UserLoginEmail(user=new_user, email_type=UserLoginEmailType.LOGIN)
+                login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.LOGIN)
                 try:
                     login_email.save()
                     send_login_email(str(login_email.id))

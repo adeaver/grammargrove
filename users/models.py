@@ -5,6 +5,7 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
+from django.utils import timezone
 
 
 class UserStatus(IntEnum):
@@ -67,13 +68,13 @@ class UserLoginEmailType(IntEnum):
         return [(key.value, key.name) for key in cls]
 
 def _get_expiration_time():
-    return datetime.datetime.now() + datetime.timedelta(minutes=15)
+    return timezone.now() + datetime.timedelta(minutes=15)
 
 class UserLoginEmail(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     fulfilled = models.BooleanField(default=False)
-    expires_at = models.DateField(default=_get_expiration_time)
+    expires_at = models.DateTimeField(default=_get_expiration_time)
     email_type = models.IntegerField(choices=UserLoginEmailType.choices(), default=UserLoginEmailType.LOGIN)
 
     class Meta:
@@ -82,7 +83,7 @@ class UserLoginEmail(models.Model):
         ]
 
     def is_expired(self) -> bool:
-        return datetime.datetime.now() > self.expires_at
+        return timezone.now() > self.expires_at
 
     def is_fulfilled(self) -> bool:
         return self.fulfilled
