@@ -42,3 +42,51 @@ export function makePostRequest<T, U>(
     })
     .catch(onError);
 }
+
+export function makeGetRequest<T>(
+    url: string,
+    onSuccess: (resp: T) => void,
+    onError: (e: Error) => void,
+) {
+    fetch(url, {
+        credentials: 'include',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'cache': 'no-cache',
+            'X-CSRFToken': getCSRFToken() || "",
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            response.text().then(data => onError(new Error(data)));
+            return
+        }
+        response.json().then(data => onSuccess(data as T));
+    })
+    .catch(onError);
+}
+
+export function makeDeleteRequest(
+    url: string,
+    onSuccess: () => void,
+    onError: (e: Error) => void,
+) {
+    fetch(url, {
+        credentials: 'include',
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'cache': 'no-cache',
+            'X-CSRFToken': getCSRFToken() || "",
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            response.text().then(data => onError(new Error(data)));
+            return
+        }
+        onSuccess();
+    })
+    .catch(onError);
+}

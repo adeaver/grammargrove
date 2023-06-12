@@ -1,67 +1,128 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
-import Input, { InputType } from '../../components/Input';
-import Button from '../../components/Button';
+import WordSearchBar from '../../components/WordSearchBar';
+import { SearchResult } from '../../components/WordSearchBar/api';
+import WordCard from '../../components/WordSearchBar/WordCard';
 
 import {
-    searchForWord,
-    SearchForWordResponse,
-    SearchResult,
+    UserVocabulary,
+    getUserVocabulary,
+    addUserVocabulary,
+    deleteUserVocabulary,
 } from './api';
 
 const Dashboard = () => {
-    const [ searchQuery, setSearchQuery ] = useState<string>("");
+    const [ isLoading, setIsLoading ] = useState<boolean>(true);
+
     const [ searchResults, setSearchResults ] = useState<SearchResult[]>([]);
-    const [ isLoading, setIsLoading ] = useState<boolean>(false);
+    const [ userVocabularyByWordID, setUserVocabularyByWordID ] = useState<{ [word_id: string]: UserVocabulary }>({});
     const [ error, setError ] = useState<Error | null>(null);
 
-    const handleSubmit = () => {
-        setIsLoading(true);
-        searchForWord(
-            searchQuery, undefined,
-            (resp: SearchForWordResponse) => {
+    useEffect(() => {
+        getUserVocabulary(
+            (resp: UserVocabulary[]) => {
                 setIsLoading(false);
-                if (!resp.success) {
-                    setError(new Error("Bad request"));
-                    setSearchResults([]);
-                    return
-                }
                 setError(null);
-                setSearchResults(resp.results);
+                setUserVocabularyByWordID(
+                    resp.reduce((acc: { [word: string]: UserVocabulary }, curr: UserVocabulary) => ({
+                        ...acc,
+                        [curr.word]: curr,
+                    }), {})
+                );
             },
             (err: Error) => {
                 setIsLoading(false);
                 setError(err);
-                setSearchResults([]);
+            }
+        );
+    }, []);
+
+    const handleAddWordToVocabulary = (s: SearchResult) => {
+        setIsLoading(true);
+        addUserVocabulary(
+            s.word_id, null,
+            (resp: UserVocabulary) => {
+                setIsLoading(false);
+                setUserVocabularyByWordID({
+                    ...userVocabularyByWordID,
+                    [ resp.word ]: resp,
+                });
+                setError(null);
+            },
+            (err: Error) => {
+                setIsLoading(false);
+                setError(err);
             }
         );
     }
 
+    const handleDeleteVocabularyEntry = (s: SearchResult) => {
+        setIsLoading(true);
+        const id: string | null = userVocabularyByWordID[s.word_id].id || null;
+        if (!id) {
+            setIsLoading(false);
+            return;
+        }
+        deleteUserVocabulary(
+            id,
+            () => {
+                setIsLoading(false);
+                setUserVocabularyByWordID(
+                    Object.values(userVocabularyByWordID).reduce(
+                        (acc: { [key: string]: UserVocabulary }, curr: UserVocabulary) => {
+                            if (curr.id === id) {
+                                return acc
+                            }
+                            return {
+                                ...acc,
+                                [curr.word]: curr,
+                            }
+                        }, {}
+                    )
+                );
+                setError(null);
+            },
+            (err: Error) => {
+                setIsLoading(false);
+                setError(err);
+            }
+        );
+    }
+
+    if (isLoading) {
+        // Entire page is loading
+        return (
+            <div>
+                Loading ...
+            </div>
+        )
+    } else if (!!error) {
+        return (
+            <div>
+                An error occurred. Try again later.
+            </div>
+        )
+    }
     return (
         <div>
+            <WordSearchBar
+                onSuccess={setSearchResults} />
             {
-                !!isLoading && (
-                    <p>Loading...</p>
-                )
-            }
-            {
-                !!error && (
-                    <p>There was an error</p>
-                )
-            }
-            <Input
-                type={InputType.Text}
-                name="search"
-                value={searchQuery}
-                placeholder="Search for a word using Hanzi or Pinyin"
-                onChange={setSearchQuery} />
-            <Button onClick={handleSubmit}>
-                Submit
-            </Button>
-            {
-                searchResults.map((s: SearchResult) => (
-                    <p key={s.word_id}>{s.display}</p>
-                ))
+                searchResults.map((s: SearchResult) => {
+                    const action = !!userVocabularyByWordID[s.word_id] ? ({
+                            text: 'Remove from Vocabulary',
+                            action: handleDeleteVocabularyEntry,
+                        }) : ({
+                            text: 'Add to Vocabulary',
+                            action: handleAddWordToVocabulary,
+                        });
+                    return (
+                        <WordCard
+                            key={s.word_id}
+                            word={s}
+                            action={action} />
+                    );
+                })
             }
         </div>
     )

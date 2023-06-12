@@ -1,36 +1,57 @@
-import { makePostRequest } from '../../util/gfetch';
+import {
+    makeDeleteRequest,
+    makeGetRequest,
+    makePostRequest
+} from '../../util/gfetch';
 
-export type SearchForWordRequest = {
-    search_query: string;
-    query_language_code?: string;
+export type UserVocabulary = {
+    word: string;
+    user: string;
+    id: string;
+    notes: string | null;
 }
 
-export type SearchForWordResponse = {
-    success: boolean;
-    results: SearchResult[];
+export type AddUserVocabularyRequest = {
+    word: string;
+    notes: string | null;
 }
 
-export type SearchResult = {
-    word_id: string;
-    display: string;
-    pronunciation: string;
-    language_code: string;
-    definitions: string[];
-}
-
-export function searchForWord(
-    query: string,
-    query_language_code: string | undefined,
-    onSuccess: (resp: SearchForWordResponse) => void,
+export function addUserVocabulary(
+    word: string,
+    notes: string | null,
+    onSuccess: (resp: UserVocabulary) => void,
     onError: (err: Error) => void
 ) {
-    makePostRequest<SearchForWordRequest, SearchForWordResponse>(
-        "/api/words/v1/search/",
+    makePostRequest<AddUserVocabularyRequest, UserVocabulary>(
+        "/api/uservocabulary/v1/?format=json",
         {
-            search_query: query,
-            query_language_code: query_language_code
+            word: word,
+            notes: notes
         },
         onSuccess,
         onError
     );
+}
+
+export function getUserVocabulary(
+    onSuccess: (resp: UserVocabulary[]) => void,
+    onError: (err: Error) => void
+) {
+    makeGetRequest<UserVocabulary[]>(
+        "/api/uservocabulary/v1/?format=json",
+        onSuccess,
+        onError,
+    )
+}
+
+export function deleteUserVocabulary(
+    id: string,
+    onSuccess: () => void,
+    onError: (err: Error) => void
+) {
+    makeDeleteRequest(
+        `/api/uservocabulary/v1/${id}/?format=json`,
+        onSuccess,
+        onError,
+    )
 }

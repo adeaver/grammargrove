@@ -22,11 +22,13 @@ from django.conf import settings
 from api import views
 from users.urls import router as user_router
 from words.urls import router as word_router
+from uservocabulary.urls import router as uservocabulary_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include(user_router.urls), name="users"),
     path('api/words/', include(word_router.urls), name="words"),
+    path('api/uservocabulary/', include(uservocabulary_router.urls), name="uservocabulary"),
     path('', views.home, name='home'),
     path('login/', views.login, name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),

@@ -41,7 +41,8 @@ This is merely a convenience around `docker exec -it grammargrove-web-1 poetry r
 #### Allow users to add words to their list
 - [X] management command to add vocabulary from CEDICT.txt
 - [X] search endpoint that allows for hanzi or pinyin
-- [ ] endpoint to add words to user list
+- [X] endpoint to add words to user list
+- [ ] Page to display vocabulary and search within vocabulary
 
 #### Quiz page
 - [ ] render quiz page
@@ -51,7 +52,6 @@ This is merely a convenience around `docker exec -it grammargrove-web-1 poetry r
 Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi from English
 
 #### Allow users to add grammar rules
-
 - [ ] management command to add grammar rules from txt file or via command line
 - [ ] allow users to search for grammar rules by component words
 - [ ] allow users to CRUD their own grammar rules (combination of words and parts of speech)
@@ -87,6 +87,5 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] search endpoint that allows for hanzi or pinyin
 
 #### Next Day
-- [ ] Render cards for displaying words
-- [ ] Endpoint to allow users to CRUD words to their vocabulary
-- [ ] Page to display vocabulary and search within vocabulary
+- [X] Render cards for displaying words
+- [X] Endpoint to allow users to CRUD words to their vocabulary
