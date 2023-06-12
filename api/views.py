@@ -11,7 +11,6 @@ def home(request: HttpRequest) -> HttpResponse:
 def dashboard(request: HttpRequest) -> HttpResponse:
     return render(request, 'api/dashboard.html', {})
 
-
 def login(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
         return redirect("/?error=bad_req")

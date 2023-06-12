@@ -6,6 +6,10 @@ Currently using Python version 3.10.12, this can be installed using [pyenv](http
 
 You're also going to need to install Django for use of the command line tools.
 
+#### Download the dictionary
+
+We currently use the [CEDICT](https://www.mdbg.net/chinese/dictionary?page=cedict) for a basic dictionary. You will want to download it, unzip it, and move it words/data/cedict.txt
+
 #### Running the server
 
 ```
@@ -78,6 +82,6 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 
 #### Next Day
 
-- [ ] management command to add vocabulary from CEDICT.txt
+- [X] management command to add vocabulary from CEDICT.txt
 - [ ] search endpoint that allows for hanzi or pinyin
 - [ ] add search bar to dashboard
