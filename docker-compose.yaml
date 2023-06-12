@@ -27,15 +27,15 @@ services:
       dockerfile: Dockerfile.dev
       context: ./frontend
     volumes:
-      - ./api/static:/usr/app/dist
+      - ./index/static:/usr/app/dist
       - ./frontend:/usr/app
       - /usr/app/node_modules
   database:
     build:
-      dockerfile: ./api/migrations/Dockerfile.dev
+      dockerfile: ./index/migrations/Dockerfile.dev
       context: ./
     volumes:
-      - ./api/migrations/data:/var/lib/postgresql/data
+      - ./index/migrations/data:/var/lib/postgresql/data
     ports:
       - 5432:5432
 

@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from api import views
+from index import views
 from users.urls import router as user_router
 from words.urls import router as word_router
 from uservocabulary.urls import router as uservocabulary_router

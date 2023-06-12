@@ -28,6 +28,17 @@ Any management commands can be run with:
 
 This is merely a convenience around `docker exec -it grammargrove-web-1 poetry run ./manage.py {command}`, which needs to be used to interact with the database.
 
+## Code Layout
+
+All frontend files live in the conveniently named `frontend/` directory. We use Preact for the frontend, but it's effectively the same thing as React.
+
+We use Django for the backend. With the exception of `scripts/`, all the remaining directories are django apps.
+
+Some special cases to be aware of:
+- `grammargrove/` is the main project directory. Things related to uWSGI also live in here.
+- `index/` is for serving the frontend. React-Router is kind of garbage and makes authentication harder than it needs to be, so we serve everything from the backend.
+
+
 ## TODO
 
 #### Support

@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 node_modules/**
-api/static/**
-api/migrations/data/**
+index/static/**
+index/migrations/data/**
 grammargrove/spooler/**
 words/data/**
