@@ -67,10 +67,17 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [ ] create production uwsgi config
 - [ ] app platform
 
-## 06/10/2023
+## Progress
+
+#### 06/10/2023
 
 - [X] frontend route switch without taking over the page
 - [X] user_ids should be UUIDs
 - [X] spooler
 - [X] ability to send emails to login and verify
 
+#### Next Day
+
+- [ ] management command to add vocabulary from CEDICT.txt
+- [ ] search endpoint that allows for hanzi or pinyin
+- [ ] add search bar to dashboard
