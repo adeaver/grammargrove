@@ -43,6 +43,7 @@ This is merely a convenience around `docker exec -it grammargrove-web-1 poetry r
 - [X] search endpoint that allows for hanzi or pinyin
 - [X] endpoint to add words to user list
 - [ ] Page to display vocabulary and search within vocabulary
+- [ ] Add notes to user vocabulary
 
 #### Quiz page
 - [ ] render quiz page
@@ -61,6 +62,7 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 #### Bugs to fix
 - [ ] Pinyin search should allow for both numbered and actual pinyin
 - [ ] Dashboard should require auth, as well as search page
+- [ ] Frontend should display accents not as numbers
 
 #### Tech Debt
 - [ ] Word search bar should be a separate component
@@ -72,6 +74,9 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [ ] create production Dockerfile
 - [ ] create production uwsgi config
 - [ ] figure out deployment strategy (managed db is probably not going to work because of space limit)
+
+#### Wishlist
+- [ ] Search without accents
 
 ## Progress
 
@@ -85,7 +90,10 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] management command to add vocabulary from CEDICT.txt
 - [X] add search bar to dashboard
 - [X] search endpoint that allows for hanzi or pinyin
-
-#### Next Day
 - [X] Render cards for displaying words
 - [X] Endpoint to allow users to CRUD words to their vocabulary
+
+#### Next Day
+- [ ] render quiz page
+- [ ] frontend component display question
+- [ ] endpoint to submit answer
