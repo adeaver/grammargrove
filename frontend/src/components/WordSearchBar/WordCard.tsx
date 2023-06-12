@@ -4,6 +4,7 @@ import Button from '../Button';
 type WordCardProps = {
     word: SearchResult;
     action?: WordCardAction;
+    isLoading?: boolean;
 }
 
 export type WordCardAction = {
@@ -18,7 +19,7 @@ const WordCard = (props: WordCardProps) => {
             ( {props.word.pronunciation} )
             {
                 !!props.action && (
-                    <Button onClick={() => props.action!.action(props.word)}>
+                    <Button onClick={() => props.action!.action(props.word)} isLoading={props.isLoading}>
                         { props.action!.text }
                     </Button>
                 )

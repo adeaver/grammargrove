@@ -13,6 +13,28 @@ import {
 
 const Dashboard = () => {
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
+    const [ loadingWords, setLoadingWords ] = useState<{ [key: string]: boolean }>({});
+    const handleLoadingWord = (wordID: string, isLoading: boolean) => {
+        if (isLoading) {
+            setLoadingWords({
+                ...loadingWords,
+                [wordID]: true,
+            });
+        } else {
+            setLoadingWords(
+                Object.keys(loadingWords).reduce(
+                    (acc: { [key: string]: boolean }, curr: string) => {
+                        if (curr == wordID) {
+                            return acc
+                    }
+                    return {
+                        ...acc,
+                        [wordID]: true,
+                    }
+                }, {})
+            );
+        }
+    }
 
     const [ searchResults, setSearchResults ] = useState<SearchResult[]>([]);
     const [ userVocabularyByWordID, setUserVocabularyByWordID ] = useState<{ [word_id: string]: UserVocabulary }>({});
@@ -38,11 +60,11 @@ const Dashboard = () => {
     }, []);
 
     const handleAddWordToVocabulary = (s: SearchResult) => {
-        setIsLoading(true);
+        handleLoadingWord(s.word_id, true);
         addUserVocabulary(
             s.word_id, null,
             (resp: UserVocabulary) => {
-                setIsLoading(false);
+                handleLoadingWord(s.word_id, false);
                 setUserVocabularyByWordID({
                     ...userVocabularyByWordID,
                     [ resp.word ]: resp,
@@ -50,23 +72,23 @@ const Dashboard = () => {
                 setError(null);
             },
             (err: Error) => {
-                setIsLoading(false);
+                handleLoadingWord(s.word_id, false);
                 setError(err);
             }
         );
     }
 
     const handleDeleteVocabularyEntry = (s: SearchResult) => {
-        setIsLoading(true);
+        handleLoadingWord(s.word_id, true);
         const id: string | null = userVocabularyByWordID[s.word_id].id || null;
         if (!id) {
-            setIsLoading(false);
+            handleLoadingWord(s.word_id, false);
             return;
         }
         deleteUserVocabulary(
             id,
             () => {
-                setIsLoading(false);
+                handleLoadingWord(s.word_id, false);
                 setUserVocabularyByWordID(
                     Object.values(userVocabularyByWordID).reduce(
                         (acc: { [key: string]: UserVocabulary }, curr: UserVocabulary) => {
@@ -83,7 +105,7 @@ const Dashboard = () => {
                 setError(null);
             },
             (err: Error) => {
-                setIsLoading(false);
+                handleLoadingWord(s.word_id, false);
                 setError(err);
             }
         );
@@ -119,6 +141,7 @@ const Dashboard = () => {
                     return (
                         <WordCard
                             key={s.word_id}
+                            isLoading={loadingWords[s.word_id]}
                             word={s}
                             action={action} />
                     );
