@@ -58,8 +58,8 @@ Some special cases to be aware of:
 - [ ] Add notes to user vocabulary
 
 #### Quiz page
-- [ ] render quiz page
-- [ ] frontend component display question
+- [X] render quiz page
+- [X] frontend component display question
 - [ ] endpoint to submit answer
 
 Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi from English
@@ -79,7 +79,7 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [ ] Infra: frontend doesn't always rerender
 
 #### Tech Debt
-- [ ] Word search bar should be a separate component
+- [X] Word search bar should be a separate component
 
 #### Add Stripe Payments
 - [ ] redirect to Stripe payment dashboard
@@ -109,7 +109,9 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] Render cards for displaying words
 - [X] Endpoint to allow users to CRUD words to their vocabulary
 
+#### 06/13/2023
+- [X] render quiz page
+- [X] frontend component display question
+
 #### Next Day
-- [ ] render quiz page
-- [ ] frontend component display question
 - [ ] endpoint to submit answer
