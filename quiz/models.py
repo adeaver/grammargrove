@@ -24,7 +24,7 @@ class QuizQuestion(models.Model):
     number_of_times_displayed = models.IntegerField(null=False, default=1)
     number_of_times_answered_correctly = models.IntegerField(null=False, default=0)
     last_displayed_at = models.DateTimeField(null=False, default=timezone.now)
-    last_answered_correctly_at = models.DateTimeField()
+    last_answered_correctly_at = models.DateTimeField(null=True)
 
     class Meta:
         constraints = [
