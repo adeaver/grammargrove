@@ -64,19 +64,48 @@ class QuizViewSet(viewsets.ViewSet):
         answer = request.data.get("answer")
         if not answer:
             return HttpResponseBadRequest()
-        question = QuizQuestion.objects.filter(
+        questions = QuizQuestion.objects.filter(
             user=request.user, id=question_id
         )
-        if not question:
+        if not questions:
             return HttpResponseBadRequest()
+        question = questions[0]
         if question.user_vocabulary_entry:
             word_payload = get_word_from_question(question, LanguageCode.ENGLISH)
             if question.question_type == QuestionType.HanziFromEnglish:
-
+                return JsonResponse(
+                    CheckQuestionResponse(
+                        correct=(answer == word_payload.word.display),
+                        correct_answer=word_payload.word.display
+                    )._asdict()
+                )
             elif question.question_type == QuestionType.AccentsFromHanzi:
-
+                accents = answer.split(" ")
+                correct_answer = [w[-1] for w in word_payload.word.pronunciation.split(" ")]
+                correct = len(accents) == len(correct_answer)
+                if correct:
+                    for idx, accent in enumerate(accents):
+                        correct = correct_answer[idx] == accent
+                        if not correct:
+                            break
+                return JsonResponse(
+                    CheckQuestionResponse(
+                        correct=correct,
+                        correct_answer=" ".join(correct_answer)
+                    )._asdict()
+                )
             elif question.question_type == QuestionType.DefinitionsFromHanzi:
-
+                correct_answer = (
+                    word_payload.user_vocabulary_entry.notes
+                    if word_payload.user_vocabulary_entry.notes is not None
+                    else " ".join([ d.definition for d in word_payload.definitions])
+                )
+                return JsonResponse(
+                    CheckQuestionResponse(
+                        correct=(answer == correct_answer),
+                        correct_answer=correct_answer
+                    )._asdict()
+                )
             else:
                 return HttpResponseServerError()
         else:

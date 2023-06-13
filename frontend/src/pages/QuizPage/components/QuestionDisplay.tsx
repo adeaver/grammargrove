@@ -1,10 +1,16 @@
 import { useState } from 'preact/hooks';
 import Input, { InputType } from '../../../components/Input';
+import Button from '../../../components/Button';
 
-import { Question, QuestionType } from '../api';
+import {
+    Question,
+    QuestionType,
+} from '../api';
 
 type QuestionDisplayProps = {
-    question: Question
+    question: Question;
+    isLoading: boolean;
+    submitAnswer: (answer: string) => void;
 }
 
 const QuestionDisplay = (props: QuestionDisplayProps) => {
@@ -23,6 +29,10 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
 const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
     const characters = props.question.display.split('');
     const [ accentsByCharacter, setAccentsByCharacter ] = useState<(number | null)[]>(characters.map((_) => null));
+
+    const submitAnswer = () => {
+        props.submitAnswer(accentsByCharacter.join(" "))
+    }
 
     const handleSetAccentsByCharacter = (idx: number) => {
         return (v: string) => {
@@ -62,12 +72,19 @@ const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
                     );
                 })
             }
+            <Button onClick={submitAnswer} isLoading={props.isLoading}>
+                Submit
+            </Button>
         </div>
     )
 }
 
 const DefinitionsFromHanziDisplay = (props: QuestionDisplayProps) => {
     const [ definition, setDefinition ] = useState<string>("");
+
+    const submitAnswer = () => {
+        props.submitAnswer(definition.trim())
+    }
 
     return (
         <div>
@@ -78,12 +95,19 @@ const DefinitionsFromHanziDisplay = (props: QuestionDisplayProps) => {
                 value={definition}
                 placeholder="Definition"
                 onChange={setDefinition} />
+            <Button onClick={submitAnswer} isLoading={props.isLoading}>
+                Submit
+            </Button>
         </div>
     );
 }
 
 const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
     const [ hanzi, setHanzi ] = useState<string>("");
+
+    const submitAnswer = () => {
+        props.submitAnswer(hanzi.trim())
+    }
 
     return (
         <div>
@@ -95,6 +119,9 @@ const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
                 value={hanzi}
                 placeholder="Hanzi"
                 onChange={setHanzi} />
+            <Button onClick={submitAnswer} isLoading={props.isLoading}>
+                Submit
+            </Button>
         </div>
     );
 }

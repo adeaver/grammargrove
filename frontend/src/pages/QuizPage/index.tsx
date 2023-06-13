@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'preact/hooks';
 
+import Button from '../../components/Button';
+
 import QuestionDisplay from './components/QuestionDisplay';
 import {
     getNextQuestion,
-    Question
+    Question,
+    checkAnswer,
+    CheckAnswerResponse,
 } from './api';
 
 const QuizPage = () => {
@@ -11,7 +15,31 @@ const QuizPage = () => {
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ error, setError ] = useState<Error | null>(null);
 
-    useEffect(() => {
+    const [ answer, setAnswer ] = useState<CheckAnswerResponse | null>(null);
+
+    const handleSubmitAnswer = (a: string) => {
+        setIsLoading(true);
+        if (!question) {
+            setIsLoading(false);
+            return;
+        }
+        checkAnswer(
+            question.question_id, a,
+            (resp: CheckAnswerResponse) => {
+                setIsLoading(false);
+                setAnswer(resp);
+                setError(null);
+            },
+            (err: Error) => {
+                setIsLoading(false);
+                setAnswer(null);
+                setError(err);
+            }
+        );
+    }
+
+    const handleGetNextQuestion = () => {
+        setIsLoading(true);
         getNextQuestion(
             (q: Question) => {
                 setIsLoading(false);
@@ -23,7 +51,19 @@ const QuizPage = () => {
                 setError(err);
             }
         );
+    }
+
+    useEffect(() => {
+        handleGetNextQuestion();
     }, []);
+
+    // TODO: display answer more nicely
+    let answerText: string | null = null;
+    if (!!answer && answer.correct) {
+        answerText = "That's correct!"
+    } else if (!!answer && !answer.correct) {
+        answerText = `That's not correct. The correct answer is ${answer.correct_answer}`
+    }
 
     if (isLoading) {
         return <p>Loading</p>
@@ -37,7 +77,22 @@ const QuizPage = () => {
                     <p>There has been an error</p>
                 )
             }
-            <QuestionDisplay question={question} />
+            {
+                !!answerText && (
+                    <p>{answerText}</p>
+                )
+            }
+            <QuestionDisplay
+                question={question}
+                isLoading={isLoading}
+                submitAnswer={handleSubmitAnswer} />
+            {
+                !!answerText && (
+                    <Button onClick={handleGetNextQuestion} isLoading={isLoading}>
+                        Next Question
+                    </Button>
+                )
+            }
         </div>
     );
 }

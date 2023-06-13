@@ -1,5 +1,6 @@
 import {
-    makeGetRequest
+    makeGetRequest,
+    makePostRequest,
 } from '../../util/gfetch';
 
 export enum QuestionType {
@@ -24,5 +25,32 @@ export function getNextQuestion(
         "/api/quiz/v1/next?format=json",
         onSuccess,
         onError,
+    )
+}
+
+export type CheckAnswerRequest = {
+    question_id: string;
+    answer: string;
+}
+
+export type CheckAnswerResponse = {
+    correct: boolean;
+    correct_answer: string | null;
+}
+
+export function checkAnswer(
+    question_id: string,
+    answer: string,
+    onSuccess: (resp: CheckAnswerResponse) => void,
+    onError: (err: Error) => void,
+) {
+    makePostRequest<CheckAnswerRequest, CheckAnswerResponse>(
+        "/api/quiz/v1/check/?format=json",
+        {
+            question_id: question_id,
+            answer: answer,
+        },
+        onSuccess,
+        onError
     )
 }
