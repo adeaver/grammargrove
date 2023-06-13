@@ -1,3 +1,5 @@
+from typing import List, NamedTuple, Optional
+
 import uuid
 from enum import IntEnum
 
@@ -6,6 +8,7 @@ from django.utils import timezone
 
 from users.models import User
 from uservocabulary.models import UserVocabularyEntry
+from words.models import Word, Definition, LanguageCode
 
 class QuestionType(IntEnum):
     AccentsFromHanzi = 1
@@ -34,3 +37,29 @@ class QuizQuestion(models.Model):
                 condition=models.Q(user_vocabulary_entry__isnull=False)
             )
         ]
+
+
+class WordPayload(NamedTuple):
+    word: Word
+    definitions: List[Definition]
+    user_vocabulary_entry: UserVocabularyEntry
+
+def get_word_from_question(
+    question: QuizQuestion,
+    language_code: LanguageCode
+) -> Optional[WordPayload]:
+    user_vocabulary_entries = (
+        UserVocabularyEntry.objects.filter(id=question.user_vocabulary_entry.id)
+    )
+    if not user_vocabulary_entries:
+        return None
+    user_vocabulary_entry = user_vocabulary_entries[0]
+    words = Word.objects.filter(id=user_vocabulary_entry.word.id)
+    assert words
+    word = words[0]
+    definitions = list(Definition.objects.filter(word=word.id, language_code=language_code).all())
+    return WordPayload(
+        word=word,
+        user_vocabulary_entry=user_vocabulary_entry,
+        definitions=definitions,
+    )

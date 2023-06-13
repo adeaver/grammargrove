@@ -12,6 +12,8 @@ export type Question = {
     question_id: string;
     display: string;
     question_type: QuestionType;
+    answer_spaces: number | null;
+    vocabulary_entry_id: string;
 }
 
 export function getNextQuestion(
