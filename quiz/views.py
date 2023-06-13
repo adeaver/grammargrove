@@ -26,6 +26,7 @@ class QuizViewSet(viewsets.ViewSet):
         class QuestionResponse(NamedTuple):
             question_id: str
             display: str
+            question_type: int
 
         if not request.user:
             return HttpResponseForbidden()
@@ -36,7 +37,10 @@ class QuizViewSet(viewsets.ViewSet):
         question.number_of_times_displayed += 1
         question.save()
         display = _get_display_from_question(question)
-        return JsonResponse(QuestionResponse(question_id=question.id, display=display)._asdict())
+        return JsonResponse(
+            QuestionResponse(question_id=question.id, display=display, question_type=question.question_type)
+                ._asdict()
+        )
 
     @action(detail=True, methods=['post'])
     def check(self, request: HttpRequest) -> HttpResponse:
@@ -150,7 +154,7 @@ def _get_display_from_question(question: QuizQuestion) -> str:
     elif question.question_type == QuestionType.HanziFromEnglish:
         if vocabulary_entry[0].notes:
             return vocabulary_entry.notes
-        definitions = Definition.objects.filter(word=word[0].id, language_code=LanguageCode.ENGLISH)
+        definitions = Definition.objects.filter(word=word[0].id, language_code=LanguageCode.ENGLISH).all()
         return "\n".join([ d.definition for d in definitions ])
     else:
         raise AssertionError(f"Unsupported Question Type {question.question_type}")
