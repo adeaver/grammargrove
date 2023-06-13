@@ -39,7 +39,7 @@ Some special cases to be aware of:
 - `index/` is for serving the frontend. React-Router is kind of garbage and makes authentication harder than it needs to be, so we serve everything from the backend.
 
 
-## TODO
+## TODO for MVP
 
 #### Support
 - [X] render dashboard
@@ -47,6 +47,7 @@ Some special cases to be aware of:
 - [X] ability to send emails to login
 - [X] spooler
 - [X] user_ids should be UUIDs
+- [ ] spooler cron
 - [ ] style pages
 
 #### Allow users to add words to their list
@@ -74,12 +75,16 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [ ] Pinyin search should allow for both numbered and actual pinyin
 - [ ] Dashboard should require auth, as well as search page
 - [ ] Frontend should display accents not as numbers
+- [ ] Enter should work on forms
+- [ ] Infra: frontend doesn't always rerender
 
 #### Tech Debt
 - [ ] Word search bar should be a separate component
 
 #### Add Stripe Payments
 - [ ] redirect to Stripe payment dashboard
+- [ ] webhook for continuing payments
+- [ ] spooler job to check expiring payments
 
 #### Deployment
 - [ ] create production Dockerfile
