@@ -60,7 +60,7 @@ Some special cases to be aware of:
 #### Quiz page
 - [X] render quiz page
 - [X] frontend component display question
-- [ ] endpoint to submit answer
+- [X] endpoint to submit answer
 
 Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi from English
 
@@ -68,12 +68,12 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [ ] management command to add grammar rules from txt file or via command line
 - [ ] allow users to search for grammar rules by component words
 - [ ] allow users to CRUD their own grammar rules (combination of words and parts of speech)
-- [ ] async job that populates grammar rule examples from ChatGPT
 - [ ] add grammar rules to quiz page
+- [ ] async job that populates grammar rule examples from ChatGPT
 
 #### Bugs to fix
 - [ ] Pinyin search should allow for both numbered and actual pinyin
-- [ ] Dashboard should require auth, as well as search page
+- [X] Dashboard should require auth, as well as search page
 - [ ] Frontend should display accents not as numbers
 - [ ] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender
@@ -112,6 +112,9 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 #### 06/13/2023
 - [X] render quiz page
 - [X] frontend component display question
+- [X] endpoint to submit answer
 
 #### Next Day
-- [ ] endpoint to submit answer
+- [ ] management command to add grammar rules from txt file or via command line
+- [ ] allow users to search for grammar rules by component words
+- [ ] allow users to CRUD their own grammar rules (combination of words and parts of speech)
