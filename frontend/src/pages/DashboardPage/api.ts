@@ -102,7 +102,7 @@ export function deleteUserGrammarRule(
     onError: (err: Error) => void
 ) {
     makeDeleteRequest(
-        `/api/usergrammarrule/v1/${id}/?format=json`,
+        `/api/usergrammarrules/v1/${id}/?format=json`,
         onSuccess,
         onError,
     )
