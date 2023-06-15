@@ -16,5 +16,6 @@ class GrammarRuleComponentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
-        response['word'] = WordSerializer(instance.word).data
+        if instance.word is not None:
+            response['word'] = WordSerializer(instance.word).data
         return response

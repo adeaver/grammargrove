@@ -6,6 +6,7 @@ import {
 } from './api';
 
 import WordSearch from './components/WordSearch';
+import GrammarSearch from './components/GrammarSearch';
 
 const Dashboard = () => {
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
@@ -48,12 +49,15 @@ const Dashboard = () => {
         )
     }
     return (
-        <WordSearch
-            userVocabularyByWordID={userVocabularyByWordID}
-            loadingWords={loadingWords}
-            setUserVocabularyByWordID={setUserVocabularyByWordID}
-            setLoadingWords={setLoadingWords}
-            setError={setError} />
+        <div>
+            <WordSearch
+                userVocabularyByWordID={userVocabularyByWordID}
+                loadingWords={loadingWords}
+                setUserVocabularyByWordID={setUserVocabularyByWordID}
+                setLoadingWords={setLoadingWords}
+                setError={setError} />
+            <GrammarSearch />
+        </div>
     )
 }
 
