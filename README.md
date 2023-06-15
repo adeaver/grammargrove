@@ -118,6 +118,6 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] management command to add grammar rules from txt file or via command line
 - [X] allow users to search for grammar rules by component words
 
-#### Next Day
-- [ ] Frontend to search for grammar rules
+#### 06/15/2023
+- [X] Frontend to search for grammar rules
 - [ ] allow users to CRUD their own grammar rules (combination of words and parts of speech)
