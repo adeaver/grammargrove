@@ -49,6 +49,7 @@ Some special cases to be aware of:
 - [X] user_ids should be UUIDs
 - [ ] spooler cron
 - [ ] style pages
+- [ ] management command to apply hsk labels to grammar rules and words
 
 #### Allow users to add words to their list
 - [X] management command to add vocabulary from CEDICT.txt
@@ -61,6 +62,8 @@ Some special cases to be aware of:
 - [X] render quiz page
 - [X] frontend component display question
 - [X] endpoint to submit answer
+- [ ] handle case in which a user has nothing
+- [ ] add grammar rules to quiz page
 
 Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi from English
 
@@ -68,7 +71,6 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] management command to add grammar rules from txt file or via command line
 - [X] allow users to search for grammar rules by component words
 - [X] allow users to CRUD their own grammar rules (combination of words and parts of speech)
-- [ ] add grammar rules to quiz page
 - [ ] async job that populates grammar rule examples from ChatGPT
 
 #### Bugs to fix
