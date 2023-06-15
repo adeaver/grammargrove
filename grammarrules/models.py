@@ -1,4 +1,6 @@
 import uuid
+from enum import IntEnum
+
 from django.db import models
 from django.db.models import Q
 
@@ -18,6 +20,9 @@ class PartOfSpeech(IntEnum):
     MeasureWord = 11
     Preposition = 12
     Particle = 13
+    Predicate = 14
+    Subject = 15
+    Object = 16
 
     @classmethod
     def choices(cls):
@@ -26,6 +31,7 @@ class PartOfSpeech(IntEnum):
 class GrammarRule(models.Model):
     id = models.TextField(primary_key=True, editable=False)
     is_user_added = models.BooleanField(default=False)
+    title = models.TextField()
     definition = models.TextField()
 
 class GrammarRuleComponent(models.Model):
@@ -34,6 +40,7 @@ class GrammarRuleComponent(models.Model):
     word = models.ForeignKey(Word, null=True, on_delete=models.CASCADE)
     part_of_speech = models.IntegerField(choices=PartOfSpeech.choices(), null=True)
     rule_index = models.IntegerField()
+    optional = models.BooleanField(default=False)
 
     class Meta:
         constraints=[

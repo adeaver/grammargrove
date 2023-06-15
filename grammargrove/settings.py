@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'index',
     'users',
     'words',
+    'grammarrules',
     'uservocabulary',
     'quiz',
 ]
