@@ -21,6 +21,13 @@ from uservocabulary.models import UserVocabularyEntry
 from words.models import Word, Definition, LanguageCode
 
 class QuizViewSet(viewsets.ViewSet):
+    def get_permissions(self):
+        if self.action == 'next':
+            return [IsAuthenticated(), ]
+        elif self.action == 'check'
+            return [IsAuthenticated(), ]
+        return []
+
     @action(detail=False, methods=['get'])
     def next(self, request: HttpRequest) -> HttpResponse:
         class QuestionResponse(NamedTuple):
@@ -30,8 +37,6 @@ class QuizViewSet(viewsets.ViewSet):
             question_type: int
             answer_spaces: Optional[int]
 
-        if not request.user:
-            return HttpResponseForbidden()
         question = _select_next_word_question(request)
         if not question:
             # TODO: gracefully handle this case
@@ -56,8 +61,6 @@ class QuizViewSet(viewsets.ViewSet):
             correct: bool
             correct_answer: Optional[str]
 
-        if not request.user:
-            return HttpResponseForbidden()
         question_id = request.data.get("question_id")
         if not question_id:
             return HttpResponseBadRequest()

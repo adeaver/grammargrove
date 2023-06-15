@@ -4,6 +4,7 @@ import logging
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 
 from grammargrove import pinyin_utils
@@ -17,6 +18,11 @@ class SearchQuery(NamedTuple):
     query: str
 
 class GrammarRuleViewSet(viewsets.ViewSet):
+    def get_permissions(self):
+        if self.action == 'search':
+            return [IsAuthenticated(), ]
+        return []
+
     def _get_numeric_form_pinyin(self, s: str) -> Optional[str]:
         if pinyin_utils.is_display_form(s.lower()):
             return pinyin_utils.convert_to_numeric_form(s.lower())
