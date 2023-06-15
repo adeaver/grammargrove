@@ -22,6 +22,7 @@ from django.conf import settings
 from index import views
 from users.urls import router as user_router
 from words.urls import router as word_router
+from grammarrules.urls import router as grammarrules_router
 from uservocabulary.urls import router as uservocabulary_router
 from quiz.urls import router as quiz_router
 
@@ -29,6 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include(user_router.urls), name="users"),
     path('api/words/', include(word_router.urls), name="words"),
+    path('api/grammarrules/', include(grammarrules_router.urls), name="grammarrules"),
     path('api/uservocabulary/', include(uservocabulary_router.urls), name="uservocabulary"),
     path('api/quiz/', include(quiz_router.urls), name="quiz"),
     path('', views.home, name='home'),
