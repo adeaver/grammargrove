@@ -20,7 +20,7 @@ class SearchQuery(NamedTuple):
 class GrammarRuleViewSet(viewsets.ViewSet):
     def get_permissions(self):
         if self.action == 'search':
-            return [IsAuthenticated(), ]
+            return []
         return []
 
     def _get_numeric_form_pinyin(self, s: str) -> Optional[str]:

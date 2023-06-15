@@ -24,7 +24,7 @@ class QuizViewSet(viewsets.ViewSet):
     def get_permissions(self):
         if self.action == 'next':
             return [IsAuthenticated(), ]
-        elif self.action == 'check'
+        elif self.action == 'check':
             return [IsAuthenticated(), ]
         return []
 

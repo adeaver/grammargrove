@@ -1,42 +1,15 @@
 import { useEffect, useState } from 'preact/hooks';
 
-import WordSearchBar from '../../components/WordSearchBar';
-import { SearchResult } from '../../components/WordSearchBar/api';
-import WordCard from '../../components/WordSearchBar/WordCard';
-
 import {
     UserVocabulary,
     getUserVocabulary,
-    addUserVocabulary,
-    deleteUserVocabulary,
 } from './api';
+
+import WordSearch from './components/WordSearch';
 
 const Dashboard = () => {
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
     const [ loadingWords, setLoadingWords ] = useState<{ [key: string]: boolean }>({});
-    const handleLoadingWord = (wordID: string, isLoading: boolean) => {
-        if (isLoading) {
-            setLoadingWords({
-                ...loadingWords,
-                [wordID]: true,
-            });
-        } else {
-            setLoadingWords(
-                Object.keys(loadingWords).reduce(
-                    (acc: { [key: string]: boolean }, curr: string) => {
-                        if (curr == wordID) {
-                            return acc
-                    }
-                    return {
-                        ...acc,
-                        [wordID]: true,
-                    }
-                }, {})
-            );
-        }
-    }
-
-    const [ searchResults, setSearchResults ] = useState<SearchResult[]>([]);
     const [ userVocabularyByWordID, setUserVocabularyByWordID ] = useState<{ [word_id: string]: UserVocabulary }>({});
     const [ error, setError ] = useState<Error | null>(null);
 
@@ -59,57 +32,6 @@ const Dashboard = () => {
         );
     }, []);
 
-    const handleAddWordToVocabulary = (s: SearchResult) => {
-        handleLoadingWord(s.word_id, true);
-        addUserVocabulary(
-            s.word_id, null,
-            (resp: UserVocabulary) => {
-                handleLoadingWord(s.word_id, false);
-                setUserVocabularyByWordID({
-                    ...userVocabularyByWordID,
-                    [ resp.word ]: resp,
-                });
-                setError(null);
-            },
-            (err: Error) => {
-                handleLoadingWord(s.word_id, false);
-                setError(err);
-            }
-        );
-    }
-
-    const handleDeleteVocabularyEntry = (s: SearchResult) => {
-        handleLoadingWord(s.word_id, true);
-        const id: string | null = userVocabularyByWordID[s.word_id].id || null;
-        if (!id) {
-            handleLoadingWord(s.word_id, false);
-            return;
-        }
-        deleteUserVocabulary(
-            id,
-            () => {
-                handleLoadingWord(s.word_id, false);
-                setUserVocabularyByWordID(
-                    Object.values(userVocabularyByWordID).reduce(
-                        (acc: { [key: string]: UserVocabulary }, curr: UserVocabulary) => {
-                            if (curr.id === id) {
-                                return acc
-                            }
-                            return {
-                                ...acc,
-                                [curr.word]: curr,
-                            }
-                        }, {}
-                    )
-                );
-                setError(null);
-            },
-            (err: Error) => {
-                handleLoadingWord(s.word_id, false);
-                setError(err);
-            }
-        );
-    }
 
     if (isLoading) {
         // Entire page is loading
@@ -126,28 +48,12 @@ const Dashboard = () => {
         )
     }
     return (
-        <div>
-            <WordSearchBar
-                onSuccess={setSearchResults} />
-            {
-                searchResults.map((s: SearchResult) => {
-                    const action = !!userVocabularyByWordID[s.word_id] ? ({
-                            text: 'Remove from Vocabulary',
-                            action: handleDeleteVocabularyEntry,
-                        }) : ({
-                            text: 'Add to Vocabulary',
-                            action: handleAddWordToVocabulary,
-                        });
-                    return (
-                        <WordCard
-                            key={s.word_id}
-                            isLoading={loadingWords[s.word_id]}
-                            word={s}
-                            action={action} />
-                    );
-                })
-            }
-        </div>
+        <WordSearch
+            userVocabularyByWordID={userVocabularyByWordID}
+            loadingWords={loadingWords}
+            setUserVocabularyByWordID={setUserVocabularyByWordID}
+            setLoadingWords={setLoadingWords}
+            setError={setError} />
     )
 }
 

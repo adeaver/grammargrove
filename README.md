@@ -65,8 +65,8 @@ Some special cases to be aware of:
 Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi from English
 
 #### Allow users to add grammar rules
-- [ ] management command to add grammar rules from txt file or via command line
-- [ ] allow users to search for grammar rules by component words
+- [X] management command to add grammar rules from txt file or via command line
+- [X] allow users to search for grammar rules by component words
 - [ ] allow users to CRUD their own grammar rules (combination of words and parts of speech)
 - [ ] add grammar rules to quiz page
 - [ ] async job that populates grammar rule examples from ChatGPT
@@ -114,7 +114,10 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] frontend component display question
 - [X] endpoint to submit answer
 
+#### 06/14/2023
+- [X] management command to add grammar rules from txt file or via command line
+- [X] allow users to search for grammar rules by component words
+
 #### Next Day
-- [ ] management command to add grammar rules from txt file or via command line
-- [ ] allow users to search for grammar rules by component words
+- [ ] Frontend to search for grammar rules
 - [ ] allow users to CRUD their own grammar rules (combination of words and parts of speech)
