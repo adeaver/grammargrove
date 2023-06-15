@@ -41,6 +41,10 @@ def _process_row(
     )
     grammar_rule.save()
     for c in components:
+        if c.word is not None:
+            logging.warn(f"Saving {c.word} to {grammar_rule.id}")
+        else:
+            logging.warn(f"Saving {c.part_of_speech} to {grammar_rule.id}")
         c.grammar_rule = grammar_rule
         c.save()
 

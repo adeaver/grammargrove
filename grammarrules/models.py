@@ -29,13 +29,13 @@ class PartOfSpeech(IntEnum):
         return [(key.value, key.name) for key in cls]
 
 class GrammarRule(models.Model):
-    id = models.TextField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     is_user_added = models.BooleanField(default=False)
     title = models.TextField()
     definition = models.TextField()
 
 class GrammarRuleComponent(models.Model):
-    id = models.TextField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
     word = models.ForeignKey(Word, null=True, on_delete=models.CASCADE)
     part_of_speech = models.IntegerField(choices=PartOfSpeech.choices(), null=True)
