@@ -5,7 +5,11 @@ from functools import wraps
 logger = logging.getLogger(__name__)
 
 try:
-    from uwsgidecorators import spool
+    from uwsgidecorators import spool, cron
+
+    #  @cron(-1, -1, -1, -1, -1)
+    #  def execute_every_minute(num):
+    #      logging.warning("Hello")
 
     logger.warning("Imported spool successfully.")
 except Exception:

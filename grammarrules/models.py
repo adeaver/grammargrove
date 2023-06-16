@@ -28,6 +28,15 @@ class PartOfSpeech(IntEnum):
     def choices(cls):
         return [(key.value, key.name) for key in cls]
 
+    def to_proper_name(self) -> str:
+        api_name = self.name
+        name_parts = []
+        for char in api_name:
+            if char.isupper():
+                name_parts.append(' ')
+            name_parts.append(char.lower())
+        return "".join(name_parts).strip()
+
 class GrammarRule(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     is_user_added = models.BooleanField(default=False)
@@ -53,4 +62,55 @@ class GrammarRuleComponent(models.Model):
         indexes = [
             models.Index(fields=['word']),
             models.Index(fields=['part_of_speech']),
+        ]
+
+
+class GrammarRuleExampleParseVersion(IntEnum):
+    Version1 = 1
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
+
+    @classmethod
+    def current_version(cls) -> "GrammarRuleExampleParseVersion":
+        return GrammarRuleExampleParseVersion.Version1
+
+class GrammarRuleExamplePrompt(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
+    prompt = models.TextField()
+    response = models.TextField(null=True)
+    model = models.TextField()
+    usage_tokens = models.IntegerField()
+    parse_version = models.IntegerField(null=True, choices=GrammarRuleExampleParseVersion.choices())
+    parse_error = models.TextField(null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['grammar_rule'])
+        ]
+
+class GrammarRuleExample(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
+    grammar_rule_example_prompt = models.ForeignKey(GrammarRuleExamplePrompt, on_delete=models.CASCADE)
+    english_definition = models.TextField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['grammar_rule']),
+            models.Index(fields=['grammar_rule_example_prompt'])
+        ]
+
+class GrammarRuleExampleComponent(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    grammar_rule_example = models.ForeignKey(GrammarRuleExample, on_delete=models.CASCADE)
+    example_index = models.IntegerField()
+    word = models.ForeignKey(Word, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints=[
+            models.UniqueConstraint(fields=['grammar_rule_example', 'example_index'], name='grammar_rule_example_component_index_unique')
         ]

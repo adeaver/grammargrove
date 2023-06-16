@@ -47,7 +47,7 @@ Some special cases to be aware of:
 - [X] ability to send emails to login
 - [X] spooler
 - [X] user_ids should be UUIDs
-- [ ] spooler cron
+- [X] spooler cron
 - [ ] style pages
 - [ ] management command to apply hsk labels to grammar rules and words
 
@@ -62,7 +62,7 @@ Some special cases to be aware of:
 - [X] render quiz page
 - [X] frontend component display question
 - [X] endpoint to submit answer
-- [ ] handle case in which a user has nothing
+- [ ] handle case in which a user has nothing to quiz
 - [ ] add grammar rules to quiz page
 
 Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi from English
@@ -123,7 +123,7 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 #### 06/15/2023
 - [X] Frontend to search for grammar rules
 - [X] allow users to CRUD their own grammar rules (combination of words and parts of speech)
+- [X] spooler cron
 
 #### Next Day
-- [ ] spooler cron
 - [ ] async job that populates grammar rule examples from ChatGPT

@@ -14,6 +14,9 @@ psycopg2 = "^2.9.6"
 uwsgi = "^2.0.21"
 django-extensions = "^3.2.3"
 boto3 = "^1.26.151"
+openai = "^0.27.8"
+jieba = "^0.42.1"
+pygtrie = "^2.5.0"
 
 
 [build-system]
