@@ -12,6 +12,8 @@ from .models import (
     GrammarRuleExamplePrompt,
     GrammarRuleExample,
     GrammarRuleExampleComponent,
+    GrammarRuleHumanVerifiedPromptExample,
+    GrammarRuleHumanVerifiedPromptExampleComponent
     PartOfSpeech
 )
 from words.models import LanguageCode

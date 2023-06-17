@@ -85,7 +85,6 @@ class GrammarRuleHumanVerifiedPromptExample(models.Model):
     language_code = models.TextField(choices=LanguageCode.choices())
     hanzi_display = models.TextField()
     pinyin_display = models.TextField()
-    english_definition = models.TextField()
     structure_use = models.TextField()
     explanation = models.TextField()
     uses = models.IntegerField(default=0)
