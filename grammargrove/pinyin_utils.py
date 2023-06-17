@@ -11,26 +11,82 @@ vowels_by_tone = {
     5: { 'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u', 'ü': 'u:' },
 }
 
-def _get_first_vowel_with_index(pinyin: str) -> Tuple[str, int]:
-    for idx, c in enumerate(pinyin):
-        if c in vowels_by_tone[1]:
-            return vowels_by_tone[1][c], idx
-        elif c in vowels_by_tone[2]:
-            return vowels_by_tone[2][c], idx
-        elif c in vowels_by_tone[3]:
-            return vowels_by_tone[3][c], idx
-        elif c in vowels_by_tone[4]:
-            return vowels_by_tone[4][c], idx
-        elif c in vowels_by_tone[5]:
-            character = vowels_by_tone[5][c]
-            if (
-                character == 'u' and
-                (idx+1) < len(pinyin) and
-                pinyin[idx+1] == ":"
+vowels_by_tone_position = {
+    "a": 0, "ao": 0, "ai": 0, "an": 0, "ang": 0,
+    "o": 0, "ou": 0, "ong": 0,
+    "e": 0, "ei": 0, "en": 0, "eng": 0, "er": 0,
+    "i": 0, "ia": 1, "iu": 1, "iao": 1, "in": 0, "ing": 0,
+    "ian": 1, "iang": 1, "iong": 1,
+    "u": 0, "ua": 1, "uo": 1, "ue": 1, "ui": 1, "uai": 1,
+    "un": 0, "uan": 1, "uang": 1,
+    "u:": 0, "u:e": 2, "u:n": 0, "u:an": 1
+}
+
+class _Vowel(NamedTuple):
+    vowel: str
+    tone_number: int
+
+    def to_display_form(self) -> str:
+        skip_next = False
+        out = []
+        for idx, c in enumerate(self.vowel):
+            if skip_next:
+                skip_next = False
+                continue
+            elif (
+                c == "u" and
+                idx < len(self.vowel)-1
+                and self.vowel[idx+1] == ":"
             ):
-                return 'u:', idx
-            return character, idx
-    raise ValueError(f"Invalid pinyin {pinyin}")
+                c == "u:"
+                skip_next=True
+
+            if idx == vowels_by_tone_position[self.vowel]:
+                for display, base_form in vowels_by_tone[self.tone_number].items():
+                    if base_form == c:
+                        out.append(display)
+            else:
+                out.append(c)
+        return "".join(out)
+
+
+def _is_vowel_and_maybe_tone_number(char: str) -> Tuple[bool, Optional[int]]:
+    for tone_number, vowel_dict in vowels_by_tone.items():
+        if char in vowel_dict:
+            return True, tone_number
+    return False, None
+
+
+def _get_vowel_with_index(pinyin: str) -> Tuple[_Vowel, int]:
+    tone_number: int = 5
+    all_in_numeric = []
+    for c in pinyin:
+        is_vowel, char_tone_number = _is_vowel_and_maybe_tone_number(c)
+        if is_vowel:
+            if char_tone_number != 5:
+                tone_number = char_tone_number
+            all_in_numeric.append(vowels_by_tone[char_tone_number][c])
+        else:
+            all_in_numeric.append(c)
+    base_version = "".join(all_in_numeric)
+    curr_vowel = ""
+    curr_vowel_idx = -1
+    for vowel in vowels_by_tone_position.keys():
+        vowel_idx = base_version.find(vowel)
+        if vowel_idx != -1 and len(vowel) > len(curr_vowel):
+            curr_vowel = vowel
+            curr_vowel_idx = vowel_idx
+    assert curr_vowel_idx != -1, (
+        f"Could not find any vowels in {pinyin} (base version {base_version})"
+    )
+    assert curr_vowel != "", (
+        f"{pinyin} (base version {base_version}) has no vowels"
+    )
+    return _Vowel(
+        vowel=curr_vowel,
+        tone_number=tone_number,
+    ), curr_vowel_idx
+
 
 def _get_replacement_vowel_in_display_form(vowel: str, tone_number: int) -> str:
     for display, base in vowels_by_tone[tone_number].items():
@@ -44,7 +100,7 @@ def get_tone_number_from_display_form(pinyin: str) -> Optional[int]:
             return None
         for tone_number in range(4):
             if c in vowels_by_tone[tone_number+1]:
-                return tone_number
+                return tone_number+1
     return 5 if pinyin[-1].isalpha() else None
 
 def is_display_form(pinyin: str) -> bool:
@@ -56,9 +112,10 @@ def convert_to_display_form(pinyin: str) -> str:
     tone_number = get_tone_number_from_numeric_form(pinyin)
     if tone_number is None:
         raise ValueError(f"Pinyin {pinyin} is neither numeric nor display form")
-    vowel, idx = _get_first_vowel_with_index(pinyin)
-    replacement_vowel = _get_replacement_vowel_in_display_form(vowel, tone_number)
-    return f"{pinyin[:idx]}{replacement_vowel}{pinyin[idx+1+len(vowel):]}"
+    vowel, idx = _get_vowel_with_index(pinyin)
+    replacement_vowel = vowel.to_display_form()
+    tail_start_pos = idx+1+len(vowel.vowel)
+    return f"{pinyin[:idx]}{replacement_vowel}{pinyin[tail_start_pos:]}"
 
 def get_tone_number_from_numeric_form(pinyin: str) -> Optional[int]:
     if pinyin[-1].isnumeric():
@@ -74,8 +131,10 @@ def convert_to_numeric_form(pinyin: str) -> bool:
     tone_number = get_tone_number_from_display_form(pinyin)
     if tone_number is None:
         raise ValueError(f"Pinyin {pinyin} is neither numeric nor display form")
-    vowel, idx = _get_first_vowel_with_index(pinyin)
-    return f"{pinyin[:idx]}{vowel}{pinyin[idx+1:]}{tone_number}"
+    vowel, idx = _get_vowel_with_index(pinyin)
+    tail_start_pos = idx+1+len(vowel.to_display_form())
+    numeric_form = vowel.vowel
+    return f"{pinyin[:idx]}{numeric_form}{pinyin[tail_start_pos:]}{tone_number}"
 
 finals_list = [
     'a', 'ai', 'an', 'ang', 'ao',

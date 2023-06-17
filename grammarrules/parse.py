@@ -1,16 +1,19 @@
-from typing import NamedTuple, List
+from typing import NamedTuple, List, Tuple, Optional
+
+import logging
 
 import csv
 import jieba
 
-from grammargrove.pinyin_utils import PinyinSplitter
+from grammargrove.pinyin_utils import PinyinSplitter, convert_to_numeric_form
 from .models import (
     GrammarRuleExampleParseVersion,
     GrammarRuleExamplePrompt,
     GrammarRuleExample,
     GrammarRuleExampleComponent,
 )
-from words.models import Word
+from words.models import Word, LanguageCode
+from words.utils import make_word_id_with_pinyin_list
 
 class ParseOutput(NamedTuple):
     grammar_rule_examples: List[GrammarRuleExample]
@@ -28,15 +31,89 @@ def parse_example_prompt(example_prompt_id: str) -> ParseOutput:
         if idx == 0:
             continue
         hanzi, pinyin, english_definition = row
-        # Step 1: make sure that hanzi and pinyin are the same length
-        pinyin_parts = pinyin.split(" ")
-        # TODO there's a bug where it returns the whole thing sometimes for some reason
-        hanzi_parts = list(jieba.cut(hanzi, cut_all=True))
-        if len(pinyin_parts) < len(hanzi_parts):
+        example = GrammarRuleExample(
+            grammar_rule = prompt.grammar_rule,
+            grammar_rule_example_prompt=prompt,
+            line_idx=idx,
+            hanzi_display=hanzi,
+            pinyin_display=pinyin,
+            english_definition=english_definition,
+            parse_version=GrammarRuleExampleParseVersion.current_version()
+        )
+        pinyin_parts = splitter.split(
+            "".join(pinyin.split(" ")),
+            len(hanzi)
+        )
+        if pinyin_parts.error_reason is not None:
+            example.parse_error = (
+                f"Could not parse pinyin because {pinyin_parts.error_reason}"
+            )
+            logging.warn(example.parse_error)
+            #  example.save()
+            continue
+        elif len(pinyin_parts.result) > 1:
+            example.parse_error = (
+                f"Could not parse pinyin because there are {len(pinyin_parts.result)} parse results"
+            )
+            logging.warn(example.parse_error)
+            #  example.save()
+            continue
+        hanzi_parts = jieba.cut(hanzi, cut_all=False)
+        pinyin_idx = 0
+        lookup: List[Tuple[str, List[str]]] = []
+        for h in hanzi_parts:
+            lookup.append((
+                h,
+                pinyin_parts.result[0][pinyin_idx:pinyin_idx+len(h)]
+            ))
+            pinyin_idx += len(h)
+        if pinyin_idx != len(pinyin_parts.result[0]):
+            example.parse_error = (
+                f"Could not parse line because there are {len(pinyin_parts.result) - pinyin_idx} "
+                f"missing pinyin parts in result"
+            )
+            logging.warn(example.parse_error)
+            #  example.save()
+            continue
+        words: List[Word] = []
+        errors: List[str] = []
+        for idx, (hanzi, pinyin) in enumerate(lookup):
+            pronunciation = [ convert_to_numeric_form(p) for p in pinyin ]
+            language_code = _fix_language_code(prompt.language_code)
+            if not language_code:
+                errors.append(f"Language code {prompt.language_code} does not exist")
+                break
+            word_id = make_word_id_with_pinyin_list(
+                language_code,
+                hanzi,
+                pronunciation
+            )
+            w = Word.objects.filter(id=word_id)
+            if not w:
+                errors.append(f"Word {hanzi} with pronunciation {pronunciation} has no word record")
+            elif len(w) > 1:
+                errors.append(f"Word {hanzi} with pronunciation {pronunciation} has {len(w)} word records, but expected at most 1")
+            else:
+                words.append(w[0])
+        if errors:
+            example.parse_error = "; ".join(errors)
+            logging.warn(example.parse_error)
+            #  example.save()
+            continue
+        #  example.save()
+        for idx, word in enumerate(words):
+            logging.warn(f"Would save {word.display} in position {idx}")
 
-        elif len(pinyin_parts) > len(hanzi_parts):
-            prompt.parse_error = "More pinyin than Hanzi"
-            prompt.save()
-            return ParseOutput(grammar_rule_examples=[], retryable=False)
+
+def _fix_language_code(l: str) -> Optional[LanguageCode]:
+    possible_name_parts = l.split(".")
+    possible_name = possible_name_parts[-1]
+    for code in LanguageCode:
+        if code.name == possible_name:
+            return code
+    return None
+
+
+
 
 

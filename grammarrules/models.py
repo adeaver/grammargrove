@@ -4,7 +4,7 @@ from enum import IntEnum
 from django.db import models
 from django.db.models import Q
 
-from words.models import Word
+from words.models import Word, LanguageCode
 
 class PartOfSpeech(IntEnum):
     Noun = 1
@@ -84,8 +84,8 @@ class GrammarRuleExamplePrompt(models.Model):
     response = models.TextField(null=True)
     model = models.TextField()
     usage_tokens = models.IntegerField()
+    language_code = models.TextField(choices=LanguageCode.choices())
     parse_version = models.IntegerField(null=True, choices=GrammarRuleExampleParseVersion.choices())
-    parse_error = models.TextField(null=True)
 
     class Meta:
         indexes = [
@@ -96,12 +96,19 @@ class GrammarRuleExample(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
     grammar_rule_example_prompt = models.ForeignKey(GrammarRuleExamplePrompt, on_delete=models.CASCADE)
+    line_idx = models.IntegerField()
+    hanzi_display = models.TextField()
+    pinyin_display = models.TextField()
     english_definition = models.TextField()
+    parse_version = models.IntegerField(null=True, choices=GrammarRuleExampleParseVersion.choices())
+    parse_error = models.TextField(null=True)
 
     class Meta:
         indexes = [
             models.Index(fields=['grammar_rule']),
-            models.Index(fields=['grammar_rule_example_prompt'])
+        ]
+        constraints=[
+            models.UniqueConstraint(fields=['grammar_rule_example_prompt', 'line_idx'], name='grammar_rule_example_line_index_unique')
         ]
 
 class GrammarRuleExampleComponent(models.Model):

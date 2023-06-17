@@ -34,14 +34,17 @@ def is_over_daily_usage_limit() -> bool:
     return _get_daily_usage() > daily_usage_limit
 
 def fetch_grammar_rule_examples(
-    grammar_rule: GrammarRule,
-    components: List[GrammarRuleComponent],
+    grammar_rule_id: str,
     valid_hsk_levels: Optional[List[int]] = None,
     must_include_words: Optional[List[str]] = None,
     number_of_examples: int = 10,
     language_code: LanguageCode = LanguageCode.SIMPLIFIED_MANDARIN,
     model: str = "gpt-3.5-turbo"
 ) -> str:
+    grammar_rules = GrammarRule.objects.filter(id=grammar_rule_id).all()
+    assert len(grammar_rules) == 1
+    grammar_rule = grammar_rules[0]
+    components = list(GrammarRuleComponent.objects.filter(grammar_rule=grammar_rule).all())
     assert model in highest_price_by_model
     components.sort(key=lambda x: x.rule_index)
     sentence_structure = "+".join(
@@ -67,6 +70,7 @@ def fetch_grammar_rule_examples(
         prompt=prompt,
         model=model,
         usage_tokens=0,
+        language_code=language_code,
     )
     prompt_record.save()
     openai_response = openai.ChatCompletion.create(
