@@ -5,6 +5,8 @@ import logging
 import csv
 import jieba
 
+from django.db import transaction
+
 from grammargrove.pinyin_utils import PinyinSplitter, convert_to_numeric_form
 from .models import (
     GrammarRuleExampleParseVersion,
@@ -19,7 +21,10 @@ class ParseOutput(NamedTuple):
     grammar_rule_examples: List[GrammarRuleExample]
     retryable: bool
 
-def parse_example_prompt(example_prompt_id: str) -> ParseOutput:
+def parse_example_prompt(
+    example_prompt_id: str,
+    reparse_non_errored: bool = False
+) -> ParseOutput:
     prompts = GrammarRuleExamplePrompt.objects.filter(id=example_prompt_id)
     if not prompts:
         return ParseOutput(grammar_rule_examples=[], retryable=False)
@@ -31,15 +36,24 @@ def parse_example_prompt(example_prompt_id: str) -> ParseOutput:
         if idx == 0:
             continue
         hanzi, pinyin, english_definition = row
-        example = GrammarRuleExample(
-            grammar_rule = prompt.grammar_rule,
-            grammar_rule_example_prompt=prompt,
-            line_idx=idx,
-            hanzi_display=hanzi,
-            pinyin_display=pinyin,
-            english_definition=english_definition,
-            parse_version=GrammarRuleExampleParseVersion.current_version()
-        )
+        examples = GrammarRuleExample.objects.filter(grammar_rule=prompt.grammar_rule, grammar_rule_example_prompt=prompt, line_idx=idx)
+        if examples:
+            example = examples[0]
+            if not reparse_non_errored and example.parse_error is None:
+                logging.warn(f"Grammar rule example {example.id} has no errors, not reparsing")
+                continue
+            example.parse_version = GrammarRuleExampleParseVersion.current_version()
+        else:
+            logging.warn("Creating new grammar rule example record")
+            example = GrammarRuleExample(
+                grammar_rule = prompt.grammar_rule,
+                grammar_rule_example_prompt=prompt,
+                line_idx=idx,
+                hanzi_display=hanzi,
+                pinyin_display=pinyin,
+                english_definition=english_definition,
+                parse_version=GrammarRuleExampleParseVersion.current_version()
+            )
         pinyin_parts = splitter.split(
             "".join(pinyin.split(" ")),
             len(hanzi)
@@ -49,14 +63,14 @@ def parse_example_prompt(example_prompt_id: str) -> ParseOutput:
                 f"Could not parse pinyin because {pinyin_parts.error_reason}"
             )
             logging.warn(example.parse_error)
-            #  example.save()
+            example.save()
             continue
         elif len(pinyin_parts.result) > 1:
             example.parse_error = (
                 f"Could not parse pinyin because there are {len(pinyin_parts.result)} parse results"
             )
             logging.warn(example.parse_error)
-            #  example.save()
+            example.save()
             continue
         hanzi_parts = jieba.cut(hanzi, cut_all=False)
         pinyin_idx = 0
@@ -73,7 +87,7 @@ def parse_example_prompt(example_prompt_id: str) -> ParseOutput:
                 f"missing pinyin parts in result"
             )
             logging.warn(example.parse_error)
-            #  example.save()
+            example.save()
             continue
         words: List[Word] = []
         errors: List[str] = []
@@ -98,11 +112,19 @@ def parse_example_prompt(example_prompt_id: str) -> ParseOutput:
         if errors:
             example.parse_error = "; ".join(errors)
             logging.warn(example.parse_error)
-            #  example.save()
+            example.save()
             continue
-        #  example.save()
-        for idx, word in enumerate(words):
-            logging.warn(f"Would save {word.display} in position {idx}")
+        with transaction.atomic():
+            example.save()
+            GrammarRuleExampleComponent.objects.filter(grammar_rule_example=example).delete()
+            for idx, word in enumerate(words):
+                GrammarRuleExampleComponent(
+                    grammar_rule_example=example,
+                    example_index=idx,
+                    word=word
+                ).save()
+        logging.warn(f"Saved {example.id}")
+
 
 
 def _fix_language_code(l: str) -> Optional[LanguageCode]:
