@@ -39,7 +39,48 @@ Some special cases to be aware of:
 - `index/` is for serving the frontend. React-Router is kind of garbage and makes authentication harder than it needs to be, so we serve everything from the backend.
 
 
-## TODO for MVP
+## Outstanding TODO for MVP
+
+#### Support
+- [ ] style pages
+- [ ] management command to apply hsk labels to grammar rules and words
+- [ ] populate grammarrules.csv
+
+#### Allow users to add words to their list
+- [ ] Page to display vocabulary and search within vocabulary
+- [ ] Add notes to user vocabulary (not super necessary, can be a fast follow)
+
+#### Quiz page
+- [ ] handle case in which a user has nothing to quiz
+- [ ] add grammar rules to quiz page
+
+#### Bugs to fix
+- [ ] Pinyin search should allow for both numbered and actual pinyin
+- [ ] Frontend should display accents not as numbers
+- [ ] Enter should work on forms
+- [ ] Infra: frontend doesn't always rerender (fast follow)
+
+#### Add Stripe Payments
+- [ ] redirect to Stripe payment dashboard
+- [ ] webhook for continuing payments
+- [ ] spooler job to check expiring payments
+
+#### Deployment
+- [ ] create production Dockerfile
+- [ ] create production uwsgi config
+- [ ] figure out deployment strategy (managed db is probably not going to work because of space limit)
+
+#### Wishlist
+- [ ] Search without accents (fast follow)
+
+## Progress 06/18/2023-06/24/2023
+
+#### Next Day
+- [ ] add grammar rules to quiz page
+- [ ] Page to display vocabulary and search within vocabulary
+
+
+## Done for MVP
 
 #### Support
 - [X] render dashboard
@@ -48,23 +89,16 @@ Some special cases to be aware of:
 - [X] spooler
 - [X] user_ids should be UUIDs
 - [X] spooler cron
-- [ ] style pages
-- [ ] management command to apply hsk labels to grammar rules and words
-- [ ] populate grammarrules.csv
 
 #### Allow users to add words to their list
 - [X] management command to add vocabulary from CEDICT.txt
 - [X] search endpoint that allows for hanzi or pinyin
 - [X] endpoint to add words to user list
-- [ ] Page to display vocabulary and search within vocabulary
-- [ ] Add notes to user vocabulary
 
 #### Quiz page
 - [X] render quiz page
 - [X] frontend component display question
 - [X] endpoint to submit answer
-- [ ] handle case in which a user has nothing to quiz
-- [ ] add grammar rules to quiz page
 
 Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi from English
 
@@ -75,7 +109,7 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] Functions to get grammar rule examples from ChatGPT
 - [X] Function to parse response from ChatGPT and save models
 - [X] async job that populates grammar rule examples
-- [ ] script to load in grammar rules should take in human verified examples to prompt ChatGPT
+- [X] script to load in grammar rules should take in human verified examples to prompt ChatGPT
 
 -> Example prompt for (subject+是+predicate+的):
 
@@ -115,7 +149,7 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 #### Wishlist
 - [ ] Search without accents
 
-## Progress
+## Progress 06/10/2023-06/17/2023
 
 #### 06/10/2023
 - [X] frontend route switch without taking over the page
@@ -148,7 +182,4 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 - [X] Functions to get grammar rule examples from ChatGPT
 - [X] Function to parse response from ChatGPT and save models
 - [X] async job that populates grammar rule examples
-
-#### Next Day
-- [ ] script to load in grammar rules should take in human verified examples to prompt ChatGPT
-- [ ] add grammar rules to quiz page
+- [X] script to load in grammar rules should take in human verified examples to prompt ChatGPT
