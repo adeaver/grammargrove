@@ -10,6 +10,8 @@ from .models import (
     GrammarRule,
     GrammarRuleComponent,
     GrammarRuleExamplePrompt,
+    GrammarRuleExample,
+    GrammarRuleExampleComponent,
     PartOfSpeech
 )
 from words.models import LanguageCode
@@ -73,6 +75,8 @@ def fetch_grammar_rule_examples(
         language_code=language_code,
     )
     prompt_record.save()
+    grammar_rule.fetch_example_attempts += 1
+    grammar_rule.save()
     openai_response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}]
     )
@@ -82,3 +86,27 @@ def fetch_grammar_rule_examples(
     prompt_record.usage_tokens = usage_tokens
     prompt_record.save()
     return prompt_record.id
+
+
+def get_best_candidate_grammar_rules_for_examples(
+    max_number_of_rules: int = 5
+) -> List[GrammarRule]:
+    return list(GrammarRule.objects.order_by("fetch_example_attempts")[:max_number_of_rules])
+
+
+def get_examples_for_grammar_rule(
+    grammar_rule_id: str
+) -> List[str]:
+    examples = GrammarRuleExample.objects.filter(
+        grammar_rule__in=GrammarRule.objects.filter(id=grammar_rule_id)
+    )
+    if not examples:
+        return []
+    out: List[str] = []
+    for e in examples:
+        components = list(
+            GrammarRuleExampleComponent.objects.filter(grammar_rule_example=e)
+        )
+        components.sort(key=lambda x: x.example_index)
+        out.append("".join([ c.word.display for c in components ]))
+    return out

@@ -50,6 +50,7 @@ Some special cases to be aware of:
 - [X] spooler cron
 - [ ] style pages
 - [ ] management command to apply hsk labels to grammar rules and words
+- [ ] populate grammarrules.csv
 
 #### Allow users to add words to their list
 - [X] management command to add vocabulary from CEDICT.txt
@@ -71,7 +72,25 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] management command to add grammar rules from txt file or via command line
 - [X] allow users to search for grammar rules by component words
 - [X] allow users to CRUD their own grammar rules (combination of words and parts of speech)
-- [ ] async job that populates grammar rule examples from ChatGPT
+- [X] Functions to get grammar rule examples from ChatGPT
+- [X] Function to parse response from ChatGPT and save models
+- [X] async job that populates grammar rule examples
+- [ ] script to load in grammar rules should take in human verified examples to prompt ChatGPT
+
+-> Example prompt for (subject+是+predicate+的):
+
+In Mandarin, the sentence structure "subject+是+在+place+verb+的" is used for emphasizing where something is done. For example, "我 是 在 香港 出生 的 " emphasizes that the birth happened in Hong Kong. In this example, 我 is the subject, 香港 is the place, 出生 is the verb.
+Please write a CSV file with 10 example sentences using this sentence structure and only vocabulary from HSK1 and HSK2? The headers should be "Simplified characters,pinyin,English Definition".
+
+-> Prompt format
+
+In Mandarin, the sentence structure {structure} is used for {use}. For example, {example} {explanation}. In this example, {word} is {function}.
+Please write a CSV file with 10 example sentences using this sentence structure and only vocabulary from HSK1 and HSK2? The headers should be "Simplified characters,pinyin,English Definition".
+
+-> Create CSV:
+
+grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
+1,subject 是 在 place verb 的,emphasizing where something is done,我 是 在 香港 出生 的,Wǒ shì zài Xiānggǎng chūshēng de,emphasizes that the birth happened in Hong Kong
 
 #### Bugs to fix
 - [ ] Pinyin search should allow for both numbered and actual pinyin
@@ -125,5 +144,11 @@ Types of questions for words: accents from Hanzi, definitions from Hanzi, hanzi 
 - [X] allow users to CRUD their own grammar rules (combination of words and parts of speech)
 - [X] spooler cron
 
+#### 06/17/2023
+- [X] Functions to get grammar rule examples from ChatGPT
+- [X] Function to parse response from ChatGPT and save models
+- [X] async job that populates grammar rule examples
+
 #### Next Day
-- [ ] async job that populates grammar rule examples from ChatGPT
+- [ ] script to load in grammar rules should take in human verified examples to prompt ChatGPT
+- [ ] add grammar rules to quiz page

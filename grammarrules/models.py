@@ -42,6 +42,7 @@ class GrammarRule(models.Model):
     is_user_added = models.BooleanField(default=False)
     title = models.TextField()
     definition = models.TextField()
+    fetch_example_attempts = models.IntegerField(default=0)
 
 class GrammarRuleComponent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -108,7 +109,8 @@ class GrammarRuleExample(models.Model):
             models.Index(fields=['grammar_rule']),
         ]
         constraints=[
-            models.UniqueConstraint(fields=['grammar_rule_example_prompt', 'line_idx'], name='grammar_rule_example_line_index_unique')
+            models.UniqueConstraint(fields=['grammar_rule_example_prompt', 'line_idx'], name='grammar_rule_example_line_index_unique'),
+            models.UniqueConstraint(fields=['grammar_rule', 'hanzi_display'], name='grammar_rule_display_index_unique')
         ]
 
 class GrammarRuleExampleComponent(models.Model):

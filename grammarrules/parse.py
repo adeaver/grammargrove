@@ -44,7 +44,11 @@ def parse_example_prompt(
                 continue
             example.parse_version = GrammarRuleExampleParseVersion.current_version()
         else:
-            logging.warn("Creating new grammar rule example record")
+            logging.warn("Attempting to create new grammar rule example record")
+            examples = GrammarRuleExample.objects.filter(grammar_rule=prompt.grammar_rule, hanzi_display=hanzi).all()
+            if examples:
+                logging.warn(f"Example {hanzi} for grammar rule {prompt.grammar_rule.id} already exists. Skipping...")
+                continue
             example = GrammarRuleExample(
                 grammar_rule = prompt.grammar_rule,
                 grammar_rule_example_prompt=prompt,

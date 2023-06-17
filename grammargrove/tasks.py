@@ -1,3 +1,7 @@
+from typing import List
+
+import django
+
 import logging
 import uuid
 from functools import wraps
@@ -7,9 +11,24 @@ logger = logging.getLogger(__name__)
 try:
     from uwsgidecorators import spool, cron
 
-    #  @cron(-1, -1, -1, -1, -1)
-    #  def execute_every_minute(num):
-    #      logging.warning("Hello")
+    django.setup()
+
+    @cron(10, -1, -1, -1, -1)
+    def start_grammar_rule_fetches(num):
+        from grammarrules.models import GrammarRule
+        from grammarrules.examples import (
+            is_over_daily_usage_limit,
+            get_best_candidate_grammar_rules_for_examples
+        )
+        if is_over_daily_usage_limit():
+            logging.warn(f"ChatGPT usage is over the daily limit, skipping")
+            return
+        rules: List[GrammarRule] = (
+            get_best_candidate_grammar_rules_for_examples()
+        )
+        for r in rules:
+            logging.warn(f"Enqueuing grammar rule {r.id}")
+            fetch_examples_for_grammar_rule(str(r.id))
 
     logger.warning("Imported spool successfully.")
 except Exception:
@@ -62,3 +81,33 @@ def send_login_email(login_email_id: str):
         return uwsgi.SPOOL_OK
     except:
         return uwsgi.SPOOL_RETRY
+
+
+@spool(pass_arguments=True)
+def fetch_examples_for_grammar_rule(grammar_rule_id: str):
+    import uwsgi
+    from grammarrules.examples import fetch_grammar_rule_examples
+    from grammarrules.examples import is_over_daily_usage_limit
+    logging.warn(f"Fetching examples for rule {grammar_rule_id}")
+    try:
+        if is_over_daily_usage_limit():
+            logging.warn(f"ChatGPT usage is over the daily limit, skipping")
+            return uwsgi.SPOOL_OK
+        example_prompt_id = fetch_grammar_rule_examples(grammar_rule_id, valid_hsk_levels=[1, 2])
+        parse_grammar_rule_example(example_prompt_id)
+        logging.warn(f"Fetched examples for rule {grammar_rule_id}")
+    except Exception as e:
+        logging.warn(f"Got exception {e}")
+    return uwsgi.SPOOL_OK
+
+@spool(pass_arguments=True)
+def parse_grammar_rule_example(grammar_rule_example_id: str):
+    import uwsgi
+    from grammarrules.parse import parse_example_prompt
+    logging.warn(f"Parsing example {grammar_rule_example_id}")
+    try:
+        parse_example_prompt(grammar_rule_example_id)
+        logging.warn(f"Parsed example {grammar_rule_example_id}")
+    except Exception as e:
+        logging.warn(f"Got exception {e}")
+    return uwsgi.SPOOL_OK
