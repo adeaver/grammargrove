@@ -13,7 +13,7 @@ from .models import (
     GrammarRuleExample,
     GrammarRuleExampleComponent,
     GrammarRuleHumanVerifiedPromptExample,
-    GrammarRuleHumanVerifiedPromptExampleComponent
+    GrammarRuleHumanVerifiedPromptExampleComponent,
     PartOfSpeech
 )
 from words.models import LanguageCode
@@ -50,10 +50,12 @@ def fetch_grammar_rule_examples(
     grammar_rule = grammar_rules[0]
     assert model in highest_price_by_model
     language = "Simplified Mandarin" if language_code == LanguageCode.SIMPLIFIED_MANDARIN else "Traditional Mandarin"
-    prompt = _make_prompt(grammar_rule, valid_hsk_levels, must_include_words, number_of_examples, language_code)
+    prompt, human_example = _make_prompt(grammar_rule, valid_hsk_levels, must_include_words, number_of_examples, language_code)
+    logging.warn(prompt)
     prompt_record = GrammarRuleExamplePrompt(
         grammar_rule=grammar_rule,
         prompt=prompt,
+        human_verified_example=human_example,
         model=model,
         usage_tokens=0,
         language_code=language_code,
@@ -99,7 +101,7 @@ def _make_prompt(
         )
     else:
         example = examples[0]
-        words = example.hanzi_display.split(" ")
+        example_words = example.hanzi_display.split(" ")
         example_components = (
             GrammarRuleHumanVerifiedPromptExampleComponent.objects.filter(prompt_example=example).order_by("rule_index")
         )
@@ -110,11 +112,13 @@ def _make_prompt(
             ]
         )
         function_examples = ", ".join(
-            [f"{words[idx]} is the {PartOfSpeech(r.part_of_speech).to_proper_name()}" for idx, r in enumerate(example_components) if r.word is None]
+            [f"{example_words[idx]} is the {PartOfSpeech(r.part_of_speech).to_proper_name()}" for idx, r in enumerate(example_components) if r.word is None]
         )
         prompt = (
             f"In Mandarin, the sentence structure {sentence_structure} is used for {example.structure_use}. For example, {example.hanzi_display} {example.explanation}. In this example, {function_examples}. "
         )
+        example.uses += 1
+        example.save()
     prompt += (
         f"Create a CSV file with {number_of_examples} in {language}. The CSV file should have the headers "
         f"\"{language} characters,pinyin,English Definition\"."
@@ -125,7 +129,7 @@ def _make_prompt(
     if must_include_words:
         words = ", ".join(must_include_words)
         prompt += f" Make sure the examples include the words: {words}"
-    return prompt, example
+    return (prompt, example)
 
 
 def get_best_candidate_grammar_rules_for_examples(

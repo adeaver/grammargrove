@@ -14,7 +14,7 @@ from grammarrules.models import (
     GrammarRuleHumanVerifiedPromptExample,
     GrammarRuleHumanVerifiedPromptExampleComponent
 )
-from words.models import Word
+from words.models import Word, LanguageCode
 from words.utils import make_word_id_with_pinyin_list
 
 class Command(BaseCommand):
@@ -24,27 +24,28 @@ class Command(BaseCommand):
         sp = PinyinSplitter()
         parts_of_speech_by_name = { p.name.lower(): p for p in PartOfSpeech }
         with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules.csv", "r") as f:
-            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexampless.csv", "r") as e:
-            grammar_rule_reader = csv.reader(f)
-            grammar_rule_example_reader = csv.reader(e)
-            current_grammar_rule_example = next(grammar_rule_example_reader)
-            current_grammar_rule_example = next(grammar_rule_example_reader)
-            for idx, row in enumerate(grammar_rule_reader):
-                if idx == 0:
-                    continue
-                to_insert = _process_row(parts_of_speech_by_name, row)
-                if current_grammar_rule_example is not None:
-                    grammar_rule_line_number, structure, use, hanzi, pinyin, explanation = current_grammar_rule_example
-                    while current_grammar_rule_example is not None and int(grammar_rule_line_number) <= idx:
-                        if int(grammar_rule_line_number) == idx:
-                            _process_example(
-                                sp, parts_of_speech_by_name, to_insert.rule, structure, use, hanzi, pinyin, explanation
-                            )
-                        try:
-                            current_grammar_rule_example = next(grammar_rule_example_reader)
-                            grammar_rule_line_number, structure, use, hanzi, pinyin, explanation = current_grammar_rule_example
-                        except StopIteration:
-                            current_grammar_rule_example = None
+            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples.csv", "r") as e:
+                grammar_rule_reader = csv.reader(f)
+                grammar_rule_example_reader = csv.reader(e)
+                current_grammar_rule_example = next(grammar_rule_example_reader)
+                current_grammar_rule_example = next(grammar_rule_example_reader)
+                for idx, row in enumerate(grammar_rule_reader):
+                    if idx == 0:
+                        continue
+                    to_insert = _process_row(parts_of_speech_by_name, row)
+                    if to_insert is not None and current_grammar_rule_example is not None:
+                        logging.warn(f"{current_grammar_rule_example}")
+                        grammar_rule_line_number, structure, use, hanzi, pinyin, explanation = current_grammar_rule_example
+                        while current_grammar_rule_example is not None and int(grammar_rule_line_number) <= idx+1:
+                            if int(grammar_rule_line_number) == idx+1:
+                                _process_example(
+                                    sp, parts_of_speech_by_name, to_insert.rule, structure, use, hanzi, pinyin, explanation
+                                )
+                            try:
+                                current_grammar_rule_example = next(grammar_rule_example_reader)
+                                grammar_rule_line_number, structure, use, hanzi, pinyin, explanation = current_grammar_rule_example
+                            except StopIteration:
+                                current_grammar_rule_example = None
 
 
 class GrammarRuleToInsert(NamedTuple):
@@ -71,6 +72,10 @@ def _process_row(
             logging.warn(f"Saving {c.part_of_speech} to {grammar_rule.id}")
         c.grammar_rule = grammar_rule
         c.save()
+    return GrammarRuleToInsert(
+        rule=grammar_rule,
+        component=components
+    )
 
 def _process_components(
     parts_of_speech_by_name: Dict[str, PartOfSpeech],
@@ -130,6 +135,7 @@ def _process_example(
     pinyin: str,
     explanation: str,
 ):
+    logging.warn("Adding example {structure}")
     # TODO: make this whole thing atomic
     example = GrammarRuleHumanVerifiedPromptExample(
         grammar_rule=grammar_rule,
@@ -160,7 +166,7 @@ def _process_example(
             else:
                 parts = [pinyin_for_word]
             word_id = make_word_id_with_pinyin_list(
-                language_code,
+                LanguageCode.SIMPLIFIED_MANDARIN,
                 s,
                 [ convert_to_numeric_form(p) for p in parts ]
             )
