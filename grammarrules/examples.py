@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple, Optional
 import os
 import logging
 
@@ -46,27 +46,9 @@ def fetch_grammar_rule_examples(
     grammar_rules = GrammarRule.objects.filter(id=grammar_rule_id).all()
     assert len(grammar_rules) == 1
     grammar_rule = grammar_rules[0]
-    components = list(GrammarRuleComponent.objects.filter(grammar_rule=grammar_rule).all())
     assert model in highest_price_by_model
-    components.sort(key=lambda x: x.rule_index)
-    sentence_structure = "+".join(
-        [
-            r.word.display if r.word is not None else PartOfSpeech(r.part_of_speech).to_proper_name()
-            for r in components
-        ]
-    )
     language = "Simplified Mandarin" if language_code == LanguageCode.SIMPLIFIED_MANDARIN else "Traditional Mandarin"
-    prompt = (
-        f"Using the sentence structure \"{sentence_structure}\" for {grammar_rule.title}, "
-        f"create a CSV file with {number_of_examples} in {language}. The CSV file should have the headers "
-        f"\"{language} characters,pinyin,English Definition\"."
-    )
-    if valid_hsk_levels:
-        vocabulary_levels = ", ".join([ f"HSK{level}" for level in valid_hsk_levels ])
-        prompt += f" Use only vocabulary from {vocabulary_levels}."
-    if must_include_words:
-        words = ", ".join(must_include_words)
-        prompt += f" Make sure the examples include the words: {words}"
+    prompt = _make_prompt(grammar_rule, valid_hsk_levels, must_include_words, number_of_examples, language_code)
     prompt_record = GrammarRuleExamplePrompt(
         grammar_rule=grammar_rule,
         prompt=prompt,
@@ -86,6 +68,62 @@ def fetch_grammar_rule_examples(
     prompt_record.usage_tokens = usage_tokens
     prompt_record.save()
     return prompt_record.id
+
+
+def _make_prompt(
+    grammar_rule: GrammarRule,
+    valid_hsk_levels: Optional[List[int]] = None,
+    must_include_words: Optional[List[str]] = None,
+    number_of_examples: int = 10,
+    language_code: LanguageCode = LanguageCode.SIMPLIFIED_MANDARIN,
+) -> Tuple[str, Optional[GrammarRuleHumanVerifiedPromptExample]]:
+    language = "Simplified Mandarin" if language_code == LanguageCode.SIMPLIFIED_MANDARIN else "Traditional Mandarin"
+    prompt: str = ""
+    example: Optional[GrammarRuleHumanVerifiedPromptExample] = None
+    examples = (
+        GrammarRuleHumanVerifiedPromptExample.objects.filter(grammar_rule=grammar_rule).order_by("uses")
+    )
+    if not examples:
+        components = list(GrammarRuleComponent.objects.filter(grammar_rule=grammar_rule).all())
+        components.sort(key=lambda x: x.rule_index)
+        sentence_structure = "+".join(
+            [
+                r.word.display if r.word is not None else PartOfSpeech(r.part_of_speech).to_proper_name()
+                for r in components
+            ]
+        )
+        prompt = (
+            f"Using the sentence structure \"{sentence_structure}\" for {grammar_rule.title}, "
+        )
+    else:
+        example = examples[0]
+        words = example.hanzi_display.split(" ")
+        example_components = (
+            GrammarRuleHumanVerifiedPromptExampleComponent.objects.filter(prompt_example=example).order_by("rule_index")
+        )
+        sentence_structure = "+".join(
+            [
+                r.word.display if r.word is not None else PartOfSpeech(r.part_of_speech).to_proper_name()
+                for r in example_components
+            ]
+        )
+        function_examples = ", ".join(
+            [f"{words[idx]} is the {PartOfSpeech(r.part_of_speech).to_proper_name()}" for idx, r in enumerate(example_components) if r.word is None]
+        )
+        prompt = (
+            f"In Mandarin, the sentence structure {sentence_structure} is used for {example.structure_use}. For example, {example.hanzi_display} {example.explanation}. In this example, {function_examples}. "
+        )
+    prompt += (
+        f"Create a CSV file with {number_of_examples} in {language}. The CSV file should have the headers "
+        f"\"{language} characters,pinyin,English Definition\"."
+    )
+    if valid_hsk_levels:
+        vocabulary_levels = ", ".join([ f"HSK{level}" for level in valid_hsk_levels ])
+        prompt += f" Use only vocabulary from {vocabulary_levels}."
+    if must_include_words:
+        words = ", ".join(must_include_words)
+        prompt += f" Make sure the examples include the words: {words}"
+    return prompt, example
 
 
 def get_best_candidate_grammar_rules_for_examples(

@@ -23,6 +23,7 @@ class PartOfSpeech(IntEnum):
     Predicate = 14
     Subject = 15
     Object = 16
+    Place = 17
 
     @classmethod
     def choices(cls):
@@ -77,10 +78,50 @@ class GrammarRuleExampleParseVersion(IntEnum):
     def current_version(cls) -> "GrammarRuleExampleParseVersion":
         return GrammarRuleExampleParseVersion.Version1
 
+# Used for prompting
+class GrammarRuleHumanVerifiedPromptExample(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
+    language_code = models.TextField(choices=LanguageCode.choices())
+    hanzi_display = models.TextField()
+    pinyin_display = models.TextField()
+    english_definition = models.TextField()
+    structure_use = models.TextField()
+    explanation = models.TextField()
+    uses = models.IntegerField(default=0)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['grammar_rule'])
+        ]
+
+class GrammarRuleHumanVerifiedPromptExampleComponent(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    prompt_example = models.ForeignKey(GrammarRuleHumanVerifiedPromptExample, on_delete=models.CASCADE)
+    word = models.ForeignKey(Word, null=True, on_delete=models.CASCADE)
+    part_of_speech = models.IntegerField(choices=PartOfSpeech.choices(), null=True)
+    rule_index = models.IntegerField()
+
+    class Meta:
+        constraints=[
+            models.CheckConstraint(
+                check=Q(word__isnull=False) | Q(part_of_speech__isnull=False),
+                name='human_example_not_both_null'
+            ),
+            models.UniqueConstraint(fields=['prompt_example', 'rule_index'], name='human_prompt_example_rule_index_unique')
+        ]
+        indexes = [
+            models.Index(fields=['word']),
+            models.Index(fields=['part_of_speech']),
+        ]
+
+
+
 class GrammarRuleExamplePrompt(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
+    human_verified_example = models.ForeignKey(GrammarRuleHumanVerifiedPromptExample, on_delete=models.CASCADE, null=True)
     prompt = models.TextField()
     response = models.TextField(null=True)
     model = models.TextField()
@@ -92,6 +133,7 @@ class GrammarRuleExamplePrompt(models.Model):
         indexes = [
             models.Index(fields=['grammar_rule'])
         ]
+
 
 class GrammarRuleExample(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -112,6 +154,7 @@ class GrammarRuleExample(models.Model):
             models.UniqueConstraint(fields=['grammar_rule_example_prompt', 'line_idx'], name='grammar_rule_example_line_index_unique'),
             models.UniqueConstraint(fields=['grammar_rule', 'hanzi_display'], name='grammar_rule_display_index_unique')
         ]
+
 
 class GrammarRuleExampleComponent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
