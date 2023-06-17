@@ -148,6 +148,8 @@ def get_examples_for_grammar_rule(
         return []
     out: List[str] = []
     for e in examples:
+        if e.parse_error:
+            continue
         components = list(
             GrammarRuleExampleComponent.objects.filter(grammar_rule_example=e)
         )
