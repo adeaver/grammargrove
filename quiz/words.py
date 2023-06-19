@@ -10,7 +10,6 @@ from django.http import HttpRequest
 
 from .models import QuizQuestion, QuestionType, get_word_from_question
 from uservocabulary.models import UserVocabularyEntry
-from words.models import Word, Definition, LanguageCode
 
 def select_next_word_question(request: HttpRequest) -> Optional[QuizQuestion]:
     question = _maybe_get_unasked_word(request)
@@ -19,10 +18,7 @@ def select_next_word_question(request: HttpRequest) -> Optional[QuizQuestion]:
     question = _maybe_get_unasked_word_question(request)
     if question:
         return question
-    question = get_word_question_from_all(request)
-    if question:
-        return question
-    return None
+    return get_word_question_from_all(request)
 
 def _maybe_get_unasked_word(request: HttpRequest) -> Optional[QuizQuestion]:
     question_type_choices = QuestionType.choices()
@@ -49,7 +45,7 @@ def _maybe_get_unasked_word_question(request: HttpRequest) -> Optional[QuizQuest
     """
     question_type_choices = QuestionType.choices()
     questions_by_type = (
-        QuizQuestion.objects.filter(user=request.user)
+        QuizQuestion.objects.filter(user=request.user, user_vocabulary_entry__isnull=False)
             .values('user_vocabulary_entry')
             .annotate(dcount=Count('user_vocabulary_entry'))
             .order_by()
@@ -57,7 +53,7 @@ def _maybe_get_unasked_word_question(request: HttpRequest) -> Optional[QuizQuest
     potential_words = []
     for q in questions_by_type:
         if q['dcount'] == len(question_type_choices):
-            break
+            continue
         potential_words.append(q['user_vocabulary_entry'])
     if not potential_words:
         return None
@@ -88,7 +84,7 @@ def get_word_question_from_all(request: HttpRequest, bound_by_time: bool = True)
     if bound_by_time:
         bounding_time = timezone.now() - datetime.timedelta(hours=1)
     questions = list(
-        QuizQuestion.objects.filter(user=request.user, last_displayed_at__lt=bounding_time)
+        QuizQuestion.objects.filter(user=request.user, last_displayed_at__lt=bounding_time, user_vocabulary_entry__isnull=False)
             .order_by("-number_of_times_displayed")
             .all()
     )

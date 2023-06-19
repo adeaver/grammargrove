@@ -16,7 +16,7 @@ from django.http import (
 )
 
 from .words import select_next_word_question, get_word_question_from_all
-from .grammarrules import select_next_grammar_rule_question
+from .grammarrules import select_next_grammar_rule_question, get_grammar_rule_question_from_all
 
 from .models import QuizQuestion, QuestionType, get_word_from_question
 from uservocabulary.models import UserVocabularyEntry
@@ -46,7 +46,8 @@ class QuizViewSet(viewsets.ViewSet):
         ]
         shuffle(question_funcs)
         fallback_question_funcs = [
-            lambda: get_word_question_from_all(request, False)
+            lambda: get_word_question_from_all(request, False),
+            lambda: get_grammar_rule_question_from_all(request, False),
         ]
         shuffle(fallback_question_funcs)
         question: Optional[QuizQuestion] = None
