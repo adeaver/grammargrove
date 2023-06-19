@@ -121,7 +121,7 @@ def _make_prompt(
         example.save()
     prompt += (
         f"Create a CSV file with {number_of_examples} in {language}. The CSV file should have the headers "
-        f"\"{language} characters,pinyin,English Definition\"."
+        f"\"{language} characters,pinyin,English Definition\". Be sure to include all parts of example structure in your answer. "
     )
     if valid_hsk_levels:
         vocabulary_levels = ", ".join([ f"HSK{level}" for level in valid_hsk_levels ])
