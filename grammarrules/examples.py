@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple, Optional
+from typing import Optional, List, Tuple, Optional, NamedTuple
 import os
 import logging
 
@@ -138,15 +138,21 @@ def get_best_candidate_grammar_rules_for_examples(
     return list(GrammarRule.objects.order_by("fetch_example_attempts")[:max_number_of_rules])
 
 
+class GrammarRuleExampleDisplay(NamedTuple):
+    example_id: str
+    hanzi: str
+    pronunciation: str
+    definition: str
+
 def get_examples_for_grammar_rule(
     grammar_rule_id: str
-) -> List[str]:
+) -> List[GrammarRuleExampleDisplay]:
     examples = GrammarRuleExample.objects.filter(
         grammar_rule__in=GrammarRule.objects.filter(id=grammar_rule_id)
     )
     if not examples:
         return []
-    out: List[str] = []
+    out: List[GrammarRuleExample] = []
     for e in examples:
         if e.parse_error:
             continue
@@ -154,5 +160,16 @@ def get_examples_for_grammar_rule(
             GrammarRuleExampleComponent.objects.filter(grammar_rule_example=e)
         )
         components.sort(key=lambda x: x.example_index)
-        out.append("".join([ c.word.display for c in components ]))
+        hanzi: List[str] = []
+        pronunciation: List[str] = []
+        for c in components:
+            hanzi.append(c.word.display)
+            pronunciation.append(c.word.pronunciation)
+        if hanzi and pronunciation:
+            out.append(GrammarRuleExampleDisplay(
+                example_id=e.id,
+                hanzi="".join(hanzi),
+                pronunciation=" ".join(pronunciation),
+                definition=e.english_definition
+            ))
     return out

@@ -1,4 +1,4 @@
-from random import shuffle
+from random import choices, shuffle
 from typing import Optional, NamedTuple
 import datetime
 
@@ -17,10 +17,14 @@ from django.http import (
 
 from .words import select_next_word_question, get_word_question_from_all
 from .grammarrules import select_next_grammar_rule_question, get_grammar_rule_question_from_all
+from grammarrules.examples import get_examples_for_grammar_rule
 
 from .models import QuizQuestion, QuestionType, get_word_from_question
 from uservocabulary.models import UserVocabularyEntry
+from usergrammarrules.models import UserGrammarRuleEntry
+
 from words.models import Word, Definition, LanguageCode
+from grammarrules.models import GrammarRule
 
 class QuizViewSet(viewsets.ViewSet):
     def get_permissions(self):
@@ -129,6 +133,8 @@ class QuizViewSet(viewsets.ViewSet):
                 )
             else:
                 return HttpResponseServerError()
+        elif question.user_grammar_rule_entry:
+            # TODO: this
         else:
             return HttpResponseServerError()
 
@@ -182,11 +188,38 @@ def _get_display_for_vocabulary_entry(question: QuizQuestion) -> QuestionDisplay
     )
 
 
+# TODO: handle case in which this doesn't return anything
+# or make sure that user grammar rules has examples
 def _get_display_from_grammar_rule_entry(question: QuizQuestion) -> QuestionDisplay:
     assert question.user_grammar_rule_entry
+    user_grammar_rule_entry = UserGrammarRuleEntry.objects.filter(id=question.user_grammar_rule_entry.id)
+    assert user_grammar_rule_entry, (
+        f"User grammar rule {question.user_grammar_rule_entry.id} does not exist"
+    )
+    grammar_rule = GrammarRule.objects.filter(id=user_grammar_rule_entry[0].grammar_rule.id)
+    assert grammar_rule, (
+        f"Grammar rule {user_grammar_rule_entry[0].grammar_rule.id} does not exist"
+    )
+    grammar_rule_examples = get_examples_for_grammar_rule(grammar_rule[0].id)
+    assert grammar_rule_examples
+    example = choices(grammar_rule_examples, k=1)[0]
+    display: str = ""
+    if question.question_type in [QuestionType.AccentsFromHanzi, QuestionType.DefinitionsFromHanzi]:
+        # Some words are displayed with fewer characters than they are said with
+        # So the normal pronunciation screen won't work
+        answer_spaces = None if (
+            question.question_type != QuestionType.AccentsFromHanzi or
+            len(example.pronunciation.split(" ")) == len(example.hanzi)
+        ) else len(example.pronunciation.split(" "))
+        display = example.hanzi
+    elif question.question_type == QuestionType.HanziFromEnglish:
+        answer_spaces = None
+        display = example.definition
+    else:
+        raise AssertionError(f"Unsupported Question Type {question.question_type}")
     return QuestionDisplay(
         answer_spaces=None,
-        display="This is a grammar rule",
+        display=display,
         vocabulary_entry_id=None,
         grammar_rule_entry_id=question.user_grammar_rule_entry.id
     )
