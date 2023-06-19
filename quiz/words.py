@@ -27,7 +27,7 @@ def select_next_word_question(request: HttpRequest) -> Optional[QuizQuestion]:
 def _maybe_get_unasked_word(request: HttpRequest) -> Optional[QuizQuestion]:
     question_type_choices = QuestionType.choices()
     question_type_index = randrange(0, len(question_type_choices), 1)
-    unasked_questions = UserVocabularyEntry.objects.exclude(
+    unasked_questions = UserVocabularyEntry.objects.filter(user=request.user).exclude(
         id__in=QuizQuestion.objects.filter(user=request.user).values_list('user_vocabulary_entry', flat=True)
     )
     if not len(unasked_questions):

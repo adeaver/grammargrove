@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from users.models import User
 from uservocabulary.models import UserVocabularyEntry
+from usergrammarrules.models import UserGrammarRuleEntry
 from words.models import Word, Definition, LanguageCode
 
 class QuestionType(IntEnum):
@@ -23,6 +24,7 @@ class QuizQuestion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     user_vocabulary_entry = models.ForeignKey(UserVocabularyEntry, on_delete=models.CASCADE, null=True)
+    user_grammar_rule_entry = models.ForeignKey(UserGrammarRuleEntry, on_delete=models.CASCADE, null=True)
     question_type = models.IntegerField(choices=QuestionType.choices(), null=False)
     number_of_times_displayed = models.IntegerField(null=False, default=1)
     number_of_times_answered_correctly = models.IntegerField(null=False, default=0)
@@ -35,6 +37,11 @@ class QuizQuestion(models.Model):
                 fields=['user', 'user_vocabulary_entry', 'question_type'],
                 name='question_type_idx',
                 condition=models.Q(user_vocabulary_entry__isnull=False)
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'user_grammar_rule_entry', 'question_type'],
+                name='grammar_rule_question_type_idx',
+                condition=models.Q(user_grammar_rule_entry__isnull=False)
             )
         ]
 

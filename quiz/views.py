@@ -5,6 +5,7 @@ import datetime
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from django.http import (
     HttpRequest,
     JsonResponse,
@@ -15,6 +16,8 @@ from django.http import (
 )
 
 from .words import select_next_word_question, get_word_question_from_all
+from .grammarrules import select_next_grammar_rule_question
+
 from .models import QuizQuestion, QuestionType, get_word_from_question
 from uservocabulary.models import UserVocabularyEntry
 from words.models import Word, Definition, LanguageCode
@@ -38,7 +41,8 @@ class QuizViewSet(viewsets.ViewSet):
             answer_spaces: Optional[int]
 
         question_funcs = [
-            lambda: select_next_word_question(request)
+            lambda: select_next_word_question(request),
+            lambda: select_next_grammar_rule_question(request),
         ]
         shuffle(question_funcs)
         fallback_question_funcs = [
@@ -46,7 +50,7 @@ class QuizViewSet(viewsets.ViewSet):
         ]
         shuffle(fallback_question_funcs)
         question: Optional[QuizQuestion] = None
-        for f in question_funcs:
+        for f in (question_funcs + fallback_question_funcs):
             question = f()
             if question is not None:
                 break
@@ -63,7 +67,8 @@ class QuizViewSet(viewsets.ViewSet):
                 display=display.display,
                 question_type=question.question_type,
                 answer_spaces=display.answer_spaces,
-                vocabulary_entry_id=display.vocabulary_entry_id
+                vocabulary_entry_id=display.vocabulary_entry_id,
+                grammar_rule_entry_id=None
             )._asdict()
         )
 
@@ -129,9 +134,20 @@ class QuizViewSet(viewsets.ViewSet):
 class QuestionDisplay(NamedTuple):
     answer_spaces: Optional[int]
     display: str
-    vocabulary_entry_id: str
+    vocabulary_entry_id: Optional[str]
+    grammar_rule_entry_id: Optional[str]
 
 def _get_display_from_question(question: QuizQuestion) -> QuestionDisplay:
+    if question.user_vocabulary_entry is not None:
+        return _get_display_for_vocabulary_entry(question)
+    elif question.user_grammar_rule_entry is not None:
+        return _get_display_from_grammar_rule_entry(question)
+    else:
+        raise ValueError(f"Question {question.id} has neither grammar rule nor vocabulary entry")
+
+
+def _get_display_for_vocabulary_entry(question: QuizQuestion) -> QuestionDisplay:
+    assert question.user_vocabulary_entry
     vocabulary_entry = UserVocabularyEntry.objects.filter(id=question.user_vocabulary_entry.id).all()
     if not vocabulary_entry:
         raise AssertionError(f"User vocabulary {question.user_vocabulary_entry.id} does not exist")
@@ -160,5 +176,16 @@ def _get_display_from_question(question: QuizQuestion) -> QuestionDisplay:
     return QuestionDisplay(
         answer_spaces=answer_spaces,
         display=display,
-        vocabulary_entry_id=vocabulary_entry[0].id
+        vocabulary_entry_id=vocabulary_entry[0].id,
+        grammar_rule_entry_id=None
+    )
+
+
+def _get_display_from_grammar_rule_entry(question: QuizQuestion) -> QuestionDisplay:
+    assert question.user_grammar_rule_entry
+    return QuestionDisplay(
+        answer_spaces=None,
+        display="This is a grammar rule",
+        vocabulary_entry_id=None,
+        grammar_rule_entry_id=question.user_grammar_rule_entry.id
     )
