@@ -154,22 +154,38 @@ def get_examples_for_grammar_rule(
         return []
     out: List[GrammarRuleExample] = []
     for e in examples:
-        if e.parse_error:
-            continue
-        components = list(
-            GrammarRuleExampleComponent.objects.filter(grammar_rule_example=e)
-        )
-        components.sort(key=lambda x: x.example_index)
-        hanzi: List[str] = []
-        pronunciation: List[str] = []
-        for c in components:
-            hanzi.append(c.word.display)
-            pronunciation.append(c.word.pronunciation)
-        if hanzi and pronunciation:
-            out.append(GrammarRuleExampleDisplay(
-                example_id=e.id,
-                hanzi="".join(hanzi),
-                pronunciation=" ".join(pronunciation),
-                definition=e.english_definition
-            ))
+        ex = _make_display_from_grammar_rule_example(e)
+        if ex:
+            out.append(ex)
     return out
+
+def get_example_by_id(
+    grammar_rule_example_id: str
+) -> Optional[GrammarRuleExampleDisplay]:
+    es = GrammarRuleExample.objects.filter(id=grammar_rule_example_id)
+    if not es:
+        return None
+    return _make_display_from_grammar_rule_example(es[0])
+
+def _make_display_from_grammar_rule_example(
+    e: GrammarRuleExample
+) -> Optional[GrammarRuleExampleDisplay]:
+    if e.parse_error:
+        return None
+    components = list(
+        GrammarRuleExampleComponent.objects.filter(grammar_rule_example=e)
+    )
+    components.sort(key=lambda x: x.example_index)
+    hanzi: List[str] = []
+    pronunciation: List[str] = []
+    for c in components:
+        hanzi.append(c.word.display)
+        pronunciation.append(c.word.pronunciation)
+    if not hanzi or not pronunciation:
+        return None
+    return GrammarRuleExampleDisplay(
+        example_id=e.id,
+        hanzi="".join(hanzi),
+        pronunciation=" ".join(pronunciation),
+        definition=e.english_definition
+    )

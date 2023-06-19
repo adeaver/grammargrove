@@ -17,7 +17,7 @@ from django.http import (
 
 from .words import select_next_word_question, get_word_question_from_all
 from .grammarrules import select_next_grammar_rule_question, get_grammar_rule_question_from_all
-from grammarrules.examples import get_examples_for_grammar_rule
+from grammarrules.examples import get_examples_for_grammar_rule, get_example_by_id
 
 from .models import QuizQuestion, QuestionType, get_word_from_question
 from uservocabulary.models import UserVocabularyEntry
@@ -39,7 +39,8 @@ class QuizViewSet(viewsets.ViewSet):
         class QuestionResponse(NamedTuple):
             question_id: str
             vocabulary_entry_id: Optional[str]
-            grammar_rule_entry_id: Optional[str]
+            grammar_rule_entry_id: Optional[str],
+            example_id: Optional[str],
             display: str
             question_type: int
             answer_spaces: Optional[int]
@@ -73,7 +74,8 @@ class QuizViewSet(viewsets.ViewSet):
                 question_type=question.question_type,
                 answer_spaces=display.answer_spaces,
                 vocabulary_entry_id=display.vocabulary_entry_id,
-                grammar_rule_entry_id=None
+                grammar_rule_entry_id=display.grammar_rule_entry_id,
+                example_id=display.example_id,
             )._asdict()
         )
 
@@ -134,7 +136,26 @@ class QuizViewSet(viewsets.ViewSet):
             else:
                 return HttpResponseServerError()
         elif question.user_grammar_rule_entry:
-            # TODO: this
+            example_id = request.data.get("example_id")
+            if not example_id:
+                return HttpResponseBadRequest()
+            example = get_example_by_id(example_id)
+            if not example:
+                return HttpResponseBadRequest()
+            if question.question_type == QuestionType.HanziFromEnglish:
+                correct_answer = example.hanzi
+            elif question.question_type == QuestionType.AccentsFromHanzi:
+                correct_answer = " ".join([ p[-1] for p in example.pronunciation.split(" ") ])
+            elif question.question_type == QuestionType.DefinitionsFromHanzi:
+                correct_answer = example.definition
+            else:
+                raise ValueError(f"Unrecognized question type {question.question_type}")
+            return JsonResponse(
+                CheckQuestionResponse(
+                    correct=(answer == correct_answer),
+                    correct_answer=correct_answer
+                )._asdict()
+            )
         else:
             return HttpResponseServerError()
 
@@ -143,6 +164,7 @@ class QuestionDisplay(NamedTuple):
     display: str
     vocabulary_entry_id: Optional[str]
     grammar_rule_entry_id: Optional[str]
+    example_id: Optional[str]
 
 def _get_display_from_question(question: QuizQuestion) -> QuestionDisplay:
     if question.user_vocabulary_entry is not None:
@@ -184,7 +206,8 @@ def _get_display_for_vocabulary_entry(question: QuizQuestion) -> QuestionDisplay
         answer_spaces=answer_spaces,
         display=display,
         vocabulary_entry_id=vocabulary_entry[0].id,
-        grammar_rule_entry_id=None
+        grammar_rule_entry_id=None,
+        example_id=None,
     )
 
 
@@ -221,5 +244,6 @@ def _get_display_from_grammar_rule_entry(question: QuizQuestion) -> QuestionDisp
         answer_spaces=None,
         display=display,
         vocabulary_entry_id=None,
-        grammar_rule_entry_id=question.user_grammar_rule_entry.id
+        grammar_rule_entry_id=question.user_grammar_rule_entry.id,
+        example_id=example.id,
     )
