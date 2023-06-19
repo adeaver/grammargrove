@@ -39,8 +39,8 @@ class QuizViewSet(viewsets.ViewSet):
         class QuestionResponse(NamedTuple):
             question_id: str
             vocabulary_entry_id: Optional[str]
-            grammar_rule_entry_id: Optional[str],
-            example_id: Optional[str],
+            grammar_rule_entry_id: Optional[str]
+            example_id: Optional[str]
             display: str
             question_type: int
             answer_spaces: Optional[int]
@@ -245,5 +245,5 @@ def _get_display_from_grammar_rule_entry(question: QuizQuestion) -> QuestionDisp
         display=display,
         vocabulary_entry_id=None,
         grammar_rule_entry_id=question.user_grammar_rule_entry.id,
-        example_id=example.id,
+        example_id=example.example_id,
     )

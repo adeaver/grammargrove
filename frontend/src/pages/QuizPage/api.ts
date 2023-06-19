@@ -14,7 +14,9 @@ export type Question = {
     display: string;
     question_type: QuestionType;
     answer_spaces: number | null;
-    vocabulary_entry_id: string;
+    vocabulary_entry_id: string | null;
+    grammar_rule_entry_id: string | null;
+    example_id: string | null;
 }
 
 export function getNextQuestion(
@@ -31,6 +33,7 @@ export function getNextQuestion(
 export type CheckAnswerRequest = {
     question_id: string;
     answer: string;
+    example_id: string | null;
 }
 
 export type CheckAnswerResponse = {
@@ -41,6 +44,7 @@ export type CheckAnswerResponse = {
 export function checkAnswer(
     question_id: string,
     answer: string,
+    example_id: string | null,
     onSuccess: (resp: CheckAnswerResponse) => void,
     onError: (err: Error) => void,
 ) {
@@ -49,6 +53,7 @@ export function checkAnswer(
         {
             question_id: question_id,
             answer: answer,
+            example_id: example_id,
         },
         onSuccess,
         onError

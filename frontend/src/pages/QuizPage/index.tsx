@@ -24,7 +24,7 @@ const QuizPage = () => {
             return;
         }
         checkAnswer(
-            question.question_id, a,
+            question.question_id, a, question.example_id,
             (resp: CheckAnswerResponse) => {
                 setIsLoading(false);
                 setAnswer(resp);
