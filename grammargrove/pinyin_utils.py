@@ -1,5 +1,7 @@
 from typing import List, Dict, Optional, Tuple, NamedTuple
 
+import logging
+
 import copy
 from pygtrie import CharTrie
 
@@ -205,10 +207,16 @@ class PinyinSplitter():
         return c
 
     def split(self, pinyin: str, expected_output_length: Optional[int]) -> PinyinSplit:
-        if not is_display_form(pinyin):
-            return PinyinSplit(result=[], error_reason="pinyin not in display form")
-        non_display_characters = [ self._get_non_display_character(c) for c in pinyin.lower() ]
-        split_results = self._do_split("".join(non_display_characters))
+        str_to_split = ""
+        if is_display_form(pinyin):
+            non_display_characters = [ self._get_non_display_character(c) for c in pinyin.lower() ]
+            str_to_split = "".join(non_display_characters)
+        else:
+            str_to_split = "".join([ p for p in pinyin if p.isalpha() ])
+            logging.warn(str_to_split)
+        if not str_to_split:
+            return PinyinSplit(result=[], error_reason="Not in valid form")
+        split_results = self._do_split(str_to_split)
         split_results_in_display_form = [
             self._return_result_to_display_form(pinyin, r) for r in split_results
         ]
@@ -216,7 +224,7 @@ class PinyinSplitter():
             return PinyinSplit(result=split_results_in_display_form, error_reason=None)
         validated_results = [ r for r in split_results_in_display_form if len(r) == expected_output_length ]
         if not validated_results:
-            return PinyinSplit(result=[], error_reason="No results found for split")
+            return PinyinSplit(result=[], error_reason=f"No results found for split {str_to_split} (size {expected_output_length})")
         return PinyinSplit(result=validated_results, error_reason=None)
 
     def _do_split(self, pinyin: str) -> List[List[str]]:

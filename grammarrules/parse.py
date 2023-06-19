@@ -2,6 +2,8 @@ from typing import NamedTuple, List, Tuple, Optional
 
 import logging
 
+import string
+import re
 import csv
 import jieba
 
@@ -36,6 +38,8 @@ def parse_example_prompt(
         if idx == 0:
             continue
         hanzi, pinyin, english_definition = row
+        hanzi = _ensure_normalized_hanzi(hanzi)
+        pinyin = _ensure_normalized_pinyin(pinyin)
         examples = GrammarRuleExample.objects.filter(grammar_rule=prompt.grammar_rule, grammar_rule_example_prompt=prompt, line_idx=idx)
         if examples:
             example = examples[0]
@@ -43,6 +47,7 @@ def parse_example_prompt(
                 logging.warn(f"Grammar rule example {example.id} has no errors, not reparsing")
                 continue
             example.parse_version = GrammarRuleExampleParseVersion.current_version()
+            example.parse_error = None
         else:
             logging.warn("Attempting to create new grammar rule example record")
             examples = GrammarRuleExample.objects.filter(grammar_rule=prompt.grammar_rule, hanzi_display=hanzi).all()
@@ -130,6 +135,18 @@ def parse_example_prompt(
         logging.warn(f"Saved {example.id}")
 
 
+def _ensure_normalized_hanzi(hanzi: str) -> str:
+    without_spaces = "".join(hanzi.split(" "))
+    return (
+        re.sub(
+            r"[\s+\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：；《）《》“”()»〔〕-]+",
+            "", without_spaces)
+    )
+
+def _ensure_normalized_pinyin(pinyin: str) -> str:
+    for punc in string.punctuation:
+        pinyin = pinyin.replace(punc, "")
+    return pinyin
 
 def _fix_language_code(l: str) -> Optional[LanguageCode]:
     possible_name_parts = l.split(".")
@@ -138,8 +155,4 @@ def _fix_language_code(l: str) -> Optional[LanguageCode]:
         if code.name == possible_name:
             return code
     return None
-
-
-
-
 

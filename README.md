@@ -52,7 +52,7 @@ Some special cases to be aware of:
 
 #### Quiz page
 - [ ] handle case in which a user has nothing to quiz
-- [ ] add grammar rules to quiz page
+- [X] add grammar rules to quiz page
 
 #### Bugs to fix
 - [ ] Pinyin search should allow for both numbered and actual pinyin
@@ -76,7 +76,7 @@ Some special cases to be aware of:
 ## Progress 06/18/2023-06/24/2023
 
 #### Next Day
-- [ ] add grammar rules to quiz page
+- [X] add grammar rules to quiz page
 - [ ] Page to display vocabulary and search within vocabulary
 
 
@@ -132,6 +132,7 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 - [ ] Frontend should display accents not as numbers
 - [ ] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender
+- [ ] Definitions for phrases should be stripped of punctuation, trimmed, and lowercased on quizzes
 
 #### Tech Debt
 - [X] Word search bar should be a separate component
