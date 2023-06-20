@@ -37,7 +37,11 @@ def parse_example_prompt(
     for idx, row in enumerate(reader):
         if idx == 0:
             continue
-        hanzi, pinyin, english_definition = row
+        try:
+            hanzi, pinyin, english_definition = row
+        except ValueError:
+            logging.warn(f"Error on row {row}")
+            continue
         hanzi = _ensure_normalized_hanzi(hanzi)
         pinyin = _ensure_normalized_pinyin(pinyin)
         examples = GrammarRuleExample.objects.filter(grammar_rule=prompt.grammar_rule, grammar_rule_example_prompt=prompt, line_idx=idx)
@@ -102,7 +106,7 @@ def parse_example_prompt(
         errors: List[str] = []
         for idx, (hanzi, pinyin) in enumerate(lookup):
             pronunciation = [ convert_to_numeric_form(p) for p in pinyin ]
-            language_code = _fix_language_code(prompt.language_code)
+            language_code = prompt.language_code
             if not language_code:
                 errors.append(f"Language code {prompt.language_code} does not exist")
                 break

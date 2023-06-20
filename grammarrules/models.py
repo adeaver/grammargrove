@@ -43,7 +43,7 @@ class GrammarRule(models.Model):
     is_user_added = models.BooleanField(default=False)
     title = models.TextField()
     definition = models.TextField()
-    language_code = models.TextField(choices=LanguageCode.choices())
+    language_code = models.TextField(choices=LanguageCode.choices)
     fetch_example_attempts = models.IntegerField(default=0)
 
 class GrammarRuleComponent(models.Model):
@@ -83,7 +83,7 @@ class GrammarRuleExampleParseVersion(IntEnum):
 class GrammarRuleHumanVerifiedPromptExample(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
-    language_code = models.TextField(choices=LanguageCode.choices())
+    language_code = models.TextField(choices=LanguageCode.choices)
     hanzi_display = models.TextField()
     pinyin_display = models.TextField()
     structure_use = models.TextField()
@@ -126,7 +126,7 @@ class GrammarRuleExamplePrompt(models.Model):
     response = models.TextField(null=True)
     model = models.TextField()
     usage_tokens = models.IntegerField()
-    language_code = models.TextField(choices=LanguageCode.choices())
+    language_code = models.TextField(choices=LanguageCode.choices)
     parse_version = models.IntegerField(null=True, choices=GrammarRuleExampleParseVersion.choices())
 
     class Meta:

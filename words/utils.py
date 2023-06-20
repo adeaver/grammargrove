@@ -23,4 +23,4 @@ def make_word_id_with_pinyin_list(
         for c in hanzi
     ])
     pinyin_component = (":".join(pinyin)).lower()
-    return f"{language_code.value}c{character_component}::{pinyin_component}"
+    return f"{language_code}c{character_component}::{pinyin_component}"

@@ -81,11 +81,11 @@ Some special cases to be aware of:
 
 #### 06/20/2023
 - [X] Clean up search endpoint for grammar rules using nested serializers
+- [X] Use django choices for LanguageCode
 
 #### 06/19/2023
 - [X] add grammar rules to quiz page
 - [ ] Page to display vocabulary and search within vocabulary
-
 
 ## Done for MVP
 
