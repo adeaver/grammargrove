@@ -43,11 +43,12 @@ class GrammarRule(models.Model):
     is_user_added = models.BooleanField(default=False)
     title = models.TextField()
     definition = models.TextField()
+    language_code = models.TextField(choices=LanguageCode.choices())
     fetch_example_attempts = models.IntegerField(default=0)
 
 class GrammarRuleComponent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    grammar_rule = models.ForeignKey(GrammarRule, on_delete=models.CASCADE)
+    grammar_rule = models.ForeignKey(GrammarRule, related_name="grammar_rule_components", on_delete=models.CASCADE)
     word = models.ForeignKey(Word, null=True, on_delete=models.CASCADE)
     part_of_speech = models.IntegerField(choices=PartOfSpeech.choices(), null=True)
     rule_index = models.IntegerField()
@@ -157,7 +158,7 @@ class GrammarRuleExample(models.Model):
 
 class GrammarRuleExampleComponent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    grammar_rule_example = models.ForeignKey(GrammarRuleExample, on_delete=models.CASCADE)
+    grammar_rule_example = models.ForeignKey(GrammarRuleExample, related_name="grammar_rule_example_components", on_delete=models.CASCADE)
     example_index = models.IntegerField()
     word = models.ForeignKey(Word, on_delete=models.CASCADE)
 

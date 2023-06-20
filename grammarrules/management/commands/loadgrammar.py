@@ -63,6 +63,7 @@ def _process_row(
     grammar_rule = GrammarRule(
         title=title,
         definition=definition,
+        language_code=LanguageCode.SIMPLIFIED_MANDARIN,
     )
     grammar_rule.save()
     for c in components:
@@ -106,12 +107,13 @@ def _process_components(
         else:
             rule_pinyin = pinyin[pinyin_idx:pinyin_idx+len(r)]
             pinyin_idx += len(r)
-            search_pinyin = " ".join([
+            search_pinyin = [
                 convert_to_numeric_form(p)
                 for p in rule_pinyin
-            ])
+            ]
             search_display = r
-            word = Word.objects.filter(display=r, pronunciation=search_pinyin)
+            word_id = make_word_id_with_pinyin_list(LanguageCode.SIMPLIFIED_MANDARIN, r, search_pinyin)
+            word = Word.objects.filter(id=word_id)
             if not word:
                 logging.warn(f"{r} ({search_pinyin}) does not exist as word")
                 return None

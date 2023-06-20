@@ -3,12 +3,13 @@ from typing import Any, List, Dict, NamedTuple, Optional
 import logging
 
 from rest_framework import viewsets
+from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 
 from grammargrove import pinyin_utils
-from words.models import Word
+from words.models import Word, LanguageCode
 from grammarrules.models import GrammarRule, GrammarRuleComponent, PartOfSpeech
 
 from .serializers import GrammarRuleSerializer, GrammarRuleComponentSerializer
@@ -71,62 +72,43 @@ class GrammarRuleViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def search(self, request: HttpRequest) -> HttpResponse:
-        class SearchResult(NamedTuple):
-            grammar_rule: GrammarRule
-            components: List[GrammarRuleComponent]
-
-            def to_json(self) -> Dict[str, Any]:
-                return {
-                    "grammar_rule": GrammarRuleSerializer(self.grammar_rule).data,
-                    "components": [
-                        GrammarRuleComponentSerializer(c).data for c in components
-                    ]
-                }
-
-        class ResultResponse(NamedTuple):
-            results: List[SearchResult]
-
-            def to_json(self):
-                return { "results": [ r.to_json() for r in self.results ] }
-
         search_query = request.data["search_query"]
+        # TODO: support Traditional
         parsed_query = self._parse_search_query(search_query)
         if not parsed_query:
             return HttpResponseBadRequest()
-        words: List[List[Word]] = []
-        for q in parsed_query:
-            w = None
-            if q.is_pinyin:
-                w = Word.objects.filter(pronunciation=q.query).all()
-            else:
-                w = Word.objects.filter(display=q.query).all()
-            if not w:
-                logging.warn(f"Components length is {q.query} produced no results")
-                return JsonResponse(ResultResponse(results=[]).to_json())
-            words.append(list(w.all()))
         components_by_grammar_id: Dict[str, int] = {}
-        for word_list in words:
-            ids = [w.id for w in word_list]
-            components = GrammarRuleComponent.objects.filter(
-                word__in=ids
-            ).all()
+        for q in parsed_query:
+            components = _get_grammar_components_for_query_part(q)
+            if not components:
+                logging.warn(f"Components length is {q.query} produced no results")
+                return Response([])
             for c in components:
                 current_words_length = components_by_grammar_id.get(c.grammar_rule.id, 0)
                 components_by_grammar_id[c.grammar_rule.id] = current_words_length + 1
-        results: List[SearchResult] = []
+        results: List[GrammarRule] = []
         for grammar_rule_id, components_length in components_by_grammar_id.items():
-            if components_length != len(words):
-                logging.warn(f"Components length is {components_length} and words length is {len(words)}")
+            if components_length != len(parsed_query):
+                logging.warn(f"Components length is {components_length} and words length is {len(parsed_query)}")
                 continue
             rules = GrammarRule.objects.filter(id=grammar_rule_id)
             if not rules:
                 raise AssertionError(f"Grammar Rule {grammar_rule_id} does not exist but has components")
-            rule = rules[0]
-            components = list(GrammarRuleComponent.objects.filter(grammar_rule=rule).all())
-            results.append(
-                SearchResult(
-                    grammar_rule=rule,
-                    components=components,
-                )
-            )
-        return JsonResponse(ResultResponse(results=results).to_json())
+            results.append(rules[0])
+        logging.warn(results)
+        return Response(GrammarRuleSerializer(results, many=True).data)
+
+def _get_grammar_components_for_query_part(q: SearchQuery) -> List[GrammarRuleComponent]:
+    word_list = []
+    if q.is_pinyin:
+        word_list = Word.objects.filter(language_code=LanguageCode.SIMPLIFIED_MANDARIN, pronunciation=q.query).all()
+    else:
+        word_list = Word.objects.filter(language_code=LanguageCode.SIMPLIFIED_MANDARIN, display=q.query).all()
+    if not word_list:
+        return []
+    return list(
+        GrammarRuleComponent.objects.filter(
+            word__in=[word.id for word in word_list]
+        ).all()
+    )
+

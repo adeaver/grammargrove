@@ -136,6 +136,8 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 
 #### Tech Debt
 - [X] Word search bar should be a separate component
+- [ ] Clean up search endpoint for grammar rules using nested serializers
+- [ ] See if you can clean up grammar rule examples
 
 #### Add Stripe Payments
 - [ ] redirect to Stripe payment dashboard

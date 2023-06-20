@@ -24,7 +24,7 @@ export function searchForGrammarRule(
     onError: (err: Error) => void
 ) {
     makePostRequest<SearchForGrammarRuleRequest, SearchForGrammarRuleResponse>(
-        "/api/grammarrules/v1/search/",
+        "/api/grammarrules/v1/search/?format=json",
         {
             search_query: search_query,
         },
