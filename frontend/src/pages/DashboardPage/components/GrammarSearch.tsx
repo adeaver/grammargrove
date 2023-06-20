@@ -53,7 +53,7 @@ const GrammarRuleSearchComponent = (props: GrammarRuleSearchProps) => {
                 handleLoadingGrammarRule(grammarRuleID, false);
                 props.setUserGrammarRulesByID({
                     ...props.userGrammarRulesByID,
-                    [resp.grammar_rule]: resp,
+                    [resp.grammar_rule.id]: resp,
                 })
                 props.setError(null);
             },

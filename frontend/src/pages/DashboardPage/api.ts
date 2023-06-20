@@ -4,8 +4,13 @@ import {
     makePostRequest
 } from '../../util/gfetch';
 
+import {
+    GrammarRule,
+    Word
+} from '../../common/api';
+
 export type UserVocabulary = {
-    word: string;
+    word: Word;
     user: string;
     id: string;
     notes: string | null;
@@ -57,7 +62,7 @@ export function deleteUserVocabulary(
 }
 
 export type UserGrammarRule = {
-    grammar_rule: string;
+    grammar_rule: GrammarRule;
     user: string;
     id: string;
     notes: string | null;

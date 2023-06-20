@@ -54,7 +54,7 @@ const WordSearch = (props: WordSearchProps) => {
                 handleLoadingWord(wordID, false);
                 props.setUserVocabularyByWordID({
                     ...props.userVocabularyByWordID,
-                    [ resp.word ]: resp,
+                    [ resp.word.id ]: resp,
                 });
                 props.setError(null);
             },
@@ -84,7 +84,7 @@ const WordSearch = (props: WordSearchProps) => {
                             }
                             return {
                                 ...acc,
-                                [curr.word]: curr,
+                                [curr.word.id]: curr,
                             }
                         }, {}
                     )

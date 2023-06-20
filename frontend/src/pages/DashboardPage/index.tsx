@@ -29,7 +29,7 @@ const Dashboard = () => {
                 setUserVocabularyByWordID(
                     resp.reduce((acc: { [word: string]: UserVocabulary }, curr: UserVocabulary) => ({
                         ...acc,
-                        [curr.word]: curr,
+                        [curr.word.id]: curr,
                     }), {})
                 );
             },
@@ -45,7 +45,7 @@ const Dashboard = () => {
                     resp.reduce(
                         (acc: { [key: string]: UserGrammarRule }, curr: UserGrammarRule) => ({
                             ...acc,
-                            [curr.grammar_rule]: curr,
+                            [curr.grammar_rule.id]: curr,
                         }), {})
                 )
             },
