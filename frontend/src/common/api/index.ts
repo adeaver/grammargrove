@@ -68,6 +68,8 @@ export type GrammarRule = {
     is_user_added: boolean;
     title: string;
     definition: string;
+    grammar_rule_components: Array<GrammarRuleComponent>;
+    language_code: string;
 }
 
 export type GrammarRuleComponent = {

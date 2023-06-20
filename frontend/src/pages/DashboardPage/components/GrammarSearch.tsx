@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 
 import GrammarRuleSearch from '../../../components/GrammarRuleSearch';
-import { SearchResult } from '../../../components/GrammarRuleSearch/api';
+import { GrammarRule } from '../../../common/api';
 import GrammarRuleCard from '../../../components/GrammarRuleSearch/GrammarRuleCard';
 
 import {
@@ -20,7 +20,7 @@ type GrammarRuleSearchProps = {
 }
 
 const GrammarRuleSearchComponent = (props: GrammarRuleSearchProps) => {
-    const [ searchResults, setSearchResults ] = useState<SearchResult[]>([]);
+    const [ searchResults, setSearchResults ] = useState<GrammarRule[]>([]);
     const [ error, setError ] = useState<Error | null>(null);
 
     const handleLoadingGrammarRule = (grammarRuleID: string, isLoading: boolean) => {
@@ -103,24 +103,24 @@ const GrammarRuleSearchComponent = (props: GrammarRuleSearchProps) => {
                onSuccess={setSearchResults}
                onError={setError } />
             {
-                !error && searchResults.map((s: SearchResult) => {
+                !error && searchResults.map((s: GrammarRule) => {
                     let action;
-                    if (!props.userGrammarRulesByID[s.grammar_rule.id]) {
+                    if (!props.userGrammarRulesByID[s.id]) {
                         action = {
                             text: 'Add grammar rule to your list',
-                            action: (s: SearchResult) => { handleAddUserGrammarRule(s.grammar_rule.id) },
+                            action: (s: GrammarRule) => { handleAddUserGrammarRule(s.id) },
                         }
                     } else {
                         action = {
                             text: 'Remove grammar rule from your list',
-                            action: (s: SearchResult) => { handleDeleteUserGrammarRule(s.grammar_rule.id) },
+                            action: (s: GrammarRule) => { handleDeleteUserGrammarRule(s.id) },
                         }
                     }
                     return (
                         <GrammarRuleCard
                             grammarRule={s}
                             action={action}
-                            isLoading={props.loadingGrammarRules[s.grammar_rule.id]} />
+                            isLoading={props.loadingGrammarRules[s.id]} />
                     )
                 })
             }

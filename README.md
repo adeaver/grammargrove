@@ -60,6 +60,10 @@ Some special cases to be aware of:
 - [ ] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender (fast follow)
 
+#### Tech Debt
+- [X] Clean up search endpoint for grammar rules using nested serializers
+- [ ] See if you can clean up grammar rule examples
+
 #### Add Stripe Payments
 - [ ] redirect to Stripe payment dashboard
 - [ ] webhook for continuing payments
@@ -75,7 +79,10 @@ Some special cases to be aware of:
 
 ## Progress 06/18/2023-06/24/2023
 
-#### Next Day
+#### 06/20/2023
+- [X] Clean up search endpoint for grammar rules using nested serializers
+
+#### 06/19/2023
 - [X] add grammar rules to quiz page
 - [ ] Page to display vocabulary and search within vocabulary
 
@@ -136,7 +143,7 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 
 #### Tech Debt
 - [X] Word search bar should be a separate component
-- [ ] Clean up search endpoint for grammar rules using nested serializers
+- [X] Clean up search endpoint for grammar rules using nested serializers
 - [ ] See if you can clean up grammar rule examples
 
 #### Add Stripe Payments

@@ -3,14 +3,14 @@ import { useState } from 'preact/hooks';
 import Input, { InputType } from '../Input';
 import Button from '../Button';
 
+import { GrammarRule } from '../../common/api';
+
 import {
     searchForGrammarRule,
-    SearchForGrammarRuleResponse,
-    SearchResult,
 } from './api';
 
 type GrammarRuleSearchProps = {
-    onSuccess: (s: SearchResult[]) => void;
+    onSuccess: (s: GrammarRule[]) => void;
     onError: (err: Error) => void;
 }
 
@@ -45,10 +45,10 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
         setIsLoading(true);
         searchForGrammarRule(
             searchQuery.filter((value: string | null) => !!value) as string[],
-            (resp: SearchForGrammarRuleResponse) => {
+            (resp: GrammarRule[]) => {
                 setIsLoading(false);
                 setError(null);
-                props.onSuccess(resp.results);
+                props.onSuccess(resp);
             },
             (err: Error) => {
                 setIsLoading(false);
