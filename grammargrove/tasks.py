@@ -23,6 +23,9 @@ try:
         if is_over_daily_usage_limit():
             logging.warn(f"ChatGPT usage is over the daily limit, skipping")
             return
+        if os.environ.get("ENABLE_GRAMMAR_FETCHES", "false") != "true":
+            logging.warn("Grammar fetching job is disabled")
+            return
         rules: List[GrammarRule] = (
             get_best_candidate_grammar_rules_for_examples()
         )

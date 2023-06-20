@@ -113,6 +113,6 @@ def _get_parts_from_line(line: str) -> WordParts:
     return WordParts(
         traditional=traditional,
         simplified=simplified,
-        pinyin=pinyin,
+        pinyin=pinyin.lower(),
         definitions=definitions,
     )
