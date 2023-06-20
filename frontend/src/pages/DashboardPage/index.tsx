@@ -6,7 +6,7 @@ import {
 
     UserGrammarRule,
     getUserGrammarRules,
-} from './api';
+} from '../../common/api/uservocabulary';
 
 import WordSearch from './components/WordSearch';
 import GrammarSearch from './components/GrammarSearch';

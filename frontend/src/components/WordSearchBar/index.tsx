@@ -3,14 +3,14 @@ import { useState } from 'preact/hooks';
 import Input, { InputType } from '../Input';
 import Button from '../Button';
 
+import { Word } from '../../common/api';
+
 import {
     searchForWord,
-    SearchForWordResponse,
-    SearchResult,
 } from './api';
 
 type WordSearchBarProps = {
-    onSuccess: (s: SearchResult[]) => void;
+    onSuccess: (s: Word[]) => void;
     onError?: (err: Error | null) => void;
 }
 
@@ -28,17 +28,14 @@ const WordSearchBar = (props: WordSearchBarProps) => {
         setIsLoading(true);
         searchForWord(
             searchQuery, undefined,
-            (resp: SearchForWordResponse) => {
+            (resp: Word[]) => {
                 setIsLoading(false);
-                if (!resp.success) {
-                    handleError(new Error("Bad request"));
-                    return
-                }
                 handleError(null);
-                props.onSuccess(resp.results);
+                props.onSuccess(resp);
             },
             (err: Error) => {
                 setIsLoading(false);
+                props.onSuccess([]);
                 handleError(err);
             }
         );

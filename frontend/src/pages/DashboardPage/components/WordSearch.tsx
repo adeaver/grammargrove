@@ -1,14 +1,14 @@
 import { useState } from 'preact/hooks';
 
 import WordSearchBar from '../../../components/WordSearchBar';
-import { SearchResult } from '../../../components/WordSearchBar/api';
+import { Word } from '../../../common/api';
 import WordCard from '../../../components/WordSearchBar/WordCard';
 
 import {
     UserVocabulary,
     addUserVocabulary,
     deleteUserVocabulary,
-} from '../api';
+} from '../../../common/api/uservocabulary';
 
 export type WordSearchProps = {
     userVocabularyByWordID: { [key: string]: UserVocabulary };
@@ -21,7 +21,7 @@ export type WordSearchProps = {
 }
 
 const WordSearch = (props: WordSearchProps) => {
-    const [ searchResults, setSearchResults ] = useState<SearchResult[]>([]);
+    const [ searchResults, setSearchResults ] = useState<Word[]>([]);
 
     const handleLoadingWord = (wordID: string, isLoading: boolean) => {
         if (isLoading) {
@@ -103,18 +103,18 @@ const WordSearch = (props: WordSearchProps) => {
             <WordSearchBar
                 onSuccess={setSearchResults} />
             {
-                searchResults.map((s: SearchResult) => {
-                    const action = !!props.userVocabularyByWordID[s.word_id] ? ({
+                searchResults.map((s: Word) => {
+                    const action = !!props.userVocabularyByWordID[s.id] ? ({
                             text: 'Remove from Vocabulary',
-                            action: (s: SearchResult) => { handleDeleteVocabularyEntry(s.word_id) },
+                            action: (s: Word) => { handleDeleteVocabularyEntry(s.id) },
                         }) : ({
                             text: 'Add to Vocabulary',
-                            action: (s: SearchResult) => { handleAddWordToVocabulary(s.word_id) },
+                            action: (s: Word) => { handleAddWordToVocabulary(s.id) },
                         });
                     return (
                         <WordCard
-                            key={s.word_id}
-                            isLoading={props.loadingWords[s.word_id]}
+                            key={s.id}
+                            isLoading={props.loadingWords[s.id]}
                             word={s}
                             action={action} />
                     );

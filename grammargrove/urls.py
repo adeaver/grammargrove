@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from index import views
+import index.views as index
 from users.urls import router as user_router
 from words.urls import router as word_router
 from grammarrules.urls import router as grammarrules_router
@@ -35,8 +35,9 @@ urlpatterns = [
     path('api/uservocabulary/', include(uservocabulary_router.urls), name="uservocabulary"),
     path('api/usergrammarrules/', include(usergrammarrules_router.urls), name="usergrammarrules"),
     path('api/quiz/', include(quiz_router.urls), name="quiz"),
-    path('', views.home, name='home'),
-    path('login/', views.login, name='login'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('quiz/', views.quiz, name='quiz'),
+    path('', index.home, name='home'),
+    path('login/', index.login, name='login'),
+    path('dashboard/', index.dashboard, name='dashboard'),
+    path('user-vocabulary/', index.user_vocabulary, name='user-vocabulary'),
+    path('quiz/', index.quiz, name='quiz'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

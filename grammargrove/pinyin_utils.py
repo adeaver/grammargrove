@@ -2,6 +2,7 @@ from typing import List, Dict, Optional, Tuple, NamedTuple
 
 import logging
 
+import string
 import copy
 from pygtrie import CharTrie
 
@@ -103,6 +104,8 @@ def get_tone_number_from_display_form(pinyin: str) -> Optional[int]:
         for tone_number in range(4):
             if c in vowels_by_tone[tone_number+1]:
                 return tone_number+1
+        if c not in string.ascii_lowercase and c not in string.ascii_uppercase:
+            return None
     return 5 if pinyin[-1].isalpha() else None
 
 def is_display_form(pinyin: str) -> bool:

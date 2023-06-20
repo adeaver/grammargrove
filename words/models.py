@@ -24,7 +24,7 @@ class Word(models.Model):
 class Definition(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     language_code = models.TextField(choices=LanguageCode.choices)
-    word = models.ForeignKey(Word, on_delete=models.CASCADE)
+    word = models.ForeignKey(Word, related_name="definitions", on_delete=models.CASCADE)
     definition = models.TextField()
 
     class Meta:

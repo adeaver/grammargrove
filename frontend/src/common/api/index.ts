@@ -61,6 +61,14 @@ export type Word = {
     language_code: string;
     display: string;
     pronunciation: string;
+    definitions: Array<Definition>;
+}
+
+export type Definition = {
+   id: string;
+   language_code: string;
+   definition: string;
+   word: string;
 }
 
 export type GrammarRule = {

@@ -8,7 +8,7 @@ import {
     UserGrammarRule,
     addUserGrammarRule,
     deleteUserGrammarRule,
-} from '../api';
+} from '../../../common/api/uservocabulary';
 
 type GrammarRuleSearchProps = {
     userGrammarRulesByID: { [key: string]: UserGrammarRule };

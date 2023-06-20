@@ -70,9 +70,11 @@ Some special cases to be aware of:
 - [ ] spooler job to check expiring payments
 
 #### Deployment
-- [ ] create production Dockerfile
+- [ ] create production Dockerfile for web and postgres
 - [ ] create production uwsgi config
-- [ ] figure out deployment strategy (managed db is probably not going to work because of space limit)
+- [ ] remove all migrations and re-run makemigrations
+- [ ] write scripts to setup ufw on servers
+- [ ] write nginx configuration and use certbot (steal from Babblegraph)
 
 #### Wishlist
 - [ ] Search without accents (fast follow)

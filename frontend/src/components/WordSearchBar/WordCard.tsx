@@ -1,18 +1,22 @@
-import { SearchResult } from './api';
+import { Word, Definition } from '../../common/api';
 import Button from '../Button';
 
 type WordCardProps = {
-    word: SearchResult;
+    word: Word;
     action?: WordCardAction;
     isLoading?: boolean;
 }
 
 export type WordCardAction = {
     text: string;
-    action: (s: SearchResult) => void;
+    action: (s: Word) => void;
 }
 
 const WordCard = (props: WordCardProps) => {
+    const definition = props.word.definitions
+        .map((d: Definition) => d.definition.trim())
+        .filter((d: string) => !!d)
+        .join("; ");
     return (
         <div>
             { props.word.display }
@@ -24,6 +28,7 @@ const WordCard = (props: WordCardProps) => {
                     </Button>
                 )
             }
+            { definition }
         </div>
     );
 }

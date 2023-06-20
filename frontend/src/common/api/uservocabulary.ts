@@ -7,7 +7,7 @@ import {
 import {
     GrammarRule,
     Word
-} from '../../common/api';
+} from './index';
 
 export type UserVocabulary = {
     word: Word;
