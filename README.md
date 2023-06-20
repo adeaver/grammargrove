@@ -55,7 +55,7 @@ Some special cases to be aware of:
 - [X] add grammar rules to quiz page
 
 #### Bugs to fix
-- [ ] Pinyin search should allow for both numbered and actual pinyin
+- [X] Pinyin search should allow for both numbered and actual pinyin
 - [ ] Frontend should display accents not as numbers
 - [ ] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender (fast follow)
