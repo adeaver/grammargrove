@@ -47,7 +47,7 @@ Some special cases to be aware of:
 - [ ] populate grammarrules.csv
 
 #### Allow users to add words to their list
-- [ ] Page to display vocabulary and search within vocabulary
+- [X] Page to display vocabulary and search within vocabulary
 - [ ] Add notes to user vocabulary (not super necessary, can be a fast follow)
 
 #### Quiz page
@@ -56,7 +56,7 @@ Some special cases to be aware of:
 
 #### Bugs to fix
 - [X] Pinyin search should allow for both numbered and actual pinyin
-- [ ] Frontend should display accents not as numbers
+- [x] Frontend should display accents not as numbers
 - [ ] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender (fast follow)
 
@@ -84,6 +84,9 @@ Some special cases to be aware of:
 #### 06/20/2023
 - [X] Clean up search endpoint for grammar rules using nested serializers
 - [X] Use django choices for LanguageCode
+- [X] Page to display vocabulary and search within vocabulary
+- [X] Pinyin search should allow for both numbered and actual pinyin
+- [x] Frontend should display accents not as numbers
 
 #### 06/19/2023
 - [X] add grammar rules to quiz page

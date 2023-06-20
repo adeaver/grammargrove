@@ -43,7 +43,6 @@ class _Vowel(NamedTuple):
             ):
                 c == "u:"
                 skip_next=True
-
             if idx == vowels_by_tone_position[self.vowel]:
                 for display, base_form in vowels_by_tone[self.tone_number].items():
                     if base_form == c:
@@ -60,8 +59,7 @@ def _is_vowel_and_maybe_tone_number(char: str) -> Tuple[bool, Optional[int]]:
     return False, None
 
 
-def _get_vowel_with_index(pinyin: str) -> Tuple[_Vowel, int]:
-    tone_number: int = 5
+def _get_vowel_with_index(pinyin: str, tone_number: int = 5) -> Tuple[_Vowel, int]:
     all_in_numeric = []
     for c in pinyin:
         is_vowel, char_tone_number = _is_vowel_and_maybe_tone_number(c)
@@ -117,7 +115,7 @@ def convert_to_display_form(pinyin: str) -> str:
     tone_number = get_tone_number_from_numeric_form(pinyin)
     if tone_number is None:
         raise ValueError(f"Pinyin {pinyin} is neither numeric nor display form")
-    vowel, idx = _get_vowel_with_index(pinyin)
+    vowel, idx = _get_vowel_with_index(pinyin, tone_number)
     replacement_vowel = vowel.to_display_form()
     tail_start_pos = idx+1+len(vowel.vowel)
     return f"{pinyin[:idx]}{replacement_vowel}{pinyin[tail_start_pos:]}"
