@@ -1,7 +1,9 @@
 import {
     makeDeleteRequest,
     makeGetRequest,
-    makePostRequest
+    makePostRequest,
+
+    PaginatedResponse,
 } from '../../util/gfetch';
 
 import {
@@ -39,11 +41,13 @@ export function addUserVocabulary(
 }
 
 export function getUserVocabulary(
-    onSuccess: (resp: UserVocabulary[]) => void,
+    pageNumber: number | undefined,
+    onSuccess: (resp: PaginatedResponse<UserVocabulary>) => void,
     onError: (err: Error) => void
 ) {
-    makeGetRequest<UserVocabulary[]>(
-        "/api/uservocabulary/v1/?format=json",
+    const pageNumberQuery = !pageNumber ? "" : `&page=${pageNumber}`;
+    makeGetRequest<PaginatedResponse<UserVocabulary>>(
+        `/api/uservocabulary/v1/?format=json${pageNumberQuery}`,
         onSuccess,
         onError,
     )
@@ -91,11 +95,13 @@ export function addUserGrammarRule(
 }
 
 export function getUserGrammarRules(
-    onSuccess: (resp: UserGrammarRule[]) => void,
+    pageNumber: number | undefined,
+    onSuccess: (resp: PaginatedResponse<UserGrammarRule>) => void,
     onError: (err: Error) => void
 ) {
-    makeGetRequest<UserGrammarRule[]>(
-        "/api/usergrammarrules/v1/?format=json",
+    const pageNumberQuery = !pageNumber ? "" : `&page=${pageNumber}`;
+    makeGetRequest<PaginatedResponse<UserGrammarRule>>(
+        `/api/usergrammarrules/v1/?format=json${pageNumberQuery}`,
         onSuccess,
         onError,
     )

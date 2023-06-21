@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'preact/hooks';
 
 import {
+    PaginatedResponse
+} from '../../util/gfetch';
+
+import Header from '../../components/Header';
+
+import {
     UserVocabulary,
     getUserVocabulary,
 
@@ -8,85 +14,105 @@ import {
     getUserGrammarRules,
 } from '../../common/api/uservocabulary';
 
-import WordSearch from './components/WordSearch';
-import GrammarSearch from './components/GrammarSearch';
+import UserVocabularyDisplay from './components/UserVocabularyDisplay';
+import UserGrammarRuleDisplay from './components/UserGrammarRuleDisplay';
 
-const Dashboard = () => {
-    const [ isLoadingWords, setIsLoadingWords ] = useState<boolean>(true);
-    const [ loadingWords, setLoadingWords ] = useState<{ [key: string]: boolean }>({});
-    const [ userVocabularyByWordID, setUserVocabularyByWordID ] = useState<{ [word_id: string]: UserVocabulary }>({});
+const DashboardPage = () => {
+    const [ isLoadingUserVocabulary, setIsLoadingUserVocabulary ] = useState<boolean>(true);
+    const [ userVocabulary, setUserVocabulary ] = useState<UserVocabulary[]>([]);
+    const [ userVocabularyError, setUserVocabularyError ] = useState<Error | null>(null);
+    const [ nextUserVocabularyPage, setNextUserVocabularyPage ] = useState<number | null | undefined>(undefined);
+    const [ previousUserVocabularyPage, setPreviousUserVocabularyPage ] = useState<number | null | undefined>(undefined);
 
-    const [ isLoadingGrammarRules, setIsLoadingGrammarRules ] = useState<boolean>(true);
-    const [ loadingGrammarRules, setLoadingGrammarRules ] = useState<{ [key: string]: boolean }>({});
-    const [ userGrammarRulesByID, setUserGrammarRulesByID ] = useState<{ [key: string]: UserGrammarRule }>({});
+    const getUserVocabularyPage = (pageNumber: number | null | undefined) => {
+        if (pageNumber === null) {
+            return;
+        }
+        setIsLoadingUserVocabulary(true);
+        getUserVocabulary(
+            pageNumber,
+            (resp: PaginatedResponse<UserVocabulary>) => {
+                setIsLoadingUserVocabulary(false);
+                setUserVocabularyError(null);
+                setPreviousUserVocabularyPage(resp.previous);
+                setNextUserVocabularyPage(resp.next);
+                setUserVocabulary(resp.results);
+            },
+            (err: Error) => {
+                setIsLoadingUserVocabulary(false);
+                setUserVocabularyError(err);
+            }
+        );
+    }
 
-    const [ error, setError ] = useState<Error | null>(null);
+    const makeChangeUserVocabularyPageFunc = (pageNumber: number | undefined | null) => {
+        if (pageNumber === null) {
+            return undefined;
+        }
+        return () => {
+            getUserVocabularyPage(pageNumber);
+        }
+    }
+
+    const [ isLoadingUserGrammarRules, setIsLoadingUserGrammarRules ] = useState<boolean>(true);
+    const [ userGrammarRules, setUserGrammarRules ] = useState<UserGrammarRule[]>([]);
+    const [ userGrammarRulesError, setUserGrammarRulesError ] = useState<Error | null>(null);
+    const [ nextUserGrammarRulesPage, setNextUserGrammarRulesPage ] = useState<number | null | undefined>(undefined);
+    const [ previousUserGrammarRulesPage, setPreviousUserGrammarRulesPage ] = useState<number | null | undefined>(undefined);
+
+    const getUserGrammarRulesPage = (pageNumber: number | null | undefined) => {
+        if (pageNumber === null) {
+            return;
+        }
+        setIsLoadingUserVocabulary(true);
+        getUserGrammarRules(
+            pageNumber,
+            (resp: PaginatedResponse<UserGrammarRule>) => {
+                setIsLoadingUserGrammarRules(false);
+                setUserGrammarRulesError(null);
+                setPreviousUserGrammarRulesPage(resp.previous);
+                setNextUserGrammarRulesPage(resp.next);
+                setUserGrammarRules(resp.results);
+            },
+            (err: Error) => {
+                setIsLoadingUserGrammarRules(false);
+                setUserGrammarRulesError(err);
+            }
+        );
+    }
+
+    const makeChangeUserGrammarRulesPageFunc = (pageNumber: number | undefined | null) => {
+        if (pageNumber === null) {
+            return undefined;
+        }
+        return () => {
+            getUserGrammarRulesPage(pageNumber);
+        }
+    }
 
     useEffect(() => {
-        getUserVocabulary(
-            (resp: UserVocabulary[]) => {
-                setIsLoadingWords(false);
-                setUserVocabularyByWordID(
-                    resp.reduce((acc: { [word: string]: UserVocabulary }, curr: UserVocabulary) => ({
-                        ...acc,
-                        [curr.word.id]: curr,
-                    }), {})
-                );
-            },
-            (err: Error) => {
-                setIsLoadingWords(false);
-                setError(err);
-            }
-        );
-        getUserGrammarRules(
-            (resp: UserGrammarRule[]) => {
-                setIsLoadingGrammarRules(false);
-                setUserGrammarRulesByID(
-                    resp.reduce(
-                        (acc: { [key: string]: UserGrammarRule }, curr: UserGrammarRule) => ({
-                            ...acc,
-                            [curr.grammar_rule.id]: curr,
-                        }), {})
-                )
-            },
-            (err: Error) => {
-                setIsLoadingGrammarRules(false);
-                setError(err);
-            }
-        );
+        getUserVocabularyPage(nextUserVocabularyPage);
+        getUserGrammarRulesPage(nextUserGrammarRulesPage);
     }, []);
 
-
-    if (!!error) {
-        return (
-            <div>
-                An error occurred. Try again later.
-            </div>
-        )
-    } else if (isLoadingWords || isLoadingGrammarRules) {
-        // Entire page is loading
-        return (
-            <div>
-                Loading ...
-            </div>
-        )
+    if (isLoadingUserVocabulary || isLoadingUserGrammarRules) {
+        return <p>Loading...</p>
+    } else if (!!userVocabularyError || !!userGrammarRulesError) {
+        return <p>Something went wrong</p>
     }
     return (
         <div>
-            <WordSearch
-                userVocabularyByWordID={userVocabularyByWordID}
-                loadingWords={loadingWords}
-                setUserVocabularyByWordID={setUserVocabularyByWordID}
-                setLoadingWords={setLoadingWords}
-                setError={setError} />
-            <GrammarSearch
-                userGrammarRulesByID={userGrammarRulesByID}
-                setUserGrammarRulesByID={setUserGrammarRulesByID}
-                loadingGrammarRules={loadingGrammarRules}
-                setLoadingGrammarRules={setLoadingGrammarRules}
-                setError={setError} />
+            <Header />
+            <UserVocabularyDisplay
+                vocabulary={userVocabulary}
+                getNextPage={makeChangeUserVocabularyPageFunc(nextUserVocabularyPage)}
+                getPreviousPage={makeChangeUserVocabularyPageFunc(previousUserVocabularyPage)} />
+            <UserGrammarRuleDisplay
+                grammarRules={userGrammarRules}
+                getNextPage={makeChangeUserGrammarRulesPageFunc(nextUserGrammarRulesPage)}
+                getPreviousPage={makeChangeUserGrammarRulesPageFunc(previousUserGrammarRulesPage)} />
         </div>
-    )
+    );
 }
 
-export default Dashboard;
+export default DashboardPage;

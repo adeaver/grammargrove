@@ -43,6 +43,13 @@ export function makePostRequest<T, U>(
     .catch(onError);
 }
 
+export type PaginatedResponse<T> = {
+    next: number | null,
+    previous: number | null,
+    count: number,
+    results: Array<T>
+}
+
 export function makeGetRequest<T>(
     url: string,
     onSuccess: (resp: T) => void,
