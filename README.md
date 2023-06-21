@@ -42,7 +42,11 @@ Some special cases to be aware of:
 ## Outstanding TODO for MVP
 
 #### Support
-- [ ] style pages
+- [X] style index page
+- [ ] add "already have an account?" to index page
+- [ ] redo dashboard to include both user vocabulary and word search
+- [ ] style quiz page
+- [ ] restyle "How it works" section with styled components from quiz and dashboard pages
 - [ ] management command to apply hsk labels to grammar rules and words
 - [ ] populate grammarrules.csv
 
@@ -81,6 +85,13 @@ Some special cases to be aware of:
 
 ## Progress 06/18/2023-06/24/2023
 
+#### Next Day
+- [ ] redo dashboard to include both user vocabulary and word search
+- [ ] add "already have an account?" to index page
+
+#### 06/21/2023
+- [X] Style index page
+
 #### 06/20/2023
 - [X] Clean up search endpoint for grammar rules using nested serializers
 - [X] Use django choices for LanguageCode
@@ -90,7 +101,7 @@ Some special cases to be aware of:
 
 #### 06/19/2023
 - [X] add grammar rules to quiz page
-- [ ] Page to display vocabulary and search within vocabulary
+- [X] Page to display vocabulary and search within vocabulary
 
 ## Done for MVP
 

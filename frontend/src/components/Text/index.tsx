@@ -12,6 +12,7 @@ export enum TextFunction {
     Display = 'display',
     Confirmation = 'confirmation',
     Warning = 'warning',
+    Link = 'link'
 }
 
 export enum TextAlignment {
@@ -67,6 +68,9 @@ const getClassesForProps = (props: TextProps) => {
             break;
         case TextFunction.Warning:
             classes = classes.concat(["text-warning-500"]);
+            break;
+        case TextFunction.Link:
+            classes = classes.concat(["text-primary-600"]);
             break;
         default:
             throw new Error(`Unexpected function ${props.type}`);
