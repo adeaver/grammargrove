@@ -6,6 +6,8 @@ from enum import Enum
 from typing import Optional
 from django.db import IntegrityError
 
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.contrib.auth import logout, login
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
@@ -79,6 +81,10 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'])
     def search_by_email(self, request: HttpRequest) -> JsonResponse:
         email = request.data["email"]
+        try:
+            validate_email(email)
+        except ValidationError:
+            return HttpResponseBadRequest()
         users = User.objects.filter(email=email)
         user = None if not users else users[0]
         action = SearchEmailAction.RequireLogin

@@ -69,7 +69,7 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
                 )
             }
             <Button onClick={handleAddWordToSearchQuery}>
-                Add Word
+                <p class="font-body">Add Word</p>
             </Button>
             {
                 searchQuery.map((value: string | null, idx: number) => {
