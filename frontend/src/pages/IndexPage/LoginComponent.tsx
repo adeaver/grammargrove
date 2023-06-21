@@ -36,15 +36,8 @@ const LoginComponent = () => {
         );
     }
 
-    let body = (
-        <GenericEmailForm
-            error={!!error ? "There was an error" : null }
-            email={email}
-            setEmail={setEmail}
-            handleSubmit={handleClick} />
-    );
     if (isLoading) {
-        body = (
+        return (
             <Text>Loading...</Text>
         )
     } else if (action == SearchByEmailAction.Redirect) {
@@ -53,24 +46,22 @@ const LoginComponent = () => {
         // to properly render this page
         setLocation("/dashboard/");
     } else if (action == SearchByEmailAction.RequireLogin) {
-        body = (
+        return (
             <LoginForm
                 email={email}
                 setEmail={setEmail} />
         );
     } else if (action == SearchByEmailAction.RequireSignup) {
-        body = (
+        return (
             <Text>We sent you an email to access your account. Check your inbox for a magic link.</Text>
         );
     }
     return (
-        <div className="w-full h-full grid grid-cols-5 bg-china bg-cover">
-            <div className="md:col-span-3 md:col-start-2 col-span-5 flex flex-col justify-center items-center">
-                <div className="md:p-12 p-6 w-full h-1/2 rounded-md border-2 border-slate-600 bg-white flex justify-center items-center">
-                    { body }
-                </div>
-            </div>
-        </div>
+        <GenericEmailForm
+            error={!!error ? "There was an error" : null }
+            email={email}
+            setEmail={setEmail}
+            handleSubmit={handleClick} />
     );
 }
 
@@ -91,15 +82,19 @@ const GenericEmailForm = (props: GenericEmailFormProps) => {
                     </Text>
                 )
             }
-            <Input
-                type={InputType.Email}
-                value={props.email}
-                name="email"
-                placeholder="Email Address"
-                onChange={props.setEmail} />
-            <Button onClick={props.handleSubmit}>
-                Submit
-            </Button>
+            <div className="w-full flex flex-col justify-center items-center">
+                <Input
+                    type={InputType.Email}
+                    value={props.email}
+                    name="email"
+                    placeholder="Email Address"
+                    onChange={props.setEmail} />
+                <div className="w-1/2">
+                    <Button onClick={props.handleSubmit}>
+                        Get Started
+                    </Button>
+                </div>
+            </div>
         </div>
     )
 }

@@ -42,7 +42,7 @@ const getClassesForProps = (props: TextProps) => {
             classes = classes.concat(["text-4xl", "font-body", "font-bold"]);
             break;
         case TextType.Subtitle:
-            classes = classes.concat(["text-2xl", "font-body", "font-bold"]);
+            classes = classes.concat(["text-2xl", "font-body"]);
             break;
         case TextType.SectionHeader:
             classes = classes.concat(["text-xl", "font-body"]);
