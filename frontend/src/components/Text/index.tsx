@@ -1,4 +1,5 @@
 export enum TextType {
+    Logo = 'logo',
     Title = 'title',
     Subtitle = 'subtitle',
     SectionHeader = 'section-header',
@@ -33,6 +34,9 @@ const getClassesForProps = (props: TextProps) => {
         case null:
         case TextType.Body:
             classes = classes.concat(["text-lg", "font-body"]);
+            break;
+        case TextType.Logo:
+            classes = classes.concat(["text-2xl", "md:text-4x", "font-logo", "font-bold"]);
             break;
         case TextType.Title:
             classes = classes.concat(["text-4xl", "font-body", "font-bold"]);
@@ -91,6 +95,7 @@ const Text = (props: TextProps) => {
         case TextType.Body:
         case TextType.FinePrint:
             return <p className={classes}>{props.children}</p>
+        case TextType.Logo:
         case TextType.Title:
             return <h1 className={classes}>{props.children}</h1>
         case TextType.Subtitle:

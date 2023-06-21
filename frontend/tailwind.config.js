@@ -8,12 +8,16 @@ export default {
     extend: {
         fontFamily: {
             body: ['Noto Sans', 'Noto Sans SC', 'sans-serif'],
+            logo: [ 'Poppins', 'sans-serif' ],
         },
         colors: {
             'primary': colors.red,
             'text': colors.slate,
             'confirmation': colors.green,
             'warning': colors.orange,
+        },
+        backgroundImage: {
+            'china': "url('assets/china.jpg')"
         },
     },
   },

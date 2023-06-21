@@ -64,9 +64,9 @@ const LoginComponent = () => {
         );
     }
     return (
-        <div className="w-full h-full grid grid-cols-5">
+        <div className="w-full h-full grid grid-cols-5 bg-china bg-cover">
             <div className="md:col-span-3 md:col-start-2 col-span-5 flex flex-col justify-center items-center">
-                <div className="p-6 w-full rounded-md border-slate-600">
+                <div className="md:p-12 p-6 w-full h-1/2 rounded-md border-2 border-slate-600 bg-white flex justify-center items-center">
                     { body }
                 </div>
             </div>

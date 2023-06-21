@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite build --watch --config vite.config.development.js",
-    "build": "tsc && vite build",
+    "dev": "vite build --watch --config vite.config.development.js --base=/static",
+    "build": "tsc && vite build --base=/static",
     "preview": "vite preview"
   },
   "dependencies": {
