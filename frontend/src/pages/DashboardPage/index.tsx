@@ -54,6 +54,10 @@ const DashboardPage = () => {
         }
     }
 
+    const removeFromUserVocabulary = (userVocabularyID: string) => {
+        setUserVocabulary(userVocabulary.filter((u: UserVocabulary) => u.id !== userVocabularyID));
+    }
+
     const [ isLoadingUserGrammarRules, setIsLoadingUserGrammarRules ] = useState<boolean>(true);
     const [ userGrammarRules, setUserGrammarRules ] = useState<UserGrammarRule[]>([]);
     const [ userGrammarRulesError, setUserGrammarRulesError ] = useState<Error | null>(null);
@@ -105,6 +109,7 @@ const DashboardPage = () => {
             <Header />
             <UserVocabularyDisplay
                 vocabulary={userVocabulary}
+                removeFromUserVocabulary={removeFromUserVocabulary}
                 getNextPage={makeChangeUserVocabularyPageFunc(nextUserVocabularyPage)}
                 getPreviousPage={makeChangeUserVocabularyPageFunc(previousUserVocabularyPage)} />
             <UserGrammarRuleDisplay

@@ -7,6 +7,7 @@ import {
 
 type UserVocabularyDisplayProps = {
     vocabulary: UserVocabulary[];
+    removeFromUserVocabulary: (id: string) => void;
 
     getNextPage?: () => void;
     getPreviousPage?: () => void;
@@ -22,7 +23,11 @@ const UserVocabularyDisplay = (props: UserVocabularyDisplayProps) => {
             </Text>
             {
                 props.vocabulary.map((u: UserVocabulary) => (
-                    <WordCard key={u.id} word={u.word} />
+                    <WordCard
+                        key={u.id}
+                        word={u.word}
+                        userVocabularyID={u.id}
+                        handleRemoveUserVocabulary={props.removeFromUserVocabulary} />
                 ))
             }
         </div>

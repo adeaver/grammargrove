@@ -1,10 +1,22 @@
+import { useState } from 'preact/hooks';
+
 import { Word, Definition } from '../../common/api';
-import Button from '../Button';
+import Button, { ButtonType } from '../Button';
+
+import {
+    UserVocabulary,
+
+    addUserVocabulary,
+    deleteUserVocabulary,
+} from '../../common/api/uservocabulary';
+
 
 type WordCardProps = {
     word: Word;
-    action?: WordCardAction;
-    isLoading?: boolean;
+
+    userVocabularyID?: string;
+    handleAddUserVocabulary?: (userVocabulary: UserVocabulary) => void;
+    handleRemoveUserVocabulary?: (userVocabularyID: string) => void;
 }
 
 export type WordCardAction = {
@@ -17,17 +29,60 @@ const WordCard = (props: WordCardProps) => {
         .map((d: Definition) => d.definition.trim())
         .filter((d: string) => !!d)
         .join("; ");
+
+    const [ isLoading, setIsLoading ] = useState<boolean>(false);
+    const [ error, setError ] = useState<Error | null>(null);
+
+    let action = null;
+    if (!!error) {
+        action = (
+            <p>Something went wrong</p>
+        );
+    } else if (!!props.userVocabularyID && !!props.handleRemoveUserVocabulary) {
+        const handleRemoveFromUserVocabulary = () => {
+            setIsLoading(true);
+            deleteUserVocabulary(
+                props.userVocabularyID!,
+                () => {
+                    setIsLoading(false);
+                    props.handleRemoveUserVocabulary!(props.userVocabularyID!)
+                },
+                (err: Error) => {
+                    setIsLoading(false);
+                    setError(err);
+                }
+            );
+        }
+        action = (
+            <Button type={ButtonType.Warning} onClick={handleRemoveFromUserVocabulary} isLoading={isLoading}>
+                Remove from your list
+            </Button>
+        )
+    } else if (!props.userVocabularyID && props.handleAddUserVocabulary) {
+        const handleAddUserVocabulary = () => {
+            setIsLoading(true);
+            addUserVocabulary(props.word.id, null,
+                (resp: UserVocabulary) => {
+                    setIsLoading(false);
+                    props.handleAddUserVocabulary!(resp);
+                },
+                (err: Error) => {
+                    setIsLoading(false);
+                    setError(err);
+                }
+            );
+        }
+        action = (
+            <Button type={ButtonType.Confirmation} onClick={handleAddUserVocabulary} isLoading={isLoading}>
+                Add to your list
+            </Button>
+        )
+    }
     return (
         <div>
             { props.word.display }
             ( {props.word.pronunciation} )
-            {
-                !!props.action && (
-                    <Button onClick={() => props.action!.action(props.word)} isLoading={props.isLoading}>
-                        { props.action!.text }
-                    </Button>
-                )
-            }
+            { action }
             { definition }
         </div>
     );
