@@ -161,6 +161,7 @@ cython_debug/
 
 node_modules/**
 index/static/**
+!index/static/china.jpg
 index/migrations/data/**
 grammargrove/spooler/**
 words/data/**
