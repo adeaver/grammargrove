@@ -104,7 +104,7 @@ const DashboardPage = () => {
         getUserGrammarRulesPage(nextUserGrammarRulesPage);
     }, []);
 
-    if (isLoadingUserVocabulary || isLoadingUserGrammarRules) {
+    if (isLoadingUserGrammarRules) {
         return <p>Loading...</p>
     } else if (!!userVocabularyError || !!userGrammarRulesError) {
         return <p>Something went wrong</p>
@@ -113,6 +113,7 @@ const DashboardPage = () => {
         <div>
             <Header />
             <UserVocabularyDisplay
+                isLoading={isLoadingUserVocabulary}
                 vocabulary={userVocabulary}
                 removeFromUserVocabulary={removeFromUserVocabulary}
                 handleAddUserVocabulary={handleAddToUserVocabulary}

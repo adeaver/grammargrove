@@ -26,7 +26,3 @@ def dashboard(request: HttpRequest) -> HttpResponse:
 @login_required(login_url="/")
 def quiz(request: HttpRequest) -> HttpResponse:
     return render(request, 'quiz.html', {})
-
-@login_required(login_url="/")
-def user_vocabulary(request: HttpRequest) -> HttpResponse:
-    return render(request, 'user_vocabulary.html', {})

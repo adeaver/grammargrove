@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 
 import Text, { TextType, TextAlignment, TextFunction } from '../../../components/Text';
+import Button, { ButtonType } from '../../../components/Button';
 
 import { Word } from '../../../common/api';
 import WordSearchBar from '../../../components/WordSearchBar';
@@ -11,6 +12,7 @@ import {
 } from '../../../common/api/uservocabulary';
 
 type UserVocabularyDisplayProps = {
+    isLoading: boolean;
     vocabulary: UserVocabulary[];
     removeFromUserVocabulary: (id: string) => void;
     handleAddUserVocabulary: (u: UserVocabulary) => void;
@@ -24,32 +26,48 @@ const UserVocabularyDisplay = (props: UserVocabularyDisplayProps) => {
     const [ wordSearchError, setWordSearchError ] = useState<Error | null>(null);
 
     return (
-        <div>
-            <Text
-                type={TextType.Subtitle}
-                alignment={TextAlignment.Left}>
-                Vocabulary Words
-            </Text>
+        <div class="p-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <Text
+                        type={TextType.Subtitle}
+                        alignment={TextAlignment.Left}>
+                        Vocabulary Words
+                    </Text>
+                </div>
+                <PageNavigationButtons
+                    getNextPage={props.getNextPage}
+                    getPreviousPage={props.getPreviousPage} />
+            </div>
+            <hr class="my-4 border-2 border-slate-600" />
             {
-                props.vocabulary.map((u: UserVocabulary) => (
-                    <WordCard
-                        key={u.id}
-                        word={u.word}
-                        userVocabularyID={u.id}
-                        handleRemoveUserVocabulary={props.removeFromUserVocabulary} />
-                ))
+                props.isLoading ? (
+                    "Loading..."
+                ) : (
+                    <div>
+                        {
+                            props.vocabulary.map((u: UserVocabulary) => (
+                                <WordCard
+                                    key={u.id}
+                                    word={u.word}
+                                    userVocabularyID={u.id}
+                                    handleRemoveUserVocabulary={props.removeFromUserVocabulary} />
+                            ))
+                        }
+                        <Text alignment={TextAlignment.Left} type={TextType.SectionHeader}>
+                            Search for a new word
+                        </Text>
+                        <WordSearchBar
+                            onSuccess={setWordSearchResults}
+                            onError={setWordSearchError} />
+                        <WordSearchBody
+                            error={wordSearchError}
+                            results={wordSearchResults}
+                            handleAddUserVocabulary={props.handleAddUserVocabulary}
+                            handleRemoveUserVocabulary={props.removeFromUserVocabulary} />
+                    </div>
+                )
             }
-            <Text>
-                Search for a new word
-            </Text>
-            <WordSearchBar
-                onSuccess={setWordSearchResults}
-                onError={setWordSearchError} />
-            <WordSearchBody
-                error={wordSearchError}
-                results={wordSearchResults}
-                handleAddUserVocabulary={props.handleAddUserVocabulary}
-                handleRemoveUserVocabulary={props.removeFromUserVocabulary} />
         </div>
     )
 }
@@ -69,7 +87,7 @@ const WordSearchBody = (props: WordSearchBodyProps) => {
                 There was an error searching.
             </Text>
         );
-    } else if (!props.results && props.results === undefined) {
+    } else if (!props.results && props.results != undefined) {
         return (
             <Text function={TextFunction.Warning}>
                 No results
@@ -79,7 +97,7 @@ const WordSearchBody = (props: WordSearchBodyProps) => {
     return (
         <div>
         {
-            props.results!.map((w: Word) => {
+            (props.results || []).map((w: Word) => {
                 return (
                     <WordCard
                         key={w.id}
@@ -89,6 +107,32 @@ const WordSearchBody = (props: WordSearchBodyProps) => {
                 )
             })
         }
+        </div>
+    )
+}
+
+type PageNavigationButtonsProps = {
+    getNextPage?: () => void;
+    getPreviousPage?: () => void;
+}
+
+const PageNavigationButtons = (props: PageNavigationButtonsProps) => {
+    return (
+        <div class="flex flex-row space-x-4">
+            {
+                !!props.getPreviousPage && (
+                    <Button type={ButtonType.Secondary} onClick={props.getPreviousPage}>
+                        Previous Page
+                    </Button>
+                )
+            }
+            {
+                !!props.getNextPage && (
+                    <Button type={ButtonType.Secondary} onClick={props.getNextPage}>
+                        Next Page
+                    </Button>
+                )
+            }
         </div>
     )
 }

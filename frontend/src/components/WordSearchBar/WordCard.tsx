@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 
 import { Word, Definition } from '../../common/api';
 import Button, { ButtonType } from '../Button';
+import Text, { TextType, TextAlignment } from '../Text';
 
 import {
     UserVocabulary,
@@ -81,11 +82,23 @@ const WordCard = (props: WordCardProps) => {
         )
     }
     return (
-        <div>
-            { props.word.display }
-            ( {props.word.pronunciation} )
-            { action }
-            { definition }
+        <div class="p-6 grid grid-cols-3">
+            <div class="md:col-span-1 col-span-3 flex flex-col">
+                <Text type={TextType.Title}>
+                    { props.word.display }
+                </Text>
+                <Text>
+                    {`(${props.word.pronunciation})`}
+                </Text>
+            </div>
+            <div class="md:col-span-1 col-span-3 flex flex-col">
+                <Text alignment={TextAlignment.Left}>
+                    { definition }
+                </Text>
+            </div>
+            <div class="md:col-span-1 col-span-3">
+                { action }
+            </div>
         </div>
     );
 }

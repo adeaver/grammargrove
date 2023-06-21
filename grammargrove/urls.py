@@ -38,6 +38,5 @@ urlpatterns = [
     path('', index.home, name='home'),
     path('login/', index.login, name='login'),
     path('dashboard/', index.dashboard, name='dashboard'),
-    path('user-vocabulary/', index.user_vocabulary, name='user-vocabulary'),
     path('quiz/', index.quiz, name='quiz'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
