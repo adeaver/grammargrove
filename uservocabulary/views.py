@@ -11,7 +11,7 @@ class UserVocabularyEntryViewSet(viewsets.ModelViewSet):
     pagination_class = UserVocabularyEntryPaginator
 
     def get_queryset(self):
-        return UserVocabularyEntry.objects.filter(user=self.request.user).all()
+        return UserVocabularyEntry.objects.filter(user=self.request.user).order_by("-created_at").all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

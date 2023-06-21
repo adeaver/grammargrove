@@ -30,6 +30,7 @@ const WordCard = (props: WordCardProps) => {
         .filter((d: string) => !!d)
         .join("; ");
 
+    const [ userVocabularyID, setUserVocabularyID ] = useState<string | undefined>(props.userVocabularyID);
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ error, setError ] = useState<Error | null>(null);
 
@@ -38,11 +39,11 @@ const WordCard = (props: WordCardProps) => {
         action = (
             <p>Something went wrong</p>
         );
-    } else if (!!props.userVocabularyID && !!props.handleRemoveUserVocabulary) {
+    } else if (!!userVocabularyID && !!props.handleRemoveUserVocabulary) {
         const handleRemoveFromUserVocabulary = () => {
             setIsLoading(true);
             deleteUserVocabulary(
-                props.userVocabularyID!,
+                userVocabularyID!,
                 () => {
                     setIsLoading(false);
                     props.handleRemoveUserVocabulary!(props.userVocabularyID!)
@@ -58,13 +59,14 @@ const WordCard = (props: WordCardProps) => {
                 Remove from your list
             </Button>
         )
-    } else if (!props.userVocabularyID && props.handleAddUserVocabulary) {
+    } else if (!userVocabularyID && props.handleAddUserVocabulary) {
         const handleAddUserVocabulary = () => {
             setIsLoading(true);
             addUserVocabulary(props.word.id, null,
                 (resp: UserVocabulary) => {
                     setIsLoading(false);
                     props.handleAddUserVocabulary!(resp);
+                    setUserVocabularyID(resp.id);
                 },
                 (err: Error) => {
                     setIsLoading(false);

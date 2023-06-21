@@ -11,7 +11,7 @@ class UserGrammarRuleEntryViewSet(viewsets.ModelViewSet):
     pagination_class = UserGrammarRuleEntryPaginator
 
     def get_queryset(self):
-        return UserGrammarRuleEntry.objects.filter(user=self.request.user).all()
+        return UserGrammarRuleEntry.objects.filter(user=self.request.user).order_by("-created_at").all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
