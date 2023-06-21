@@ -63,6 +63,8 @@ Some special cases to be aware of:
 - [x] Frontend should display accents not as numbers
 - [ ] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender (fast follow)
+- [ ] Word search results should include user vocabulary ID
+- [ ] refresh page on user vocabulary
 
 #### Tech Debt
 - [X] Clean up search endpoint for grammar rules using nested serializers
@@ -86,11 +88,13 @@ Some special cases to be aware of:
 ## Progress 06/18/2023-06/24/2023
 
 #### Next Day
-- [ ] redo dashboard to include both user vocabulary and word search
+- [ ] add style to user grammar rules
+- [ ] add link to quiz page
 - [ ] add "already have an account?" to index page
 
 #### 06/21/2023
 - [X] Style index page
+- [X] Add style to user vocabulary words
 
 #### 06/20/2023
 - [X] Clean up search endpoint for grammar rules using nested serializers
