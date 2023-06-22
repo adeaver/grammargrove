@@ -3,6 +3,7 @@ import { useState } from 'preact/hooks';
 import Input, { InputType } from '../Input';
 import Button from '../Button';
 
+import { PaginatedResponse } from '../../util/gfetch'
 import { Word } from '../../common/api';
 
 import {
@@ -28,10 +29,10 @@ const WordSearchBar = (props: WordSearchBarProps) => {
         setIsLoading(true);
         searchForWord(
             searchQuery, undefined,
-            (resp: Word[]) => {
+            (resp: PaginatedResponse<Word>) => {
                 setIsLoading(false);
                 handleError(null);
-                props.onSuccess(resp);
+                props.onSuccess(resp.results);
             },
             (err: Error) => {
                 setIsLoading(false);

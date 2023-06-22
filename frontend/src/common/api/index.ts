@@ -62,6 +62,7 @@ export type Word = {
     display: string;
     pronunciation: string;
     definitions: Array<Definition>;
+    user_vocabulary_entry: string | null;
 }
 
 export type Definition = {

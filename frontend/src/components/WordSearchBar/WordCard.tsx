@@ -15,7 +15,7 @@ import {
 type WordCardProps = {
     word: Word;
 
-    userVocabularyID?: string;
+    userVocabularyID?: string | null;
     handleAddUserVocabulary?: (userVocabulary: UserVocabulary) => void;
     handleRemoveUserVocabulary?: (userVocabularyID: string) => void;
 }
@@ -31,7 +31,7 @@ const WordCard = (props: WordCardProps) => {
         .filter((d: string) => !!d)
         .join("; ");
 
-    const [ userVocabularyID, setUserVocabularyID ] = useState<string | undefined>(props.userVocabularyID);
+    const [ userVocabularyID, setUserVocabularyID ] = useState<string | undefined | null>(props.userVocabularyID);
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ error, setError ] = useState<Error | null>(null);
 
@@ -47,6 +47,7 @@ const WordCard = (props: WordCardProps) => {
                 userVocabularyID!,
                 () => {
                     setIsLoading(false);
+                    setUserVocabularyID(null);
                     props.handleRemoveUserVocabulary!(props.userVocabularyID!)
                 },
                 (err: Error) => {

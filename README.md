@@ -65,6 +65,7 @@ Some special cases to be aware of:
 - [ ] Infra: frontend doesn't always rerender (fast follow)
 - [ ] Word search results should include user vocabulary ID
 - [ ] refresh page on user vocabulary
+- [ ] If there has been a change to user vocabulary, buttons should change to refresh
 
 #### Tech Debt
 - [X] Clean up search endpoint for grammar rules using nested serializers
@@ -91,6 +92,8 @@ Some special cases to be aware of:
 - [ ] add style to user grammar rules
 - [ ] add link to quiz page
 - [ ] add "already have an account?" to index page
+- [ ] If there has been a change to user vocabulary, buttons should change to refresh
+- [ ] Link to grammar rules
 
 #### 06/21/2023
 - [X] Style index page

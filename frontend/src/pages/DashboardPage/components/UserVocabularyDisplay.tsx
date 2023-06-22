@@ -103,7 +103,8 @@ const WordSearchBody = (props: WordSearchBodyProps) => {
                         key={w.id}
                         word={w}
                         handleAddUserVocabulary={props.handleAddUserVocabulary}
-                        handleRemoveUserVocabulary={props.handleRemoveUserVocabulary} />
+                        handleRemoveUserVocabulary={props.handleRemoveUserVocabulary}
+                        userVocabularyID={w.user_vocabulary_entry} />
                 )
             })
         }

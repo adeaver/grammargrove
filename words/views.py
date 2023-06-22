@@ -1,9 +1,5 @@
-from typing import Any, Dict, List, NamedTuple
-
 from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django.http import HttpRequest, JsonResponse
+from rest_framework.permissions import IsAuthenticated
 
 from grammargrove.pinyin_utils import (
     PinyinSplitter,
@@ -12,24 +8,24 @@ from grammargrove.pinyin_utils import (
     convert_to_numeric_form
 )
 
-from words.models import Word, Definition, LanguageCode
-from words.serializers import WordSerializer
+from .models import Word, LanguageCode
+from .serializers import WordSerializer
+from .pagination import WordPaginator
 
-class WordsViewSet(viewsets.ViewSet):
+class WordsViewSet(viewsets.ModelViewSet):
+    serializer_class = WordSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get']
+    pagination_class = WordPaginator
 
-    @action(detail=False, methods=['post'])
-    def search(self, request: HttpRequest) -> Response:
-        search_query = request.data.get("search_query", "").strip().lower()
-        try:
-            query_language_code = LanguageCode(request.data.get("query_language_code", LanguageCode.SIMPLIFIED_MANDARIN.value))
-        except ValueError:
-            return Response([])
-
-        results: List[Word] = []
+    def get_queryset(self):
+        search_query: str = self.request.query_params.get("search_query", "").strip().lower()
+        query_language_code = LanguageCode(self.request.query_params.get("language_code", LanguageCode.SIMPLIFIED_MANDARIN.value))
         are_all_parts_numeric_form = all([ is_numeric_form(p) for p in search_query.split(" ") ])
         are_all_parts_display_form = all([ is_display_form(p) for p in search_query.split(" ") ])
         if are_all_parts_numeric_form:
-            results = list(Word.objects.filter(language_code=query_language_code, pronunciation=search_query).all())
+            return Word.objects.filter(
+                language_code=query_language_code, pronunciation=search_query)
         elif are_all_parts_display_form:
             split_results = search_query.split(" ")
             if len(split_results) == 1:
@@ -44,8 +40,7 @@ class WordsViewSet(viewsets.ViewSet):
                     ]
             else:
                 split_results = [ " ".join([ convert_to_numeric_form(p) for p in split_results ]) ]
-            results = list(Word.objects.filter(language_code=query_language_code, pronunciation__in=split_results).all())
-        else:
-            results = list(Word.objects.filter(language_code=query_language_code, display=search_query).all())
-        return Response(WordSerializer(results, many=True).data)
-
+            return Word.objects.filter(
+                language_code=query_language_code, pronunciation__in=split_results)
+        return Word.objects.filter(
+            language_code=query_language_code, display=search_query)
