@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 
 import Input, { InputType } from '../Input';
-import Button from '../Button';
+import Button, { ButtonType } from '../Button';
 
 import { PaginatedResponse } from '../../util/gfetch'
 import { Word } from '../../common/api';
@@ -20,19 +20,36 @@ const WordSearchBar = (props: WordSearchBarProps) => {
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ error, setError ] = useState<Error | null>(null);
 
+    const [ pageTurnSearchQuery, setPageTurnSearchQuery ] = useState<string>("");
+
+    const [ nextPage, setNextPage ] = useState<number | null>(null);
+    const [ previousPage, setPreviousPage ] = useState<number | null>(null);
+
+    const getPageFunc = (page: number | null) => {
+        if (page == null) {
+            return null;
+        }
+        return () => {
+            handleSearch(pageTurnSearchQuery, page);
+        }
+    }
+
     const handleError = (err: Error | null) => {
         setError(err);
         !!props.onError && props.onError(err);
     }
 
-    const handleSubmit = () => {
+    const handleSearch = (query: string, page: number | null) => {
         setIsLoading(true);
         searchForWord(
-            searchQuery, undefined,
+            searchQuery, undefined, page,
             (resp: PaginatedResponse<Word>) => {
                 setIsLoading(false);
                 handleError(null);
                 props.onSuccess(resp.results);
+                setNextPage(resp.next);
+                setPreviousPage(resp.previous);
+                setPageTurnSearchQuery(query);
             },
             (err: Error) => {
                 setIsLoading(false);
@@ -40,6 +57,13 @@ const WordSearchBar = (props: WordSearchBarProps) => {
                 handleError(err);
             }
         );
+    }
+
+    const getNextPage = getPageFunc(nextPage);
+    const getPreviousPage = getPageFunc(previousPage);
+
+    const handleSubmit = () => {
+        handleSearch(searchQuery, null);
     }
 
 
@@ -64,6 +88,22 @@ const WordSearchBar = (props: WordSearchBarProps) => {
             <Button onClick={handleSubmit}>
                 Submit
             </Button>
+            <div class="grid grid-cols-2 gap-4">
+            {
+                !!previousPage && (
+                    <Button type={ButtonType.Secondary} onClick={getPreviousPage!}>
+                        Previous Page
+                    </Button>
+                )
+            }
+            {
+                !!nextPage && (
+                    <Button type={ButtonType.Secondary} onClick={getNextPage!}>
+                        Next Page
+                    </Button>
+                )
+            }
+            </div>
         </div>
     );
 }
