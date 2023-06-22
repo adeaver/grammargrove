@@ -90,17 +90,21 @@ const WordSearchBar = (props: WordSearchBarProps) => {
             </Button>
             <div class="grid grid-cols-2 gap-4">
             {
-                !!previousPage && (
+                !!previousPage ? (
                     <Button type={ButtonType.Secondary} onClick={getPreviousPage!}>
                         Previous Page
                     </Button>
+                ) : (
+                    <div />
                 )
             }
             {
-                !!nextPage && (
+                !!nextPage ? (
                     <Button type={ButtonType.Secondary} onClick={getNextPage!}>
                         Next Page
                     </Button>
+                ) : (
+                    <div />
                 )
             }
             </div>

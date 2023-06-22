@@ -40,7 +40,7 @@ def get_queryset_for_query(query_language_code: LanguageCode, search_query: str)
     are_all_parts_display_form = all([ is_display_form(p) for p in search_query.split(" ") ])
     if are_all_parts_numeric_form:
         return Word.objects.filter(
-            language_code=language_code, pronunciation=search_query)
+            language_code=query_language_code, pronunciation=search_query)
     elif are_all_parts_display_form:
         split_results = search_query.split(" ")
         if len(split_results) == 1:
