@@ -1,48 +1,71 @@
+import Text, { TextType } from '../../components/Text';
+
 import {
     GrammarRule,
     GrammarRuleComponent,
     partOfSpeechToDisplay,
 } from '../../common/api';
 
-import Button from '../Button';
+import {
+    UserGrammarRule
+} from '../../common/api/uservocabulary';
+
+// import Button from '../Button';
 
 type GrammarRuleCardProps = {
     grammarRule: GrammarRule;
-    action?: GrammarRuleCardAction;
-    isLoading?: boolean;
-}
+    userGrammarRuleID?: string | null;
 
-export type GrammarRuleCardAction = {
-    text: string;
-    action: (s: GrammarRule) => void;
+    handleRemoveUserGrammarRule?: (id: string) => void;
+    handleAddUserGrammarRule?: (u: UserGrammarRule) => void;
 }
 
 const GrammarRuleCard = (props: GrammarRuleCardProps) => {
     return (
-        <div>
-            <p>{props.grammarRule.title}</p>
-            <p>{props.grammarRule.definition}</p>
+        <div class="w-full grid grid-cols-4">
+            <div class="p-6 col-span-4 md:col-span-2 flex flex-row">
             {
                 props.grammarRule.grammar_rule_components.map((c: GrammarRuleComponent) => {
+                    let body = null;
                     if (!!c.word) {
-                        return (
-                            <p key={c.id}>{c.word.display} ({c.word.pronunciation})</p>
+                        body = (
+                            <div class="flex flex-col">
+                                <Text type={TextType.SectionHeader}>
+                                    {c.word.display}
+                                </Text>
+                                <Text>
+                                    {`(${c.word.pronunciation})`}
+                                </Text>
+                            </div>
                         );
                     } else if (!!c.part_of_speech) {
-                        return (
-                            <p key={c.id}>{partOfSpeechToDisplay(c.part_of_speech)}</p>
+                        body = (
+                            <Text type={TextType.SectionHeader}>
+                                {partOfSpeechToDisplay(c.part_of_speech)}
+                            </Text>
                         )
                     }
-                    return null;
+                    if (!body) {
+                        return null;
+                    }
+                    return (
+                        <div key={c.id} class="flex max-w-md py-4 px-8 bg-white shadow-lg rounded-lg items-center justify-center">
+                            {body}
+                        </div>
+                    );
                 })
             }
-            {
-                !!props.action && (
-                    <Button onClick={() => props.action!.action(props.grammarRule)} isLoading={props.isLoading}>
-                        { props.action!.text }
-                    </Button>
-                )
-            }
+            </div>
+            <div class="flex col-span-4 md:col-span-1 items-center justify-center">
+                <Text>
+                    {props.grammarRule.title}
+                </Text>
+            </div>
+            <div class="flex col-span-4 md:col-span-1 items-center justify-center">
+                <Text>
+                    {props.grammarRule.definition}
+                </Text>
+            </div>
         </div>
     );
 }

@@ -14,12 +14,17 @@ type UserGrammarRulesDisplayProps = {
 
 const UserGrammarRulesDisplay = (props: UserGrammarRulesDisplayProps) => {
     return (
-        <div>
-            <Text
-                type={TextType.Subtitle}
-                alignment={TextAlignment.Left}>
-                Grammar Rules
-            </Text>
+        <div class="p-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <Text
+                        type={TextType.Subtitle}
+                        alignment={TextAlignment.Left}>
+                        Grammar Rules
+                    </Text>
+                </div>
+            </div>
+            <hr class="my-4 border-2 border-slate-600" />
             {
                 props.grammarRules.map((u: UserGrammarRule) => (
                     <GrammarRuleCard key={u.id} grammarRule={u.grammar_rule} />
