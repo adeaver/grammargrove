@@ -99,6 +99,15 @@ const DashboardPage = () => {
         }
     }
 
+    const handleAddUserGrammarRule = (u: UserGrammarRule) => {
+        const toSet = userGrammarRules.filter((g: UserGrammarRule) => g.id !== u.id);
+        toSet.unshift(u);
+        setUserGrammarRules(toSet);
+    }
+    const handleRemoveUserGrammarRule = (uid: string) => {
+        setUserGrammarRules(userGrammarRules.filter((g: UserGrammarRule) => g.id !== uid));
+    }
+
     useEffect(() => {
         getUserVocabularyPage(nextUserVocabularyPage);
         getUserGrammarRulesPage(nextUserGrammarRulesPage);
@@ -122,7 +131,9 @@ const DashboardPage = () => {
             <UserGrammarRuleDisplay
                 grammarRules={userGrammarRules}
                 getNextPage={makeChangeUserGrammarRulesPageFunc(nextUserGrammarRulesPage)}
-                getPreviousPage={makeChangeUserGrammarRulesPageFunc(previousUserGrammarRulesPage)} />
+                getPreviousPage={makeChangeUserGrammarRulesPageFunc(previousUserGrammarRulesPage)}
+                handleAddUserGrammarRule={handleAddUserGrammarRule}
+                handleRemoveUserGrammarRule={handleRemoveUserGrammarRule} />
         </div>
     );
 }

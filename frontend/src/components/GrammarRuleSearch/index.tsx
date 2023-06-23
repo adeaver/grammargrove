@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 
 import Input, { InputType } from '../Input';
-import Button from '../Button';
+import Button, { ButtonType } from '../Button';
 
 import { GrammarRule } from '../../common/api';
 
@@ -15,7 +15,7 @@ type GrammarRuleSearchProps = {
 }
 
 const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
-    const [ searchQuery, setSearchQuery ] = useState<Array<string | null>>([]);
+    const [ searchQuery, setSearchQuery ] = useState<Array<string | null>>([null]);
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ error, setError ] = useState<Error | null>(null);
 
@@ -68,14 +68,12 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
                     <p>There was an error</p>
                 )
             }
-            <Button onClick={handleAddWordToSearchQuery}>
-                <p class="font-body">Add Word</p>
-            </Button>
+            <div class="grid grid-cols-4">
             {
                 searchQuery.map((value: string | null, idx: number) => {
                     const tag = `${Math.floor(Math.random() * 2000) + 1}`;
                     return (
-                        <div>
+                        <div class="p-4 col-span-4 md:col-span-1">
                             <Input
                                 type={InputType.Text}
                                 value={!!value ? value : ""}
@@ -90,9 +88,15 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
                     )
                 })
             }
-            <Button onClick={handleSubmit}>
-                Search
-            </Button>
+            </div>
+            <div class="flex flex-row space-x-4">
+                <Button type={ButtonType.Secondary} onClick={handleAddWordToSearchQuery}>
+                    <p class="font-body">Add Word</p>
+                </Button>
+                <Button onClick={handleSubmit}>
+                    Search
+                </Button>
+            </div>
         </div>
     );
 }

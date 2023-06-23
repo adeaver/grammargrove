@@ -1,18 +1,31 @@
-import Text, { TextType, TextAlignment } from '../../../components/Text';
+import { useState } from 'preact/hooks';
+
+import Text, { TextType, TextAlignment, TextFunction } from '../../../components/Text';
+import GrammarRuleSearch from '../../../components/GrammarRuleSearch';
 import GrammarRuleCard from '../../../components/GrammarRuleSearch/GrammarRuleCard';
 
 import {
-    UserGrammarRule
+    GrammarRule,
+} from '../../../common/api';
+
+import {
+    UserGrammarRule,
 } from '../../../common/api/uservocabulary';
 
 type UserGrammarRulesDisplayProps = {
     grammarRules: UserGrammarRule[];
+
+    handleAddUserGrammarRule: (u: UserGrammarRule) => void;
+    handleRemoveUserGrammarRule: (uid: string) => void;
 
     getNextPage?: () => void;
     getPreviousPage?: () => void;
 }
 
 const UserGrammarRulesDisplay = (props: UserGrammarRulesDisplayProps) => {
+    const [ searchResults, setSearchResults ] = useState<GrammarRule[]>([]);
+    const [ searchResultError, setSearchResultError ] = useState<Error | null>(null);
+
     return (
         <div class="p-6">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -27,7 +40,47 @@ const UserGrammarRulesDisplay = (props: UserGrammarRulesDisplayProps) => {
             <hr class="my-4 border-2 border-slate-600" />
             {
                 props.grammarRules.map((u: UserGrammarRule) => (
-                    <GrammarRuleCard key={u.id} grammarRule={u.grammar_rule} />
+                    <GrammarRuleCard
+                        key={u.id}
+                        grammarRule={u.grammar_rule}
+                        userGrammarRuleID={u.id}
+                        handleAddUserGrammarRule={props.handleAddUserGrammarRule}
+                        handleRemoveUserGrammarRule={props.handleRemoveUserGrammarRule} />
+                ))
+            }
+            <Text alignment={TextAlignment.Left} type={TextType.SectionHeader}>
+                Search for a new rule
+            </Text>
+            <GrammarRuleSearch
+                onSuccess={setSearchResults}
+                onError={setSearchResultError} />
+            <GrammarRuleSearchBody
+                searchResults={searchResults}
+                searchResultError={searchResultError} />
+        </div>
+    )
+}
+
+type GrammarRuleSearchBodyProps = {
+    searchResults: GrammarRule[];
+    searchResultError: Error | null;
+}
+
+const GrammarRuleSearchBody = (props: GrammarRuleSearchBodyProps) => {
+    if (!!props.searchResultError) {
+        return (
+            <Text function={TextFunction.Warning}>
+                Something went wrong.
+            </Text>
+        );
+    }
+    return (
+        <div>
+            {
+                props.searchResults.map((g: GrammarRule) => (
+                    <GrammarRuleCard
+                        key={g.id}
+                        grammarRule={g} />
                 ))
             }
         </div>

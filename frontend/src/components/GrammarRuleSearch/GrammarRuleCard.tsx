@@ -1,4 +1,7 @@
-import Text, { TextType } from '../../components/Text';
+import { useState } from 'preact/hooks';
+
+import Text, { TextType, TextFunction } from '../../components/Text';
+import Button, { ButtonType } from '../../components/Button';
 
 import {
     GrammarRule,
@@ -7,10 +10,11 @@ import {
 } from '../../common/api';
 
 import {
-    UserGrammarRule
-} from '../../common/api/uservocabulary';
+    UserGrammarRule,
 
-// import Button from '../Button';
+    addUserGrammarRule,
+    deleteUserGrammarRule,
+} from '../../common/api/uservocabulary';
 
 type GrammarRuleCardProps = {
     grammarRule: GrammarRule;
@@ -21,6 +25,66 @@ type GrammarRuleCardProps = {
 }
 
 const GrammarRuleCard = (props: GrammarRuleCardProps) => {
+    const [ userGrammarRuleID, setUserGrammarRuleID ] = useState<string | null | undefined>(props.userGrammarRuleID);
+    const [ isLoading, setIsLoading ] = useState<boolean>(false);
+    const [ error, setError ] = useState<Error | null>(null);
+
+    let action;
+    if (!!error) {
+        action = (
+            <Text function={TextFunction.Warning}>
+                Something went wrong. Try again later.
+            </Text>
+        )
+    } else if (!userGrammarRuleID && !!props.handleAddUserGrammarRule) {
+        const handleAddUserGrammarRule = () => {
+            setIsLoading(true);
+            addUserGrammarRule(
+                props.grammarRule.id, null,
+                (resp: UserGrammarRule) => {
+                    setIsLoading(false);
+                    setUserGrammarRuleID(resp.id);
+                    props.handleAddUserGrammarRule!(resp);
+                },
+                (err: Error) => {
+                    setIsLoading(false);
+                    setError(err);
+                }
+            );
+        }
+        action = (
+            <Button
+                type={ButtonType.Confirmation}
+                onClick={handleAddUserGrammarRule}
+                isLoading={isLoading}>
+                Add to your list
+            </Button>
+        )
+    } else if (userGrammarRuleID && !!props.handleRemoveUserGrammarRule) {
+        const handleRemoveUserGrammarRule = () => {
+            setIsLoading(true);
+            deleteUserGrammarRule(userGrammarRuleID,
+                () => {
+                    setIsLoading(false);
+                    props.handleRemoveUserGrammarRule!(userGrammarRuleID);
+                    setUserGrammarRuleID(null);
+                },
+                (err: Error) => {
+                    setIsLoading(false);
+                    setError(err);
+                }
+            );
+        }
+        action = (
+            <Button
+                type={ButtonType.Warning}
+                onClick={handleRemoveUserGrammarRule}
+                isLoading={isLoading}>
+                Remove from your list
+            </Button>
+        )
+    }
+
     return (
         <div class="w-full grid grid-cols-4">
             <div class="p-6 col-span-4 md:col-span-2 flex flex-row">
@@ -49,22 +113,23 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
                         return null;
                     }
                     return (
-                        <div key={c.id} class="flex max-w-md py-4 px-8 bg-white shadow-lg rounded-lg items-center justify-center">
+                        <div key={c.id} class="flex mx-2 py-4 px-8 bg-white shadow-lg rounded-lg items-center justify-center">
                             {body}
                         </div>
                     );
                 })
             }
             </div>
-            <div class="flex col-span-4 md:col-span-1 items-center justify-center">
+            <div class="flex flex-col col-span-4 md:col-span-1 items-center justify-center">
                 <Text>
                     {props.grammarRule.title}
                 </Text>
-            </div>
-            <div class="flex col-span-4 md:col-span-1 items-center justify-center">
-                <Text>
+                <Text type={TextType.FinePrint}>
                     {props.grammarRule.definition}
                 </Text>
+            </div>
+            <div class="flex col-span-4 md:col-span-1 items-center justify-center">
+                { action }
             </div>
         </div>
     );
