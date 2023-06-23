@@ -89,13 +89,13 @@ Some special cases to be aware of:
 ## Progress 06/18/2023-06/24/2023
 
 #### Next Day
-- [ ] Add pagination button to user grammar rules display view
-- [ ] Add pagination buttons to grammar rules search result view
-- [ ] Add/Remove buttons to user grammar rules
 - [ ] add link to quiz page
 
 #### 06/23/2023
 - [X] add style to user grammar rules
+- [X] Add/Remove buttons to user grammar rules
+- [ ] Add pagination button to user grammar rules display view
+- [ ] Add pagination buttons to grammar rules search result view
 
 #### 06/22/2023
 - [X] Add pagination to word search

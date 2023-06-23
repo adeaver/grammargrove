@@ -79,6 +79,7 @@ export type GrammarRule = {
     definition: string;
     grammar_rule_components: Array<GrammarRuleComponent>;
     language_code: string;
+    user_grammar_rule_entry: string | null;
 }
 
 export type GrammarRuleComponent = {

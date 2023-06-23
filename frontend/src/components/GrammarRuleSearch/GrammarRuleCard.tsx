@@ -18,8 +18,8 @@ import {
 
 type GrammarRuleCardProps = {
     grammarRule: GrammarRule;
-    userGrammarRuleID?: string | null;
 
+    userGrammarRuleID?: string | null;
     handleRemoveUserGrammarRule?: (id: string) => void;
     handleAddUserGrammarRule?: (u: UserGrammarRule) => void;
 }
@@ -36,7 +36,7 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
                 Something went wrong. Try again later.
             </Text>
         )
-    } else if (!userGrammarRuleID && !!props.handleAddUserGrammarRule) {
+    } else if (userGrammarRuleID == null && !!props.handleAddUserGrammarRule) {
         const handleAddUserGrammarRule = () => {
             setIsLoading(true);
             addUserGrammarRule(
@@ -60,7 +60,7 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
                 Add to your list
             </Button>
         )
-    } else if (userGrammarRuleID && !!props.handleRemoveUserGrammarRule) {
+    } else if (!!userGrammarRuleID && !!props.handleRemoveUserGrammarRule) {
         const handleRemoveUserGrammarRule = () => {
             setIsLoading(true);
             deleteUserGrammarRule(userGrammarRuleID,

@@ -56,7 +56,10 @@ const UserGrammarRulesDisplay = (props: UserGrammarRulesDisplayProps) => {
                 onError={setSearchResultError} />
             <GrammarRuleSearchBody
                 searchResults={searchResults}
-                searchResultError={searchResultError} />
+                searchResultError={searchResultError}
+                handleAddUserGrammarRule={props.handleAddUserGrammarRule}
+                handleRemoveUserGrammarRule={props.handleRemoveUserGrammarRule} />
+
         </div>
     )
 }
@@ -64,6 +67,8 @@ const UserGrammarRulesDisplay = (props: UserGrammarRulesDisplayProps) => {
 type GrammarRuleSearchBodyProps = {
     searchResults: GrammarRule[];
     searchResultError: Error | null;
+    handleRemoveUserGrammarRule?: (id: string) => void;
+    handleAddUserGrammarRule?: (u: UserGrammarRule) => void;
 }
 
 const GrammarRuleSearchBody = (props: GrammarRuleSearchBodyProps) => {
@@ -80,7 +85,11 @@ const GrammarRuleSearchBody = (props: GrammarRuleSearchBodyProps) => {
                 props.searchResults.map((g: GrammarRule) => (
                     <GrammarRuleCard
                         key={g.id}
-                        grammarRule={g} />
+                        grammarRule={g}
+                        userGrammarRuleID={g.user_grammar_rule_entry}
+                        handleAddUserGrammarRule={props.handleAddUserGrammarRule}
+                        handleRemoveUserGrammarRule={props.handleRemoveUserGrammarRule} />
+
                 ))
             }
         </div>

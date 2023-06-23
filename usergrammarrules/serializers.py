@@ -14,3 +14,4 @@ class UserGrammarRuleEntrySerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response["grammar_rule"] = GrammarRuleSerializer(instance.grammar_rule).data
         return response
+
