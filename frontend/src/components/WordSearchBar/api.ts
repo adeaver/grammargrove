@@ -14,10 +14,11 @@ export function searchForWord(
     onSuccess: (resp: PaginatedResponse<Word>) => void,
     onError: (err: Error) => void
 ) {
-    const languageCodeQuery = !!queryLanguageCode ? `&language_code=${queryLanguageCode}` : ""
-    const pageNumberQuery = pageNumber != null ? `&page=${pageNumber}` : ""
+    const encodedQuery = encodeURIComponent(query)
+    const languageCodeQuery = !!queryLanguageCode ? `&language_code=${encodeURIComponent(queryLanguageCode)}` : ""
+    const pageNumberQuery = pageNumber != null ? `&page=${encodeURIComponent(pageNumber)}` : ""
     makeGetRequest<PaginatedResponse<Word>>(
-        `/api/words/v1/?search_query=${query}${languageCodeQuery}${pageNumberQuery}&format=json`,
+        `/api/words/v1/?search_query=${encodedQuery}${languageCodeQuery}${pageNumberQuery}&format=json`,
         onSuccess,
         onError
     );

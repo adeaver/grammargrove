@@ -95,6 +95,9 @@ Some special cases to be aware of:
 - [ ] If there has been a change to user vocabulary, buttons should change to refresh
 - [ ] Link to grammar rules
 
+#### 06/23/2023
+- [X] add style to user grammar rules
+
 #### 06/22/2023
 - [X] Add pagination to word search
 
