@@ -63,9 +63,9 @@ Some special cases to be aware of:
 - [x] Frontend should display accents not as numbers
 - [ ] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender (fast follow)
-- [ ] Word search results should include user vocabulary ID
-- [ ] refresh page on user vocabulary
-- [ ] If there has been a change to user vocabulary, buttons should change to refresh
+- [X] Word search results should include user vocabulary ID
+- [ ] If there has been a change to user vocabulary or user grammar rules, buttons should change to refresh
+- [ ] Searching two numeric forms without a space in between does not yield results (i.e. zheng4zai4 vs zheng4 zai4)
 
 #### Tech Debt
 - [X] Clean up search endpoint for grammar rules using nested serializers
@@ -89,17 +89,17 @@ Some special cases to be aware of:
 ## Progress 06/18/2023-06/24/2023
 
 #### Next Day
-- [ ] add style to user grammar rules
+- [ ] Add pagination button to user grammar rules display view
+- [ ] Add pagination buttons to grammar rules search result view
+- [ ] Add/Remove buttons to user grammar rules
 - [ ] add link to quiz page
-- [ ] add "already have an account?" to index page
-- [ ] If there has been a change to user vocabulary, buttons should change to refresh
-- [ ] Link to grammar rules
 
 #### 06/23/2023
 - [X] add style to user grammar rules
 
 #### 06/22/2023
 - [X] Add pagination to word search
+- [X] Word search results should include user vocabulary ID
 
 #### 06/21/2023
 - [X] Style index page

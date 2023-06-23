@@ -3,6 +3,7 @@ from typing import Set, Optional
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from .pagination import GrammarRulePaginator
 from .models import GrammarRule, GrammarRuleComponent, PartOfSpeech
 from .serializers import GrammarRuleSerializer
 
@@ -11,6 +12,9 @@ from words.utils import get_queryset_for_query
 
 class GrammarRuleViewSet(viewsets.ModelViewSet):
     serializer_class = GrammarRuleSerializer
+    ipermission_classes = [IsAuthenticated]
+    http_method_names = ['get']
+    pagination_class = GrammarRulePaginator
 
     def get_queryset(self):
         parts_of_speech_by_name = { p.name.lower(): p for p in PartOfSpeech }
@@ -34,4 +38,4 @@ class GrammarRuleViewSet(viewsets.ModelViewSet):
                 valid_component_ids = valid_component_ids.union(component_ids)
         return GrammarRule.objects.filter(
             id__in=GrammarRuleComponent.objects.filter(id__in=valid_component_ids).values_list("grammar_rule", flat=True)
-        )
+        ).order_by("id")

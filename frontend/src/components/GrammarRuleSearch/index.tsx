@@ -1,5 +1,7 @@
 import { useState } from 'preact/hooks';
 
+import { PaginatedResponse } from '../../util/gfetch';
+
 import Input, { InputType } from '../Input';
 import Button, { ButtonType } from '../Button';
 
@@ -45,10 +47,10 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
         setIsLoading(true);
         searchForGrammarRule(
             searchQuery.filter((value: string | null) => !!value) as string[],
-            (resp: GrammarRule[]) => {
+            (resp: PaginatedResponse<GrammarRule>) => {
                 setIsLoading(false);
                 setError(null);
-                props.onSuccess(resp);
+                props.onSuccess(resp.results);
             },
             (err: Error) => {
                 setIsLoading(false);

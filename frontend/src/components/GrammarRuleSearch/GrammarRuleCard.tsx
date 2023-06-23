@@ -87,7 +87,7 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
 
     return (
         <div class="w-full grid grid-cols-4">
-            <div class="p-6 col-span-4 md:col-span-2 flex flex-row">
+            <div class="p-6 col-span-4 md:col-span-2 flex md:flex-row flex-col">
             {
                 props.grammarRule.grammar_rule_components.map((c: GrammarRuleComponent) => {
                     let body = null;
@@ -113,7 +113,7 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
                         return null;
                     }
                     return (
-                        <div key={c.id} class="flex mx-2 py-4 px-8 bg-white shadow-lg rounded-lg items-center justify-center">
+                        <div key={c.id} class="flex m-2 py-4 px-8 bg-white shadow-lg rounded-lg items-center justify-center">
                             {body}
                         </div>
                     );
