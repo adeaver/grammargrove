@@ -44,11 +44,13 @@ Some special cases to be aware of:
 #### Support
 - [X] style index page
 - [ ] add "already have an account?" to index page
-- [ ] redo dashboard to include both user vocabulary and word search
+- [X] redo dashboard to include both user vocabulary and word search
 - [ ] style quiz page
 - [ ] restyle "How it works" section with styled components from quiz and dashboard pages
 - [ ] management command to apply hsk labels to grammar rules and words
 - [ ] populate grammarrules.csv
+- [ ] Add pagination button to user grammar rules display view
+- [ ] Add pagination buttons to grammar rules search result view
 
 #### Allow users to add words to their list
 - [X] Page to display vocabulary and search within vocabulary
@@ -89,13 +91,12 @@ Some special cases to be aware of:
 ## Progress 06/18/2023-06/24/2023
 
 #### Next Day
-- [ ] add link to quiz page
+- [ ] style quiz page
 
 #### 06/23/2023
 - [X] add style to user grammar rules
 - [X] Add/Remove buttons to user grammar rules
-- [ ] Add pagination button to user grammar rules display view
-- [ ] Add pagination buttons to grammar rules search result view
+- [X] add link to quiz page
 
 #### 06/22/2023
 - [X] Add pagination to word search

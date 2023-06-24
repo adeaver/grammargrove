@@ -3,8 +3,13 @@ import { useEffect, useState } from 'preact/hooks';
 import {
     PaginatedResponse
 } from '../../util/gfetch';
+import {
+    setLocation
+} from '../../util/window';
 
 import Header from '../../components/Header';
+import Button from '../../components/Button';
+import Text from '../../components/Text';
 
 import {
     UserVocabulary,
@@ -113,6 +118,10 @@ const DashboardPage = () => {
         getUserGrammarRulesPage(nextUserGrammarRulesPage);
     }, []);
 
+    const navigateToQuizPage = () => {
+        setLocation("/quiz/")
+    }
+
     if (isLoadingUserGrammarRules) {
         return <p>Loading...</p>
     } else if (!!userVocabularyError || !!userGrammarRulesError) {
@@ -121,6 +130,16 @@ const DashboardPage = () => {
     return (
         <div>
             <Header />
+            <div class="w-full flex items-center justify-center">
+                <div class="max-w-lg flex flex-col space-y-4">
+                    <Text>
+                        Ready for a quiz?
+                    </Text>
+                    <Button onClick={navigateToQuizPage}>
+                        Quiz me!
+                    </Button>
+                </div>
+            </div>
             <UserVocabularyDisplay
                 isLoading={isLoadingUserVocabulary}
                 vocabulary={userVocabulary}
