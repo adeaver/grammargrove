@@ -26,9 +26,9 @@ class QuizQuestion(models.Model):
     user_vocabulary_entry = models.ForeignKey(UserVocabularyEntry, on_delete=models.CASCADE, null=True)
     user_grammar_rule_entry = models.ForeignKey(UserGrammarRuleEntry, on_delete=models.CASCADE, null=True)
     question_type = models.IntegerField(choices=QuestionType.choices(), null=False)
-    number_of_times_displayed = models.IntegerField(null=False, default=1)
+    number_of_times_displayed = models.IntegerField(null=False, default=0)
     number_of_times_answered_correctly = models.IntegerField(null=False, default=0)
-    last_displayed_at = models.DateTimeField(null=False, default=timezone.now)
+    last_displayed_at = models.DateTimeField(null=True)
     last_answered_correctly_at = models.DateTimeField(null=True)
 
     class Meta:
