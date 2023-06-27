@@ -1,6 +1,7 @@
 import {
     makeGetRequest,
     makePostRequest,
+    PaginatedResponse
 } from '../../util/gfetch';
 
 export enum QuestionType {
@@ -10,21 +11,25 @@ export enum QuestionType {
 }
 
 export type Question = {
-    question_id: string;
-    display: string;
+    id: string;
     question_type: QuestionType;
-    answer_spaces: number | null;
-    vocabulary_entry_id: string | null;
-    grammar_rule_entry_id: string | null;
-    example_id: string | null;
+    user_vocabulary_entry: string | null;
+    user_grammar_rule_entry: string | null;
+    display: Array<Display>;
+    example_id?: string | null;
+}
+
+export type Display = {
+    display: string;
+    input_length: number;
 }
 
 export function getNextQuestion(
-    onSuccess: (resp: Question) => void,
+    onSuccess: (resp: PaginatedResponse<Question>) => void,
     onError: (err: Error) => void
 ) {
-    makeGetRequest<Question>(
-        "/api/quiz/v1/next?format=json",
+    makeGetRequest<PaginatedResponse<Question>>(
+        "/api/quiz/v1/?format=json",
         onSuccess,
         onError,
     )
