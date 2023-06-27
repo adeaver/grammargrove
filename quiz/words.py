@@ -1,33 +1,46 @@
 from typing import Optional
-import logging
 import datetime
 
 from django.db.models import QuerySet
 
-from random import randrange, choices
-
 from django.db.models import Count
 from django.utils import timezone
-from django.http import HttpRequest
 
 from users.models import User
 
-from .models import QuizQuestion, QuestionType, get_word_from_question
+from .models import QuizQuestion, QuestionType
 from uservocabulary.models import UserVocabularyEntry
 
 def get_queryset_from_user_vocabulary(user: User) -> Optional[QuerySet]:
     _ensure_all_possible_quiz_records(user)
     unasked_questions = QuizQuestion.objects.filter(
-        user=user, number_of_times_displayed=0
-    )
+        user=user,
+        user_vocabulary_entry__isnull=False,
+        number_of_times_displayed=0
+    ).order_by("?")
     if unasked_questions:
         return unasked_questions
-    for number_of_days_since_asked in [ 30, 7, 1 ]:
-        bounding_time = timezone.now() - datetime.timedelta(
-            days=number_of_days_since_asked
+    for (
+        days_since_asked_lower_bound,
+        days_since_asked_upper_bound
+    ) in [
+        (1, 3),
+        (3, 5),
+        (20, 30),
+        (10, 20),
+        (5, 10),
+    ]:
+        upper_bound = timezone.now() - datetime.timedelta(
+            days=days_since_asked_lower_bound
+        )
+        lower_bound = timezone.now() - datetime.timedelta(
+            days=days_since_asked_upper_bound
         )
         questions = QuizQuestion.objects.filter(
-            user=user, last_displayed_at__lt=bounding_time, user_vocabulary_entry__isnull=False).order_by("?")
+            user=user,
+            last_displayed_at__lt=upper_bound,
+            last_displayed_at__gt=lower_bound,
+            user_vocabulary_entry__isnull=False).order_by("?")
         if questions:
             return questions
     return QuizQuestion.objects.filter(
@@ -58,12 +71,12 @@ def _ensure_all_possible_quiz_records(user: User) -> None:
             .exclude(dcount=len(QuestionType.choices()))
     )
     if questions_by_type:
-        for potential_question in questions_by_type:
-            user_vocabulary_entry_id = potential_question["user_vocabulary_entry"]
+        user_vocabulary_entries = UserVocabularyEntry.objects.filter(id__in=[q["user_vocabulary_entry"] for q in questions_by_type])
+        for entry in user_vocabulary_entries:
             questions_for_word = set(
                 list(
                     QuizQuestion.objects.filter(
-                        user=user, user_vocabulary_entry=user_vocabulary_entry_id).values_list("question_type", flat=True)
+                        user=user, user_vocabulary_entry=entry).values_list("question_type", flat=True)
                 )
             )
             for k, v in QuestionType.choices():
