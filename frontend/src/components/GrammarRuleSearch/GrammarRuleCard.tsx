@@ -2,13 +2,13 @@ import { useState } from 'preact/hooks';
 
 import Text, { TextType, TextFunction } from '../../components/Text';
 import Button, { ButtonType } from '../../components/Button';
+import Card from '../../components/Card';
 
 import {
     GrammarRule,
     GrammarRuleComponent,
     partOfSpeechToDisplay,
 } from '../../common/api';
-
 import {
     UserGrammarRule,
 
@@ -113,9 +113,9 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
                         return null;
                     }
                     return (
-                        <div key={c.id} class="flex m-2 py-4 px-8 bg-white shadow-lg rounded-lg items-center justify-center">
+                        <Card key={c.id}>
                             {body}
-                        </div>
+                        </Card>
                     );
                 })
             }
