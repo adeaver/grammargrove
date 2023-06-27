@@ -2,7 +2,12 @@ from typing import Optional
 
 from rest_framework import serializers
 
-from .models import GrammarRule, GrammarRuleComponent
+from .models import (
+    GrammarRule,
+    GrammarRuleComponent,
+    GrammarRuleExample,
+    GrammarRuleExampleComponent
+)
 
 from words.serializers import WordSerializer
 from usergrammarrules.models import UserGrammarRuleEntry
@@ -38,4 +43,23 @@ class GrammarRuleSerializer(serializers.ModelSerializer):
                 if entries:
                     user_grammar_rule_entry = entries[0].id
         response["user_grammar_rule_entry"] = user_grammar_rule_entry
+        return response
+
+class GrammarRuleExampleComponentSerializer(serializers.ModelSerializer):
+    word = WordSerializer(read_only=True)
+
+    class Meta:
+        model = GrammarRuleExampleComponent
+        fields = '__all__'
+
+class GrammarRuleExampleSerializer(serializers.ModelSerializer):
+    grammar_rule_example_components = GrammarRuleExampleComponentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = GrammarRuleExample
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response["grammar_rule_example_components"] = sorted(response["grammar_rule_example_components"], key=lambda x: x["example_index"])
         return response
