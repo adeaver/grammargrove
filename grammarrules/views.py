@@ -12,7 +12,7 @@ from words.utils import get_queryset_for_query
 
 class GrammarRuleViewSet(viewsets.ModelViewSet):
     serializer_class = GrammarRuleSerializer
-    ipermission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     http_method_names = ['get']
     pagination_class = GrammarRulePaginator
 
