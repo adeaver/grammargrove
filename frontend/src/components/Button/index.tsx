@@ -47,7 +47,7 @@ const Button = (props: ButtonProps) => {
     }
     return (
         <button
-            className={`w-full border ${colors} rounded-md px-4 py-2 m-2 transition duration-500 ease select-none focus:outline-none focus:shadow-outline font-body`}
+            className={`w-full border ${colors} rounded-md px-4 py-2 transition duration-500 ease select-none focus:outline-none focus:shadow-outline font-body`}
             onClick={props.onClick}
             disabled={props.isDisabled || props.isLoading}>
             { props.children }
