@@ -37,18 +37,18 @@ export function getNextQuestion(
 
 export type CheckAnswerRequest = {
     question_id: string;
-    answer: string;
+    answer: Array<string>;
     example_id: string | null;
 }
 
 export type CheckAnswerResponse = {
-    correct: boolean;
-    correct_answer: string | null;
+    is_correct: boolean;
+    correct_answer: Array<string>;
 }
 
 export function checkAnswer(
     question_id: string,
-    answer: string,
+    answer: Array<string>,
     example_id: string | null,
     onSuccess: (resp: CheckAnswerResponse) => void,
     onError: (err: Error) => void,

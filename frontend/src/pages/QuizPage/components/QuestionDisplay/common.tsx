@@ -1,3 +1,5 @@
+import { useState } from 'preact/hooks';
+
 import Text, { TextType } from '../../../../components/Text';
 import Card from '../../../../components/Card';
 
@@ -12,9 +14,17 @@ import {
 type QuestionDisplayProps = {
     title: string;
     question: Question;
+
+    handleSubmitAnswer: (answer: string[], example_id: string | null | undefined) => void;
 }
 
 export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
+    const [ hanzi, setHanzi ] = useState<string>("");
+
+    const handleSubmitAnswer = () => {
+        props.handleSubmitAnswer([hanzi], props.question.example_id);
+    }
+
     return (
         <div class="p-12 w-full flex flex-col justify-center items-center space-y-2">
             <Text>
@@ -26,11 +36,11 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
             <div class="max-w-xl flex flex-col space-y-2">
                 <Input
                     type={InputType.Text}
-                    value=""
-                    onChange={(v: string) => console.log(v) }
+                    value={hanzi}
+                    onChange={setHanzi}
                     placeholder="Translation"
                     name="answer" />
-                <Button onClick={() => {}}>
+                <Button onClick={handleSubmitAnswer}>
                     Submit
                 </Button>
             </div>
@@ -40,6 +50,12 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
 
 
 export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
+    const [ definition, setDefinition ] = useState<string>("");
+
+    const handleSubmitAnswer = () => {
+        props.handleSubmitAnswer([definition], props.question.example_id);
+    }
+
     return (
         <div class="p-12 w-full flex flex-col justify-center items-center space-y-2">
             <Text>
@@ -59,11 +75,11 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
             <div class="max-w-xl flex flex-col space-y-2">
                 <Input
                     type={InputType.Text}
-                    value=""
-                    onChange={(v: string) => console.log(v) }
+                    value={definition}
+                    onChange={setDefinition}
                     placeholder="Translation"
                     name="answer" />
-                <Button onClick={() => {}}>
+                <Button onClick={handleSubmitAnswer}>
                     Submit
                 </Button>
             </div>
@@ -72,6 +88,25 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
 }
 
 export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
+    const [ accents, setAccents ] = useState<string[][]>(
+        props.question.display.map((d: Display) => Array(d.input_length).fill(""))
+    );
+
+    const handleUpdateAccent = (idx: number, subIdx: number, value: string) => {
+        setAccents(
+            accents.map((currValue: string[], currIdx: number) => {
+                if (currIdx === idx) {
+                    currValue[subIdx] = value
+                }
+                return currValue;
+            })
+        )
+    }
+
+    const handleSubmitAnswer = () => {
+        props.handleSubmitAnswer(accents.flat(), props.question.example_id);
+    }
+
     return (
         <div class="p-12 w-full flex flex-col justify-center items-center space-y-2">
             <Text>
@@ -90,8 +125,8 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
                                 Array(d.input_length).fill(0).map((_, inputIdx: number) => (
                                     <Input
                                         type={InputType.Number}
-                                        value=""
-                                        onChange={(v: string) => console.log(v) }
+                                        value={accents[idx][inputIdx]}
+                                        onChange={(v: string) => handleUpdateAccent(idx, inputIdx, v)}
                                         key={`answer-${inputIdx}-${idx}`}
                                         name={`answer-${inputIdx}-${idx}`} />
                                 ))
@@ -103,7 +138,7 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
             }
             </div>
             <div class="max-w-xl flex flex-col space-y-2">
-                <Button onClick={() => {}}>
+                <Button onClick={handleSubmitAnswer}>
                     Submit
                 </Button>
             </div>
