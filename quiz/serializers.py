@@ -100,3 +100,18 @@ def _convert_user_grammar_rule_to_display(user_grammar_rule: UserGrammarRuleEntr
         ], example.id
     else:
         raise ValueError(f"Unrecognized question type {question_type}")
+
+
+class CheckRequestSerializer(serializers.Serializer):
+    quiz_question_id = serializers.UUIDField()
+    example_id = serializers.UUIDField(allow_null=True)
+    answer = serializers.ListField(child=serializers.CharField())
+
+
+class CheckResponse(NamedTuple):
+    is_correct: bool
+    correct_answer: List[str]
+
+class CheckResponseSerializer(serializers.Serializer):
+    is_correct = serializers.BooleanField()
+    correct_answer = serializers.ListField(child=serializers.CharField())
