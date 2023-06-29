@@ -36,7 +36,7 @@ export function getNextQuestion(
 }
 
 export type CheckAnswerRequest = {
-    question_id: string;
+    quiz_question_id: string;
     answer: Array<string>;
     example_id: string | null;
 }
@@ -56,7 +56,7 @@ export function checkAnswer(
     makePostRequest<CheckAnswerRequest, CheckAnswerResponse>(
         "/api/quiz/v1/check/?format=json",
         {
-            question_id: question_id,
+            quiz_question_id: question_id,
             answer: answer,
             example_id: example_id,
         },

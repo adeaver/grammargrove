@@ -5,7 +5,9 @@ import LoadingIcon from '../../../../components/LoadingIcon';
 
 import {
     Question,
-    // checkAnswer,
+
+    checkAnswer,
+    CheckAnswerResponse
 } from '../../api';
 
 import GrammarRuleQuestionDisplay from './GrammarRuleQuestionDisplay';
@@ -20,7 +22,15 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
 
     const handleSubmitAnswer = (answer: string[], example_id: string | null | undefined) => {
         setIsLoading(true);
-        console.log(answer, example_id);
+        checkAnswer(
+            props.question.id, answer, example_id ? example_id : null,
+            (resp: CheckAnswerResponse) => {
+                console.log(resp);
+            },
+            (err: Error) => {
+                console.log(err);
+            }
+        );
     }
 
     if (isLoading) {

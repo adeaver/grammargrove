@@ -40,20 +40,21 @@ class QuizViewSet(viewsets.ModelViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
-        questions = QuizQuestion.objects.filter(user=request.user, id=serializer.quiz_question_id)
+        req = serializer.data
+        questions = QuizQuestion.objects.filter(user=request.user, id=req["quiz_question_id"])
         if not questions:
             return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
         question = questions[0]
         if question.user_vocabulary_entry:
-            resp = check_vocabulary_word(question.question_type, question.user_vocabulary_entry, serializer.answer)
+            resp = check_vocabulary_word(question.question_type, question.user_vocabulary_entry.id, req["answer"])
             resp_serializer = CheckResponseSerializer(resp)
             return Response(resp_serializer.data)
         elif question.user_grammar_rule_entry:
-            if not serializer.example_id:
+            if not req.get("example_id"):
                 return Response(serializer.errors,
                     status=status.HTTP_400_BAD_REQUEST)
-            resp = check_grammar_rule(question.question_type, serializer.example_id, serializer.answer)
+            resp = check_grammar_rule(question.question_type, req["example_id"], req["answer"])
             resp_serializer = CheckResponseSerializer(resp)
             return Response(resp_serializer.data)
         else:

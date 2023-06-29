@@ -1,5 +1,7 @@
 from typing import List
 
+from grammargrove.pinyin_utils import get_tone_number_from_display_form
+
 from grammarrules.models import GrammarRuleExample
 from grammarrules.serializers import GrammarRuleExampleSerializer
 
@@ -31,11 +33,11 @@ def check_grammar_rule(
         for c in example["grammar_rule_example_components"]:
             pronunciation = c["word"]["pronunciation"].split(" ")
             correct_answer += [
-                p[-1] for p in pronunciation
+                get_tone_number_from_display_form(p) for p in pronunciation
             ]
     elif question_type == QuestionType.DefinitionsFromHanzi:
         correct_answer = [
-            example["english_definition"].lower()
+            example["english_definition"].lower().strip()
         ]
     else:
         raise ValueError(f"Unrecognized question type {question_type}")
@@ -64,13 +66,15 @@ def check_vocabulary_word(
         ]
         is_correct = correct_answer == answer
     elif question_type == QuestionType.DefinitionsFromHanzi:
-        correct_answer = [
-            d.lower().strip() for d in entry["word"]["definitions"] if len(d.strip())
-        ]
+        for d in entry["word"]["definitions"]:
+            flattened_definition = d["definition"].lower().strip()
+            if not flattened_definition:
+                continue
+            correct_answer += [ d.strip() for d in flattened_definition.split(";") ]
         is_correct = answer[0].lower().strip() in correct_answer
     elif question_type == QuestionType.AccentsFromHanzi:
         correct_answer = [
-            p[-1] for p in entry["word"]["pronunciation"].split(" ")
+            get_tone_number_from_display_form(p) for p in entry["word"]["pronunciation"].split(" ")
         ]
         is_correct = answer == correct_answer
     else:
