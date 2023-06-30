@@ -1,5 +1,7 @@
 from typing import List
 
+import logging
+
 from grammargrove.pinyin_utils import get_tone_number_from_display_form
 
 from grammarrules.models import GrammarRuleExample
@@ -33,7 +35,7 @@ def check_grammar_rule(
         for c in example["grammar_rule_example_components"]:
             pronunciation = c["word"]["pronunciation"].split(" ")
             correct_answer += [
-                get_tone_number_from_display_form(p) for p in pronunciation
+                str(get_tone_number_from_display_form(p)) for p in pronunciation
             ]
     elif question_type == QuestionType.DefinitionsFromHanzi:
         correct_answer = [
@@ -74,7 +76,7 @@ def check_vocabulary_word(
         is_correct = answer[0].lower().strip() in correct_answer
     elif question_type == QuestionType.AccentsFromHanzi:
         correct_answer = [
-            get_tone_number_from_display_form(p) for p in entry["word"]["pronunciation"].split(" ")
+            str(get_tone_number_from_display_form(p)) for p in entry["word"]["pronunciation"].split(" ")
         ]
         is_correct = answer == correct_answer
     else:

@@ -1,3 +1,5 @@
+from typing import List
+
 from random import randrange
 
 from rest_framework import status, viewsets
@@ -46,15 +48,16 @@ class QuizViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
         question = questions[0]
+        answer: List[str] = [ p.lower().strip() for p in req["answer"] ]
         if question.user_vocabulary_entry:
-            resp = check_vocabulary_word(question.question_type, question.user_vocabulary_entry.id, req["answer"])
+            resp = check_vocabulary_word(question.question_type, question.user_vocabulary_entry.id, answer)
             resp_serializer = CheckResponseSerializer(resp)
             return Response(resp_serializer.data)
         elif question.user_grammar_rule_entry:
             if not req.get("example_id"):
                 return Response(serializer.errors,
                     status=status.HTTP_400_BAD_REQUEST)
-            resp = check_grammar_rule(question.question_type, req["example_id"], req["answer"])
+            resp = check_grammar_rule(question.question_type, req["example_id"], answer)
             resp_serializer = CheckResponseSerializer(resp)
             return Response(resp_serializer.data)
         else:
