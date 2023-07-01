@@ -4,12 +4,12 @@
 - [X] style index page
 - [ ] add "already have an account?" to index page
 - [X] redo dashboard to include both user vocabulary and word search
-- [ ] style quiz page
+- [X] style quiz page
 - [ ] restyle "How it works" section with styled components from quiz and dashboard pages
 - [ ] management command to apply hsk labels to grammar rules and words
 - [ ] populate grammarrules.csv
-- [ ] Add pagination button to user grammar rules display view
-- [ ] Add pagination buttons to grammar rules search result view
+- [X] Add pagination button to user grammar rules display view
+- [X] Add pagination buttons to grammar rules search result view
 
 #### Allow users to add words to their list
 - [X] Page to display vocabulary and search within vocabulary
@@ -30,7 +30,7 @@
 
 #### Tech Debt
 - [X] Clean up search endpoint for grammar rules using nested serializers
-- [ ] See if you can clean up grammar rule examples
+- [X] See if you can clean up grammar rule examples
 
 #### Add Stripe Payments
 - [ ] redirect to Stripe payment dashboard
@@ -47,10 +47,18 @@
 #### Wishlist
 - [ ] Search without accents (fast follow)
 
-## Progress 06/18/2023-06/24/2023
+## Progress 06/25/2023-07/02/2023
 
 #### Next Day
-- [ ] style quiz page
+- [ ] Make next question button work
+- [ ] Fix bug: form resets when user submits an answer
+- [ ] Ability to add a word on definition from hanzi questions
+
+#### 06/30/2023
+- [X] style quiz page
+
+## Progress 06/18/2023-06/24/2023
+
 
 #### 06/23/2023
 - [X] add style to user grammar rules
