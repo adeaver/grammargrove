@@ -15,32 +15,19 @@ const GrammarRuleQuestionDisplay = (props: QuestionDisplayControllerProps) => {
         return (
             <HanziFromDefinitionDisplay
                 title="Translate the following sentence into Mandarin:"
-                question={props.question}
-                isCorrect={props.isCorrect}
-                correctAnswer={props.correctAnswer}
-                extraContext={props.extraContext}
-                handleSubmitAnswer={props.handleSubmitAnswer} />
+                {...props} />
         );
     } else if (props.question.question_type === QuestionType.DefinitionsFromHanzi) {
         return (
             <DefinitionFromHanziDisplay
                 title="Translate the following sentence into English:"
-                question={props.question}
-                isCorrect={props.isCorrect}
-                correctAnswer={props.correctAnswer}
-                extraContext={props.extraContext}
-                handleSubmitAnswer={props.handleSubmitAnswer} />
+                {...props} />
         );
     } else if (props.question.question_type === QuestionType.AccentsFromHanzi) {
         return (
             <AccentsFromHanziDisplay
                 title="Mark the accent numbers for the following words:"
-                question={props.question}
-                isCorrect={props.isCorrect}
-                correctAnswer={props.correctAnswer}
-                extraContext={props.extraContext}
-                handleSubmitAnswer={props.handleSubmitAnswer} />
-
+                {...props} />
         );
     }
     throw Error(`Unrecognized question type ${props.question.question_type}`);

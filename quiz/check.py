@@ -50,7 +50,7 @@ def check_grammar_rule(
     return CheckResponse(
         is_correct=correct_answer == answer,
         correct_answer=correct_answer,
-        extra_context=extra_context
+        extra_context=extra_context,
     )
 
 
@@ -77,10 +77,10 @@ def check_vocabulary_word(
         for d in entry["word"]["definitions"]:
             flattened_definition = d["definition"].lower().strip()
             if not flattened_definition:
-                extra_context += [ d.strip() for d in flattened_definition.split(";") ]
                 continue
             correct_answer += [ d.strip() for d in flattened_definition.split(";") ]
         is_correct = answer[0].lower().strip() in correct_answer
+        extra_context = [ a for a in correct_answer if a != answer[0].lower().strip() ]
     elif question_type == QuestionType.AccentsFromHanzi:
         pronunciation = entry["word"]["pronunciation"].split(" ")
         correct_answer = [

@@ -15,6 +15,8 @@ import VocabularyQuestionDisplay from './VocabularyQuestionDisplay';
 
 type QuestionDisplayProps = {
     question: Question;
+
+    handleGetNextQuestion: () => void;
 }
 
 const QuestionDisplay = (props: QuestionDisplayProps) => {
@@ -25,8 +27,12 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
     const [ isCorrect, setIsCorrect ] = useState<boolean | null>(null);
     const [ extraContext, setExtraContext ] = useState<string[] | null>(null);
 
+    // Used for handle rerenders
+    const [ originalAnswer, setOriginalAnswer ] = useState<string[] | null>(null);
+
     const handleSubmitAnswer = (answer: string[], example_id: string | null | undefined) => {
         setIsLoading(true);
+        setOriginalAnswer(answer);
         checkAnswer(
             props.question.id, answer, example_id ? example_id : null,
             (resp: CheckAnswerResponse) => {
@@ -40,6 +46,16 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 setError(err);
             }
         );
+    }
+
+    const handleGetNextQuestion = () => {
+        setIsLoading(false);
+        setOriginalAnswer(null);
+        setIsCorrect(null);
+        setCorrectAnswer(null);
+        setExtraContext(null);
+        setError(null);
+        props.handleGetNextQuestion()
     }
 
     let body;
@@ -58,7 +74,9 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 isCorrect={isCorrect}
                 correctAnswer={correctAnswer}
                 extraContext={extraContext}
-                handleSubmitAnswer={handleSubmitAnswer} />
+                originalAnswer={originalAnswer}
+                handleSubmitAnswer={handleSubmitAnswer}
+                handleGetNextQuestion={handleGetNextQuestion} />
         );
     } else if (!!props.question.user_vocabulary_entry) {
         body = (
@@ -67,7 +85,10 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 isCorrect={isCorrect}
                 correctAnswer={correctAnswer}
                 extraContext={extraContext}
-                handleSubmitAnswer={handleSubmitAnswer} />
+                originalAnswer={originalAnswer}
+                handleSubmitAnswer={handleSubmitAnswer}
+                handleGetNextQuestion={handleGetNextQuestion} />
+
         );
     }
     return (

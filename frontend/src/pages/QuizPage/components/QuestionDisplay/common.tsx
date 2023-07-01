@@ -16,8 +16,10 @@ export type QuestionDisplayControllerProps = {
     isCorrect: boolean | null;
     correctAnswer: string[] | null;
     extraContext: string[] | null;
+    originalAnswer: string[] | null;
 
     handleSubmitAnswer: (answer: string[], example_id: string | null | undefined) => void;
+    handleGetNextQuestion: () => void;
 }
 
 type QuestionDisplayProps = {
@@ -26,12 +28,16 @@ type QuestionDisplayProps = {
     isCorrect: boolean | null;
     correctAnswer: string[] | null;
     extraContext: string[] | null;
+    originalAnswer: string[] | null;
 
     handleSubmitAnswer: (answer: string[], example_id: string | null | undefined) => void;
+    handleGetNextQuestion: () => void;
 }
 
 export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
-    const [ hanzi, setHanzi ] = useState<string>("");
+    const [ hanzi, setHanzi ] = useState<string>(
+        !!props.originalAnswer && !!props.originalAnswer.length ? props.originalAnswer[0] : ""
+    );
 
     const handleSubmitAnswer = () => {
         props.handleSubmitAnswer([hanzi], props.question.example_id);
@@ -50,7 +56,7 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
                 <Text type={TextType.Subtitle} function={TextFunction.Confirmation}>
                     That’s correct!
                 </Text>
-                <Button type={ButtonType.Secondary} onClick={() => console.log("next")}>
+                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
                     Next question
                 </Button>
             </div>
@@ -62,13 +68,13 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
                      Looks like this one needs some more practice.
                 </Text>
                 {
-                    !!props.correctAnswer && (
+                    !!props.correctAnswer && !!props.correctAnswer.length && (
                         <Text>
                             {`The right answer is ${ props.correctAnswer.join('') }.`}
                         </Text>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={() => console.log("next")}>
+                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
                     Next question
                 </Button>
             </div>
@@ -98,7 +104,9 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
 
 
 export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
-    const [ definition, setDefinition ] = useState<string>("");
+    const [ definition, setDefinition ] = useState<string>(
+        !!props.originalAnswer && !!props.originalAnswer.length ? props.originalAnswer[0] : ""
+    );
 
     const handleSubmitAnswer = () => {
         props.handleSubmitAnswer([definition], props.question.example_id);
@@ -118,13 +126,13 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                     That’s correct!
                 </Text>
                 {
-                    !!props.extraContext && (
+                    !!props.extraContext && !!props.extraContext.length && (
                         <Text>
                             {`This can also mean: ${props.extraContext.join('; ')}`}
                         </Text>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={() => console.log("next")}>
+                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
                     Next question
                 </Button>
             </div>
@@ -136,7 +144,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                      Looks like this one needs some more practice.
                 </Text>
                 {
-                    !!props.correctAnswer && (
+                    !!props.correctAnswer && !props.correctAnswer.length && (
                         <div>
                             <Text>
                                 {`The right answer is ${ props.correctAnswer.join('; ') }.`}
@@ -144,7 +152,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                         </div>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={() => console.log("next")}>
+                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
                     Next question
                 </Button>
             </div>
@@ -163,6 +171,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                 <Input
                     type={InputType.Text}
                     value={definition}
+                    disabled={props.isCorrect != null}
                     onChange={setDefinition}
                     placeholder="Translation"
                     name="answer" />
@@ -173,8 +182,23 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
 }
 
 export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
+    const originalAnswer = !!props.originalAnswer && !!props.originalAnswer.length ? [ ...props.originalAnswer ] : null;
+    const shiftN = (n: number) => {
+        let out: Array<string | undefined> = [];
+        if (!originalAnswer) {
+            return Array(n).fill("")
+        }
+        for (let i = 0; i < n; i++) {
+            const val = originalAnswer.shift()
+            out = out.concat(!!val ? val : "")
+        }
+        return out
+    }
+
     const [ accents, setAccents ] = useState<string[][]>(
-        props.question.display.map((d: Display) => Array(d.input_length).fill(""))
+        props.question.display.map((d: Display) => (
+            shiftN(d.input_length)
+        ))
     );
 
     const handleUpdateAccent = (idx: number, subIdx: number, value: string) => {
@@ -205,7 +229,7 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
                 <Text type={TextType.Subtitle} function={TextFunction.Confirmation}>
                     That’s correct!
                 </Text>
-                <Button type={ButtonType.Secondary} onClick={() => console.log("next")}>
+                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
                     Next question
                 </Button>
             </div>
@@ -217,22 +241,22 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
                      Looks like this one needs some more practice.
                 </Text>
                 {
-                    !!props.extraContext && (
+                    !!props.extraContext && !!props.extraContext.length && (
                         <div>
                             <Text>
                                 {`The right answer is ${ props.extraContext.join(' ') }.`}
                             </Text>
                             {
-                                !!props.correctAnswer && (
+                                !!props.correctAnswer && !!props.correctAnswer.length && (
                                     <Text type={TextType.FinePrint}>
-                                        {`(${ props.correctAnswer.join(' ')}.)`}
+                                        {`(${ props.correctAnswer.join(' ')})`}
                                     </Text>
                                 )
                             }
                         </div>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={() => console.log("next")}>
+                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
                     Next question
                 </Button>
             </div>
@@ -257,6 +281,7 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
                                     <Input
                                         type={InputType.Number}
                                         value={accents[idx][inputIdx]}
+                                        disabled={props.isCorrect != null}
                                         onChange={(v: string) => handleUpdateAccent(idx, inputIdx, v)}
                                         key={`answer-${inputIdx}-${idx}`}
                                         name={`answer-${inputIdx}-${idx}`} />

@@ -9,8 +9,6 @@ import LoadingIcon from '../../components/LoadingIcon';
 import {
     getNextQuestion,
     Question,
-    // checkAnswer,
-    // CheckAnswerResponse,
 } from './api';
 
 import QuestionDisplay from './components/QuestionDisplay';
@@ -20,7 +18,6 @@ const QuizPage = () => {
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ error, setError ] = useState<Error | null>(null);
     const [ hasNextQuestion, setHasNextQuestion ] = useState<boolean>(true);
-    // const [ answer, setAnswer ] = useState<CheckAnswerResponse | null>(null);
 
     const handleGetNextQuestion = () => {
         setIsLoading(true);
@@ -58,6 +55,7 @@ const QuizPage = () => {
             </Text>
         )
     } else if (!hasNextQuestion) {
+        // TODO: handle this case
         body = (
             <Text>
                 You’re all out of questions.
@@ -65,7 +63,9 @@ const QuizPage = () => {
         )
     } else if (!!question) {
         body = (
-            <QuestionDisplay question={question} />
+            <QuestionDisplay
+                question={question}
+                handleGetNextQuestion={handleGetNextQuestion} />
         )
     }
     return (
