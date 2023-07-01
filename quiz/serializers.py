@@ -105,13 +105,15 @@ def _convert_user_grammar_rule_to_display(user_grammar_rule: UserGrammarRuleEntr
 class CheckRequestSerializer(serializers.Serializer):
     quiz_question_id = serializers.UUIDField()
     example_id = serializers.UUIDField(allow_null=True)
-    answer = serializers.ListField(child=serializers.CharField())
+    answer = serializers.ListField(child=serializers.CharField(required=False, allow_blank=True))
 
 
 class CheckResponse(NamedTuple):
     is_correct: bool
     correct_answer: List[str]
+    extra_context: List[str]
 
 class CheckResponseSerializer(serializers.Serializer):
     is_correct = serializers.BooleanField()
     correct_answer = serializers.ListField(child=serializers.CharField())
+    extra_context = serializers.ListField(child=serializers.CharField(required=False, allow_blank=True))

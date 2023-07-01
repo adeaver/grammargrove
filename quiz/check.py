@@ -25,6 +25,7 @@ def check_grammar_rule(
         raise ValueError(f"Example {example_id} does not exist")
     example = GrammarRuleExampleSerializer(examples[0]).data
     correct_answer = []
+    extra_context = []
     if question_type == QuestionType.HanziFromEnglish:
         correct_answer = [
             ''.join([
@@ -37,6 +38,9 @@ def check_grammar_rule(
             correct_answer += [
                 str(get_tone_number_from_display_form(p)) for p in pronunciation
             ]
+            extra_context.append(
+                ''.join(pronunciation)
+            )
     elif question_type == QuestionType.DefinitionsFromHanzi:
         correct_answer = [
             example["english_definition"].lower().strip()
@@ -45,7 +49,8 @@ def check_grammar_rule(
         raise ValueError(f"Unrecognized question type {question_type}")
     return CheckResponse(
         is_correct=correct_answer == answer,
-        correct_answer=correct_answer
+        correct_answer=correct_answer,
+        extra_context=extra_context
     )
 
 
@@ -62,6 +67,7 @@ def check_vocabulary_word(
     entry = UserVocabularyEntrySerializer(entries[0]).data
     is_correct = False
     correct_answer = []
+    extra_context = []
     if question_type == QuestionType.HanziFromEnglish:
         correct_answer = [
             entry["word"]["display"]
@@ -71,12 +77,17 @@ def check_vocabulary_word(
         for d in entry["word"]["definitions"]:
             flattened_definition = d["definition"].lower().strip()
             if not flattened_definition:
+                extra_context += [ d.strip() for d in flattened_definition.split(";") ]
                 continue
             correct_answer += [ d.strip() for d in flattened_definition.split(";") ]
         is_correct = answer[0].lower().strip() in correct_answer
     elif question_type == QuestionType.AccentsFromHanzi:
+        pronunciation = entry["word"]["pronunciation"].split(" ")
         correct_answer = [
-            str(get_tone_number_from_display_form(p)) for p in entry["word"]["pronunciation"].split(" ")
+            str(get_tone_number_from_display_form(p)) for p in pronunciation
+        ]
+        extra_context = [
+            ''.join(pronunciation)
         ]
         is_correct = answer == correct_answer
     else:
@@ -84,4 +95,5 @@ def check_vocabulary_word(
     return CheckResponse(
         is_correct=is_correct,
         correct_answer=correct_answer,
+        extra_context=extra_context,
     )

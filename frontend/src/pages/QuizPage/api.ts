@@ -44,6 +44,7 @@ export type CheckAnswerRequest = {
 export type CheckAnswerResponse = {
     is_correct: boolean;
     correct_answer: Array<string>;
+    extra_context: Array<string>;
 }
 
 export function checkAnswer(

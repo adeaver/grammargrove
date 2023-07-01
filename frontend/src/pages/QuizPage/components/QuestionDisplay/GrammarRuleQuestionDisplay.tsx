@@ -1,26 +1,24 @@
 import {
-    Question,
     QuestionType,
 } from '../../api';
 
 import {
+    QuestionDisplayControllerProps,
+
     HanziFromDefinitionDisplay,
     DefinitionFromHanziDisplay,
     AccentsFromHanziDisplay
 } from './common';
 
-type GrammarRuleQuestionDisplayProps = {
-    question: Question;
-
-    handleSubmitAnswer: (answer: string[], example_id: string | null | undefined) => void;
-}
-
-const GrammarRuleQuestionDisplay = (props: GrammarRuleQuestionDisplayProps) => {
+const GrammarRuleQuestionDisplay = (props: QuestionDisplayControllerProps) => {
     if (props.question.question_type === QuestionType.HanziFromEnglish) {
         return (
             <HanziFromDefinitionDisplay
                 title="Translate the following sentence into Mandarin:"
                 question={props.question}
+                isCorrect={props.isCorrect}
+                correctAnswer={props.correctAnswer}
+                extraContext={props.extraContext}
                 handleSubmitAnswer={props.handleSubmitAnswer} />
         );
     } else if (props.question.question_type === QuestionType.DefinitionsFromHanzi) {
@@ -28,6 +26,9 @@ const GrammarRuleQuestionDisplay = (props: GrammarRuleQuestionDisplayProps) => {
             <DefinitionFromHanziDisplay
                 title="Translate the following sentence into English:"
                 question={props.question}
+                isCorrect={props.isCorrect}
+                correctAnswer={props.correctAnswer}
+                extraContext={props.extraContext}
                 handleSubmitAnswer={props.handleSubmitAnswer} />
         );
     } else if (props.question.question_type === QuestionType.AccentsFromHanzi) {
@@ -35,6 +36,9 @@ const GrammarRuleQuestionDisplay = (props: GrammarRuleQuestionDisplayProps) => {
             <AccentsFromHanziDisplay
                 title="Mark the accent numbers for the following words:"
                 question={props.question}
+                isCorrect={props.isCorrect}
+                correctAnswer={props.correctAnswer}
+                extraContext={props.extraContext}
                 handleSubmitAnswer={props.handleSubmitAnswer} />
 
         );

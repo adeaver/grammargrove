@@ -12,6 +12,7 @@ type InputProps = {
     onChange: (v: string) => void;
     name: string;
     placeholder?: string;
+    disabled?: boolean;
 }
 
 const Input = (props: InputProps) => {
@@ -36,6 +37,7 @@ const Input = (props: InputProps) => {
                 type={props.type}
                 value={props.value}
                 name={props.name}
+                disabled={!!props.disabled}
                 id={props.name}
                 onChange={handleChange} />
         </div>

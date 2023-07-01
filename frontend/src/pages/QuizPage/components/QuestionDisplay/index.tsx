@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
 
-import Text, { TextFunction, TextType } from '../../../../components/Text';
+import Text, { TextFunction } from '../../../../components/Text';
 import LoadingIcon from '../../../../components/LoadingIcon';
 
 import {
@@ -23,8 +23,7 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
 
     const [ correctAnswer, setCorrectAnswer ] = useState<string[] | null>(null);
     const [ isCorrect, setIsCorrect ] = useState<boolean | null>(null);
-
-    console.log(correctAnswer);
+    const [ extraContext, setExtraContext ] = useState<string[] | null>(null);
 
     const handleSubmitAnswer = (answer: string[], example_id: string | null | undefined) => {
         setIsLoading(true);
@@ -34,26 +33,12 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 setIsLoading(false);
                 setIsCorrect(resp.is_correct);
                 setCorrectAnswer(resp.correct_answer);
+                setExtraContext(resp.extra_context);
             },
             (err: Error) => {
                 setIsLoading(false);
                 setError(err);
             }
-        );
-    }
-
-    let correctBanner;
-    if (isCorrect) {
-        correctBanner = (
-            <Text type={TextType.Subtitle} function={TextFunction.Confirmation}>
-                Correct!
-            </Text>
-        );
-    } else if (isCorrect != null) {
-        correctBanner = (
-            <Text type={TextType.Subtitle} function={TextFunction.Warning}>
-                Sorry, that isn’t correct!
-            </Text>
         );
     }
 
@@ -70,18 +55,23 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
         body = (
             <GrammarRuleQuestionDisplay
                 question={props.question}
+                isCorrect={isCorrect}
+                correctAnswer={correctAnswer}
+                extraContext={extraContext}
                 handleSubmitAnswer={handleSubmitAnswer} />
         );
     } else if (!!props.question.user_vocabulary_entry) {
         body = (
             <VocabularyQuestionDisplay
                 question={props.question}
+                isCorrect={isCorrect}
+                correctAnswer={correctAnswer}
+                extraContext={extraContext}
                 handleSubmitAnswer={handleSubmitAnswer} />
         );
     }
     return (
-        <div>
-            { correctBanner }
+        <div class="w-full flex items-center justify-center">
             { body }
         </div>
     );
