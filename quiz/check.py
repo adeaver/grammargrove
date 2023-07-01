@@ -15,25 +15,20 @@ from .serializers import CheckResponse
 
 def check_grammar_rule(
     question_type: QuestionType,
-    example_id: str,
+    example: GrammarRuleExample,
     answer: List[str]
 ) -> CheckResponse:
-    examples = GrammarRuleExample.objects.filter(
-        id=example_id
-    )
-    if not examples:
-        raise ValueError(f"Example {example_id} does not exist")
-    example = GrammarRuleExampleSerializer(examples[0]).data
+    serialized_example = GrammarRuleExampleSerializer(example).data
     correct_answer = []
     extra_context = []
     if question_type == QuestionType.HanziFromEnglish:
         correct_answer = [
             ''.join([
-                c["word"]["display"] for c in example["grammar_rule_example_components"]
+                c["word"]["display"] for c in serialized_example["grammar_rule_example_components"]
             ])
         ]
     elif question_type == QuestionType.AccentsFromHanzi:
-        for c in example["grammar_rule_example_components"]:
+        for c in serialized_example["grammar_rule_example_components"]:
             pronunciation = c["word"]["pronunciation"].split(" ")
             correct_answer += [
                 str(get_tone_number_from_display_form(p)) for p in pronunciation
@@ -43,7 +38,7 @@ def check_grammar_rule(
             )
     elif question_type == QuestionType.DefinitionsFromHanzi:
         correct_answer = [
-            example["english_definition"].lower().strip()
+            serialized_example["english_definition"].lower().strip()
         ]
     else:
         raise ValueError(f"Unrecognized question type {question_type}")

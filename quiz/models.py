@@ -10,6 +10,7 @@ from users.models import User
 from uservocabulary.models import UserVocabularyEntry
 from usergrammarrules.models import UserGrammarRuleEntry
 from words.models import Word, Definition, LanguageCode
+from grammarrules.models import GrammarRuleExample
 
 class QuestionType(IntEnum):
     AccentsFromHanzi = 1
@@ -27,9 +28,7 @@ class QuizQuestion(models.Model):
     user_grammar_rule_entry = models.ForeignKey(UserGrammarRuleEntry, on_delete=models.CASCADE, null=True)
     question_type = models.IntegerField(choices=QuestionType.choices(), null=False)
     number_of_times_displayed = models.IntegerField(null=False, default=0)
-    number_of_times_answered_correctly = models.IntegerField(null=False, default=0)
     last_displayed_at = models.DateTimeField(null=True)
-    last_answered_correctly_at = models.DateTimeField(null=True)
 
     class Meta:
         constraints = [
@@ -46,27 +45,10 @@ class QuizQuestion(models.Model):
         ]
 
 
-class WordPayload(NamedTuple):
-    word: Word
-    definitions: List[Definition]
-    user_vocabulary_entry: UserVocabularyEntry
-
-def get_word_from_question(
-    question: QuizQuestion,
-    language_code: LanguageCode
-) -> Optional[WordPayload]:
-    user_vocabulary_entries = (
-        UserVocabularyEntry.objects.filter(id=question.user_vocabulary_entry.id)
-    )
-    if not user_vocabulary_entries:
-        return None
-    user_vocabulary_entry = user_vocabulary_entries[0]
-    words = Word.objects.filter(id=user_vocabulary_entry.word.id)
-    assert words
-    word = words[0]
-    definitions = list(Definition.objects.filter(word=word.id, language_code=language_code).all())
-    return WordPayload(
-        word=word,
-        user_vocabulary_entry=user_vocabulary_entry,
-        definitions=definitions,
-    )
+class QuizResponse(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE, null=False)
+    is_correct = models.BooleanField(default=False)
+    grammar_rule_example = models.ForeignKey(GrammarRuleExample, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
