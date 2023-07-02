@@ -17,6 +17,7 @@ boto3 = "^1.26.151"
 openai = "^0.27.8"
 jieba = "^0.42.1"
 pygtrie = "^2.5.0"
+stripe = "^5.4.0"
 
 
 [build-system]

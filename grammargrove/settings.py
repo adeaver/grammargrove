@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # Local Apps
     'index',
     'users',
+    'billing',
     'words',
     'grammarrules',
     'uservocabulary',
@@ -146,3 +147,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'index/static')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Stripe
+
+STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
+SUBSCRIPTION_STRIPE_PRODUCT_ID = os.environ.get("SUBSCRIPTION_STRIPE_PRODUCT_ID", "prod_OBvhD9pdEJEyHZ")

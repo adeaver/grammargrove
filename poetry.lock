@@ -747,6 +747,21 @@ doc = ["sphinx"]
 test = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "stripe"
+version = "5.4.0"
+description = "Python bindings for the Stripe API"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+files = [
+    {file = "stripe-5.4.0-py2.py3-none-any.whl", hash = "sha256:57c0da7e3b889b69ff1dbf23ac1ec5e00f665cfba069fdf0f328b83ddf4225df"},
+    {file = "stripe-5.4.0.tar.gz", hash = "sha256:72bda7bf9be7528e1b97a5bbacb0716cdf6a0c9597b13fdbfa364cec3c130713"},
+]
+
+[package.dependencies]
+requests = {version = ">=2.20", markers = "python_version >= \"3.0\""}
+
+[[package]]
 name = "tqdm"
 version = "4.65.0"
 description = "Fast, Extensible Progress Meter"
@@ -910,4 +925,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "6349151ea07717942f2a96eb1c804be42af3f08aff151b7ade4a7ab962bd9980"
+content-hash = "8ba12e04ba6db8fb8b53c887369147d3c0dd0c55ce3133d952bb5d20b711576b"

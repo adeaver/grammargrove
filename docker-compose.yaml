@@ -20,6 +20,7 @@ services:
       - SES_REGION=us-east-1
       - SES_DEFAULT_SENDER_ADDRESS=andrew@indieorchard.com
       - OPENAI_API_KEY=$GRAMMARGROVE_OPENAI_API_KEY
+      - STRIPE_API_KEY=$GRAMMARGROVE_STRIPE_SECRET_KEY
     depends_on:
       - database
     command: scripts/runserver

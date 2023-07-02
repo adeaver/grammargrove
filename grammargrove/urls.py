@@ -26,6 +26,7 @@ from grammarrules.urls import router as grammarrules_router
 from uservocabulary.urls import router as uservocabulary_router
 from usergrammarrules.urls import router as usergrammarrules_router
 from quiz.urls import router as quiz_router
+from billing.urls import router as billing_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,6 +36,7 @@ urlpatterns = [
     path('api/uservocabulary/', include(uservocabulary_router.urls), name="uservocabulary"),
     path('api/usergrammarrules/', include(usergrammarrules_router.urls), name="usergrammarrules"),
     path('api/quiz/', include(quiz_router.urls), name="quiz"),
+    path('api/billing/', include(billing_router.urls), name="billing"),
     path('', index.home, name='home'),
     path('login/', index.login, name='login'),
     path('dashboard/', index.dashboard, name='dashboard'),
