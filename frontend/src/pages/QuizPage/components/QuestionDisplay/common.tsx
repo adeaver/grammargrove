@@ -144,10 +144,10 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                      Looks like this one needs some more practice.
                 </Text>
                 {
-                    !!props.correctAnswer && !props.correctAnswer.length && (
+                    !!props.correctAnswer && !!props.correctAnswer.length && (
                         <div>
                             <Text>
-                                {`The right answer is ${ props.correctAnswer.join('; ') }.`}
+                                {`The right answer is: "${ props.correctAnswer.join('; ') }."`}
                             </Text>
                         </div>
                     )
