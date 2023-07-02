@@ -5,6 +5,7 @@ import { PaginatedResponse } from '../../util/gfetch';
 import Header from '../../components/Header';
 import Text, { TextFunction } from '../../components/Text';
 import LoadingIcon from '../../components/LoadingIcon';
+import Link, { LinkTarget } from '../../components/Link';
 
 import {
     getNextQuestion,
@@ -26,7 +27,6 @@ const QuizPage = () => {
                 setIsLoading(false);
                 if (resp.results.length) {
                     const question: Question = resp.results[0];
-                    // TODO: respond that we’ve seen the question
                     setQuestion(question);
                 } else {
                     setHasNextQuestion(false);
@@ -72,6 +72,14 @@ const QuizPage = () => {
         <div class="w-full h-screen">
             <Header />
             { body }
+            <div>
+                <Text>
+                    Need to add a new word or grammar rule to your list?
+                </Text>
+                <Link href="/dashboard/" target={LinkTarget.Self}>
+                    Click here to return to your list
+                </Link>
+            </div>
         </div>
     )
 }

@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from billing.permissions import HasValidSubscription
+
 from .models import Word, LanguageCode
 from .serializers import WordSerializer
 from .pagination import WordPaginator
@@ -9,7 +11,7 @@ from .utils import get_queryset_for_query
 
 class WordsViewSet(viewsets.ModelViewSet):
     serializer_class = WordSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasValidSubscription]
     http_method_names = ['get']
     pagination_class = WordPaginator
 

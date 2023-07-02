@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from django.http import HttpRequest
 from django.utils import timezone
 
+from billing.permissions import HasValidSubscription
+
 from grammarrules.models import GrammarRuleExample
 
 from .words import get_queryset_from_user_vocabulary
@@ -27,7 +29,7 @@ from .check import check_grammar_rule, check_vocabulary_word
 class QuizViewSet(viewsets.ModelViewSet):
     serializer_class = QuizQuestionSerializer
     pagination_class = QuizQuestionPaginator
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasValidSubscription]
 
     def get_queryset(self):
         if randrange(100) > 50:

@@ -1,13 +1,15 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from billing.permissions import HasValidSubscription
+
 from .models import UserVocabularyEntry
 from .serializers import UserVocabularyEntrySerializer
 from .pagination import UserVocabularyEntryPaginator
 
 class UserVocabularyEntryViewSet(viewsets.ModelViewSet):
     serializer_class = UserVocabularyEntrySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasValidSubscription]
     pagination_class = UserVocabularyEntryPaginator
 
     def get_queryset(self):

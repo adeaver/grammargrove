@@ -1,13 +1,15 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from billing.permissions import HasValidSubscription
+
 from .models import UserGrammarRuleEntry
 from .serializers import UserGrammarRuleEntrySerializer
 from .pagination import UserGrammarRuleEntryPaginator
 
 class UserGrammarRuleEntryViewSet(viewsets.ModelViewSet):
     serializer_class = UserGrammarRuleEntrySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasValidSubscription]
     pagination_class = UserGrammarRuleEntryPaginator
 
     def get_queryset(self):

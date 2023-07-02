@@ -3,6 +3,8 @@ from typing import Set, Optional
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from billing.permissions import HasValidSubscription
+
 from .pagination import GrammarRulePaginator
 from .models import GrammarRule, GrammarRuleComponent, PartOfSpeech
 from .serializers import GrammarRuleSerializer
@@ -12,7 +14,7 @@ from words.utils import get_queryset_for_query
 
 class GrammarRuleViewSet(viewsets.ModelViewSet):
     serializer_class = GrammarRuleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasValidSubscription]
     http_method_names = ['get']
     pagination_class = GrammarRulePaginator
 

@@ -10,6 +10,8 @@
 - [ ] populate grammarrules.csv
 - [X] Add pagination button to user grammar rules display view
 - [X] Add pagination buttons to grammar rules search result view
+- [ ] How to search page
+- [ ] Ability to add a word on definition from hanzi questions
 
 #### Allow users to add words to their list
 - [X] Page to display vocabulary and search within vocabulary
@@ -49,10 +51,9 @@
 
 ## Progress 06/25/2023-07/02/2023
 
-#### Next Day
-- [ ] Make next question button work
-- [ ] Fix bug: form resets when user submits an answer
-- [ ] Ability to add a word on definition from hanzi questions
+#### 07/01/2023
+- [X] Make next question button work
+- [X] Fix bug: form resets when user submits an answer
 
 #### 06/30/2023
 - [X] style quiz page
