@@ -1,6 +1,7 @@
 import { makeGetRequest } from '../../../util/gfetch';
 
 export type AvailablePlan = {
+    external_price_ref: string;
     price_cents_usd: number;
     interval: string;
     price_per_year_usd: number | null;

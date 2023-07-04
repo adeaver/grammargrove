@@ -22,14 +22,18 @@ export enum TextAlignment {
 }
 
 export type TextProps = {
-    children: string;
+    children: string | number | (number | string)[];
     type?: TextType;
     function?: TextFunction;
     alignment?: TextAlignment;
+    className?: string;
 }
 
 const getClassesForProps = (props: TextProps) => {
     let classes: string[] = [];
+    if (props.className) {
+        classes = classes.concat([props.className]);
+    }
     switch (props.type) {
         case undefined:
         case null:
