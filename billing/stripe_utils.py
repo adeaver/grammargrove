@@ -87,6 +87,16 @@ def get_checkout_session_url(user: User, price_id: str) -> str:
     return session.url
 
 
+def get_subscription_management_url(user: User) -> str:
+    stripe.api_key = settings.STRIPE_API_KEY
+    customer_id = get_or_create_customer_from_user(user)
+    portal_session = stripe.billing_portal.Session.create(
+        customer=customer_id,
+        return_url=f"{get_base_url_for_environment()}/subscription/",
+    )
+    return portal_session.url
+
+
 def get_active_subscription_end_date_for_user(user: User) -> Optional[int]:
     stripe.api_key = settings.STRIPE_API_KEY
     customer_id = get_or_create_customer_from_user(user)

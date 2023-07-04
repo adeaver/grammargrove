@@ -14,6 +14,7 @@ type ButtonProps = {
     isLoading?: boolean;
     isDisabled?: boolean;
     type?: ButtonType;
+    className?: string;
 }
 
 const getButtonColorsByType = (type: ButtonType | undefined) => {
@@ -35,9 +36,13 @@ const getButtonColorsByType = (type: ButtonType | undefined) => {
 const Button = (props: ButtonProps) => {
     // TODO: add loading spinner
     const colors = getButtonColorsByType(props.type);
+    let className = `w-full border ${colors} rounded-md px-4 py-2 transition duration-500 ease select-none focus:outline-none focus:shadow-outline font-body`;
+    if (props.className) {
+        className = `${props.className} ${className}`;
+    }
     if (props.isSubmit) {
         <button
-            className={`w-full border ${colors} rounded-md px-4 py-2 m-2 transition duration-500 ease select-none focus:outline-none focus:shadow-outline font-body`}
+            className={className}
             type="submit"
             disabled={props.isDisabled || props.isLoading}>
             { props.children }
@@ -47,7 +52,7 @@ const Button = (props: ButtonProps) => {
     }
     return (
         <button
-            className={`w-full border ${colors} rounded-md px-4 py-2 transition duration-500 ease select-none focus:outline-none focus:shadow-outline font-body`}
+            className={className}
             onClick={props.onClick}
             disabled={props.isDisabled || props.isLoading}>
             { props.children }

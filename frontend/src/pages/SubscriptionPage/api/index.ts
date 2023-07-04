@@ -9,6 +9,7 @@ export type AvailablePlan = {
 
 export type SubscriptionStatus = {
     available_plans: Array<AvailablePlan> | null;
+    management_url: string | null;
 }
 
 export function getSubscriptionStatus(

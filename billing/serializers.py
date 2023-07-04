@@ -16,6 +16,8 @@ class PriceSerializer(serializers.Serializer):
 
 class SubscriptionStatus(NamedTuple):
     available_plans: Optional[List[Price]]
+    management_url: Optional[str]
 
 class SubscriptionStatusSerializer(serializers.Serializer):
     available_plans = PriceSerializer(many=True, required=False, read_only=True)
+    management_url = serializers.CharField(allow_blank=True, required=False)

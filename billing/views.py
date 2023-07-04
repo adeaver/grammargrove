@@ -11,7 +11,8 @@ from .permissions import is_user_subscription_status_valid
 from .stripe_utils import (
     get_or_create_customer_from_user,
     get_active_prices,
-    get_checkout_session_url
+    get_checkout_session_url,
+    get_subscription_management_url
 )
 from .serializers import SubscriptionStatusSerializer, SubscriptionStatus
 
@@ -23,7 +24,9 @@ class SubscriptionViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["get"])
     def status(self, request: HttpRequest) -> Response:
         if is_user_subscription_status_valid(request.user):
-            pass
+            management_url = get_subscription_management_url(request.user)
+            status = SubscriptionStatus(available_plans=None, management_url=management_url)
+            return Response(SubscriptionStatusSerializer(status).data)
         subs = Subscription.objects.filter(user=request.user)
         if not subs:
             customer_id = get_or_create_customer_from_user(request.user)
@@ -36,7 +39,7 @@ class SubscriptionViewSet(viewsets.ViewSet):
         else:
             sub = subs[0]
         available_plans = get_active_prices()
-        status = SubscriptionStatus(available_plans=available_plans)
+        status = SubscriptionStatus(management_url=None, available_plans=available_plans)
         return Response(SubscriptionStatusSerializer(status).data)
 
     @action(detail=False, methods=["post"])
@@ -45,8 +48,7 @@ class SubscriptionViewSet(viewsets.ViewSet):
         if subs:
             sub = subs[0]
             if sub.cancel_at is not None and sub.cancel_at < timezone.now():
-                # User already has valid subscription
-                # should redirect to manage page?
-                return redirect("/subscription/")
+                management_url = get_subscription_management_url(request.user)
+                return redirect(management_url)
         checkout_session = get_checkout_session_url(request.user, request.POST["price_id"])
         return redirect(checkout_session)
