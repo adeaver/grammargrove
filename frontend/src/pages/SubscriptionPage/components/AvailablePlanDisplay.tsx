@@ -94,6 +94,25 @@ const AvailablePlanDisplay = (props: AvailablePlanDisplayProps) => {
                     </Button>
                 </div>
             </div>
+            <div>
+                <div class="max-w-lg my-12 flex flex-col space-y-4">
+                    <Text type={TextType.Subtitle}>
+                        Why is there no free plan?
+                    </Text>
+                    <Text>
+                        Hello! I’m Andrew, the developer who built (and is still building) GrammarGrove by myself. Software requires money to maintain and run, so every website and app needs to find a way to get money from its users. My thought is that if my users are my customers, then my incentive is to make GrammarGrove better so more people sign up and stay signed up.
+                    </Text>
+                    <Text>
+                        Other websites and apps use ads, which works well if you have a lot of users. But I felt this would change my incentive from building the best product for my users to building the best product for advertisers. I think we all know of some websites that ended up having to do that.
+                    </Text>
+                    <Text>
+                        Another route is getting funding from venture capitalists. A lot of websites do this, but I believe it also changes the incentive from being about the users to being about the investors.
+                    </Text>
+                    <Text>
+                        In short, if you pay me, I work for you! I think this is the best setup.
+                    </Text>
+                </div>
+            </div>
         </div>
     );
 }

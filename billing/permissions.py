@@ -1,3 +1,4 @@
+from typing import Dict
 from datetime import datetime, timedelta
 
 from django.utils import timezone
@@ -5,16 +6,22 @@ from django.http import HttpRequest
 
 from rest_framework import permissions
 
+from grammargrove.utils import Environment, get_environment
+
 from .models import Subscription
 from .stripe_utils import get_active_subscription_end_date_for_user
 
 from users.models import User
 
-LENGTH_OF_FREE_TRIAL_DAYS = 10
+LENGTH_OF_FREE_TRIAL_DAYS_BY_ENVIRONMENT: Dict[Environment, int] = {
+    Environment.Dev: 0,
+    Environment.Prod: 14,
+}
 BUFFER_PERIOD_DAYS = 3
 
 def is_user_subscription_status_valid(user: User) -> bool:
-    requires_subscription = user.date_joined < (timezone.now() - timedelta(days=LENGTH_OF_FREE_TRIAL_DAYS))
+    free_trial_days = LENGTH_OF_FREE_TRIAL_DAYS_BY_ENVIRONMENT[get_environment()]
+    requires_subscription = user.date_joined < (timezone.now() - timedelta(days=free_trial_days))
     if not requires_subscription:
         return True
     return _verify_subscription_valid(user)
