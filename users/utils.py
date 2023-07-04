@@ -108,7 +108,10 @@ def send_login_email_to_user(login_email: UserLoginEmail) -> bool:
         logging.warning(f"User ID {user_id} returned multiple users")
         return False
     user = users[0]
-    if user.status != UserStatus.VERIFIED:
+    if user.status == UserStatus.UNSUBSCRIBED:
+        logging.info(f"User {user_id} is unsubscribed")
+        return False
+    if user.status == UserStatus.UNVERIFIED:
         logging.info(f"User {user_id} is unverified, sending verification email instead")
         return send_verifcation_email_to_user(login_email)
     elif user.has_usable_password():

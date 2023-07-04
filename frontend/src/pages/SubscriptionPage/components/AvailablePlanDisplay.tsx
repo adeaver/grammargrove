@@ -4,7 +4,10 @@ import Text, { TextFunction, TextType, TextAlignment } from '../../../components
 import Input, { InputType } from '../../../components/Input';
 import Button, { ButtonType } from '../../../components/Button';
 import RadioButton from '../../../components/RadioButton';
+import FeedbackForm from '../../../components/FeedbackForm';
+import { FeedbackType } from '../../../components/FeedbackForm/api';
 import { getCSRFToken } from '../../../util/gfetch';
+import { setLocation } from '../../../util/window';
 
 import {
     AvailablePlan,
@@ -16,6 +19,7 @@ type AvailablePlanDisplayProps = {
 
 const AvailablePlanDisplay = (props: AvailablePlanDisplayProps) => {
     const [ selectedPlan, setSelectedPlan ] = useState<string>(props.availablePlans[0].external_price_ref);
+    const [ showFeedbackForm, setShowFeedbackForm ] = useState<boolean>(false);
 
     return (
         <div class="p-6 w-full flex flex-col justify-center items-center">
@@ -73,26 +77,32 @@ const AvailablePlanDisplay = (props: AvailablePlanDisplayProps) => {
                         </li>
                     </ul>
                 </div>
-                <div class="w-full flex flex-col space-y-2">
-                    <form method="POST" action="/api/billing/v1/checkout/">
-                        <Input
-                            type={InputType.Hidden}
-                            value={getCSRFToken() || ""}
-                            name="csrfmiddlewaretoken"
-                            onChange={() => {}} />
-                        <Input
-                            type={InputType.Hidden}
-                            value={selectedPlan}
-                            name="price_id"
-                            onChange={() => {}} />
-                        <Button type={ButtonType.Primary} isSubmit>
-                            Checkout
-                        </Button>
-                    </form>
-                    <Button type={ButtonType.Secondary} onClick={() => {}}>
-                        No, Thanks
-                    </Button>
-                </div>
+                {
+                    !showFeedbackForm ? (
+                        <div class="w-full flex flex-col space-y-2">
+                            <form method="POST" action="/api/billing/v1/checkout/">
+                                <Input
+                                    type={InputType.Hidden}
+                                    value={getCSRFToken() || ""}
+                                    name="csrfmiddlewaretoken"
+                                    onChange={() => {}} />
+                                <Input
+                                    type={InputType.Hidden}
+                                    value={selectedPlan}
+                                    name="price_id"
+                                    onChange={() => {}} />
+                                <Button type={ButtonType.Primary} isSubmit>
+                                    Checkout
+                                </Button>
+                            </form>
+                            <Button type={ButtonType.Secondary} onClick={() => setShowFeedbackForm(true)}>
+                                No, Thanks
+                            </Button>
+                        </div>
+                    ) : (
+                        <NoSubscribeFeedbackForm goBack={() => setShowFeedbackForm(false)} />
+                    )
+                }
             </div>
             <div>
                 <div class="max-w-lg my-12 flex flex-col space-y-4">
@@ -113,6 +123,27 @@ const AvailablePlanDisplay = (props: AvailablePlanDisplayProps) => {
                     </Text>
                 </div>
             </div>
+        </div>
+    );
+}
+
+type NoSubscribeFeedbackFormProps = {
+    goBack: () => void;
+}
+
+const NoSubscribeFeedbackForm = (props: NoSubscribeFeedbackFormProps) => {
+    const onSuccess = () => {
+        setLocation("/api/billing/v1/deny/")
+    }
+
+    return (
+        <div class="max-w-lg flex flex-col space-y-4">
+            <FeedbackForm
+                type={FeedbackType.NoSubscribe}
+                onSuccess={onSuccess} />
+            <Button type={ButtonType.Secondary} onClick={props.goBack}>
+                Go Back
+            </Button>
         </div>
     );
 }

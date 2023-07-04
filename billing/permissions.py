@@ -14,15 +14,17 @@ from .stripe_utils import get_active_subscription_end_date_for_user
 from users.models import User
 
 LENGTH_OF_FREE_TRIAL_DAYS_BY_ENVIRONMENT: Dict[Environment, int] = {
-    Environment.Dev: 0,
+    Environment.Dev: 14,
     Environment.Prod: 14,
 }
 BUFFER_PERIOD_DAYS = 3
 
-def is_user_subscription_status_valid(user: User) -> bool:
+def is_user_on_free_trial(user: User) -> bool:
     free_trial_days = LENGTH_OF_FREE_TRIAL_DAYS_BY_ENVIRONMENT[get_environment()]
-    requires_subscription = user.date_joined < (timezone.now() - timedelta(days=free_trial_days))
-    if not requires_subscription:
+    return not user.date_joined < (timezone.now() - timedelta(days=free_trial_days))
+
+def is_user_subscription_status_valid(user: User) -> bool:
+    if is_user_on_free_trial(user):
         return True
     return _verify_subscription_valid(user)
 

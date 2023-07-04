@@ -13,6 +13,7 @@ class UserStatus(IntEnum):
     VERIFIED = 2
     UNSUBSCRIBED = 3
     BLOCKLISTED = 4
+    DENIED_PLAN = 5
 
     @classmethod
     def choices(cls):

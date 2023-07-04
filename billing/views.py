@@ -1,5 +1,7 @@
 from django.shortcuts import redirect
 from django.utils import timezone
+from django.contrib.auth import logout
+from django.http import HttpRequest
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -7,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
 from .models import Subscription, AccountType
-from .permissions import is_user_subscription_status_valid
+from .permissions import is_user_subscription_status_valid, is_user_on_free_trial
 from .stripe_utils import (
     get_or_create_customer_from_user,
     get_active_prices,
@@ -16,14 +18,17 @@ from .stripe_utils import (
 )
 from .serializers import SubscriptionStatusSerializer, SubscriptionStatus
 
-from django.http import HttpRequest
+from users.models import UserStatus
 
 class SubscriptionViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=["get"])
     def status(self, request: HttpRequest) -> Response:
-        if is_user_subscription_status_valid(request.user):
+        if (
+            not is_user_on_free_trial(request.user) and
+            is_user_subscription_status_valid(request.user)
+        ):
             management_url = get_subscription_management_url(request.user)
             status = SubscriptionStatus(available_plans=None, management_url=management_url)
             return Response(SubscriptionStatusSerializer(status).data)
@@ -52,3 +57,12 @@ class SubscriptionViewSet(viewsets.ViewSet):
                 return redirect(management_url)
         checkout_session = get_checkout_session_url(request.user, request.POST["price_id"])
         return redirect(checkout_session)
+
+    @action(detail=False, methods=["get"])
+    def deny(self, request: HttpRequest) -> Response:
+        user = self.request.user
+        user.status = UserStatus.DENIED_PLAN
+        user.save()
+        logout(request)
+        return redirect("/")
+
