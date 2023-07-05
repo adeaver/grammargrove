@@ -89,7 +89,7 @@ const GenericEmailForm = (props: GenericEmailFormProps) => {
                     name="email"
                     placeholder="Email Address"
                     onChange={props.setEmail} />
-                <div className="w-1/2">
+                <div className="w-1/2 my-2">
                     <Button onClick={props.handleSubmit}>
                         Get Started
                     </Button>
@@ -129,7 +129,7 @@ const LoginForm = (props: LoginFormProps) => {
                     name="password"
                     placeholder="Password"
                     onChange={setPassword} />
-                <Button isSubmit>
+                <Button className="my-2" isSubmit>
                     Submit
                 </Button>
             </form>

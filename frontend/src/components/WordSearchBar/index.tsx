@@ -85,7 +85,7 @@ const WordSearchBar = (props: WordSearchBarProps) => {
                 value={searchQuery}
                 placeholder="Search for a word using Hanzi or Pinyin"
                 onChange={setSearchQuery} />
-            <Button onClick={handleSubmit}>
+            <Button className="my-2" onClick={handleSubmit}>
                 Submit
             </Button>
             <div class="grid grid-cols-2 gap-4">

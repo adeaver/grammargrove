@@ -71,7 +71,7 @@ def _ensure_all_possible_quiz_records(user: User) -> None:
         id__in=QuizQuestion.objects.filter(
             user=user, user_grammar_rule_entry__isnull=False
         ).values_list("user_grammar_rule_entry", flat=True)
-    )
+    ).filter(user=user)
     if user_grammar_rule_entries:
         for entry in user_grammar_rule_entries:
             for k, v in QuestionType.choices():

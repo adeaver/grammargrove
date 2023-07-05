@@ -83,7 +83,7 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
                                 placeholder="Add Search Term"
                                 name={`search-query-${tag}`}
                                 onChange={handleUpdateSearchQuery(idx)} />
-                            <Button onClick={handleRemoveSearchQuery(idx)}>
+                            <Button className="my-2" onClick={handleRemoveSearchQuery(idx)}>
                                 Remove this term
                             </Button>
                         </div>

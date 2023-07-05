@@ -17,7 +17,7 @@ const IndexPage = () => {
 const IntroSection = () => {
     return (
         <div class="w-full h-screen grid grid-cols-5">
-            <div class="p-6 md:py-24 col-span-5 md:col-span-3 md:col-start-2 h-full flex flex-col items-center space-y-4">
+            <div class="p-6 md:py-24 col-span-5 md:col-span-3 md:col-start-2 h-full flex flex-col items-center justify-center space-y-4">
                 <Text type={TextType.Title}>
                     Achieve your Mandarin goals
                 </Text>
@@ -47,7 +47,7 @@ const IntroSection = () => {
 const HowItWorksSection = () => {
     return (
         <div id="how-it-works" class="w-full h-screen grid grid-cols-5">
-            <div class="p-6 md:py-24 col-span-5 md:col-span-3 md:col-start-2 h-full flex flex-col items-center space-y-4">
+            <div class="p-6 md:py-24 col-span-5 md:col-span-3 md:col-start-2 h-full flex flex-col items-center justify-center space-y-4">
                 <Text type={TextType.Title}>
                     How it works
                 </Text>

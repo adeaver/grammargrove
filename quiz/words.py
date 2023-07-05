@@ -54,7 +54,7 @@ def _ensure_all_possible_quiz_records(user: User) -> None:
         id__in=QuizQuestion.objects.filter(
             user=user, user_vocabulary_entry__isnull=False).
             values_list("user_vocabulary_entry", flat=True)
-    )
+    ).filter(user=user)
     if user_vocabulary_entries:
         for entry in user_vocabulary_entries:
             for k, v in QuestionType.choices():
