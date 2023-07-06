@@ -69,3 +69,7 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 41,subject + 太 + adjective + 了,"Used for expressing ""too"" in the sense of ""excessively""",米饭  太  多  了  。  ,Mǐfàn  tài  duō  le ,explains that there is too much rice.
 43,phrase + 一些 + noun,"Used to express ""some"" or ""a few""",妈妈 去 超市 买 了  一些  水果。   ,Māma qù chāoshì mǎi le  yīxiē  shuǐguǒ,explains that mom went to the supermarket and bought some fruit.
 44,subject + 多少钱 ?,Used to ask about the price of something,你 的 手机  多少 钱 ？  ,Nǐ de shǒujī  duōshao qián ,explains that how much was your cell phone?
+45,subject + verb + 几 + Measure Word + Noun？,"Used for asking questions like ""how much?"" or ""how many?""",他 有  几  个 孩子？  ,Tā yǒu  jǐ  gè háizi,explains that how many kids does he have?
+45,subject + verb + 多少 + Measure Word + Noun ？,"Used for asking questions like ""how much?"" or ""how many?""",你 去 过  多少  个 国家？  ,Nǐ qù guo  duōshao  gè guójiā,explains that how many countries have you been to?
+46,subject + time + 怎么样,"Used for asking how something is, or what it is like",你 最近  怎么样  ？  ,Nǐ zuìjìn  zěnmeyàng  ,explains that how have you been recently?
+46,subject + 怎么样 ?,"Used for asking how something is, or what it is like",中国  怎么样  ？  ,Zhōngguò  zěnmeyàng  ,explains that how is china?
