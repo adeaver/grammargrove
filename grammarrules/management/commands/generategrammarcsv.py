@@ -19,13 +19,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         #  hsk_levels = [1, 2, 3, 4, 5, 6]
+        start_at_rule = 51
         number_of_rules = 0
         hsk_levels = [1]
         for level in hsk_levels:
             html = _get_html_for_hsk_level(level)
             rules = _get_rules_from_html(html)
-            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}.csv", "w") as rules_file:
-                with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples_{level}.csv", "w") as examples_file:
+            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}2.csv", "w") as rules_file:
+                with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples_{level}2.csv", "w") as examples_file:
                     rules_writer = csv.DictWriter(rules_file, fieldnames=["title", "definition", "hanzi", "pinyin", "level"])
                     rules_writer.writeheader()
 
@@ -33,9 +34,15 @@ class Command(BaseCommand):
                     examples_writer.writeheader()
 
                     for r in rules:
+                        if number_of_rules <= start_at_rule:
+                            number_of_rules += 1
+                            continue
                         try:
                             csv_lines = r.get_csv_lines()
-                        except:
+                        except KeyboardInterrupt:
+                            return
+                        except Exception as e:
+                            logging.warn(f"Error: {e}")
                             continue
                         rules_writer.writerow(
                             csv_lines.as_row(level)
@@ -215,8 +222,8 @@ class Rule(NamedTuple):
                 "\nWould you like to update the structure for this example?\n" +
                 "\n>>> "
             )
-            if strcture_change.strip():
-                structure = structure_change
+            if structure_change.strip():
+                structure = structure_change.strip()
             use = input(
                 "What is the use for this example?\n\n" +
                 ">>> "
@@ -224,7 +231,7 @@ class Rule(NamedTuple):
             if not use.strip():
                 use = definition
             examples.append(ProcessedExample(
-                example_structure=strcture,
+                example_structure=structure,
                 use=use,
                 hanzi=p.hanzi.translate
                     (str.maketrans('', '', string.punctuation)),
