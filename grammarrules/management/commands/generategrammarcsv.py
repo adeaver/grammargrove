@@ -17,41 +17,49 @@ BASE_URL = "https://resources.allsetlearning.com"
 class Command(BaseCommand):
     help = "Loads the grammar rules"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--level",
+            help="Which level to update",
+        )
+        parser.add_argument(
+            "--start_at_rule",
+            help="Which rule to start at",
+        )
+
     def handle(self, *args, **options):
-        #  hsk_levels = [1, 2, 3, 4, 5, 6]
-        start_at_rule = 51
+        level = 1 if not options["level"] else int(options.get("level"))
+        start_at_rule = -1 if not options["start_at_rule"] else int(options.get("start_at_rule"))
         number_of_rules = 0
-        hsk_levels = [1]
-        for level in hsk_levels:
-            html = _get_html_for_hsk_level(level)
-            rules = _get_rules_from_html(html)
-            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}2.csv", "w") as rules_file:
-                with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples_{level}2.csv", "w") as examples_file:
-                    rules_writer = csv.DictWriter(rules_file, fieldnames=["title", "definition", "hanzi", "pinyin", "level"])
-                    rules_writer.writeheader()
+        html = _get_html_for_hsk_level(level)
+        rules = _get_rules_from_html(html)
+        with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}.csv", "w") as rules_file:
+            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples_{level}.csv", "w") as examples_file:
+                rules_writer = csv.DictWriter(rules_file, fieldnames=["title", "definition", "hanzi", "pinyin", "level"])
+                rules_writer.writeheader()
 
-                    examples_writer = csv.DictWriter(examples_file, fieldnames=["grammar_rule_line_number", "structure", "use", "hanzi", "pinyin", "explanation"])
-                    examples_writer.writeheader()
+                examples_writer = csv.DictWriter(examples_file, fieldnames=["grammar_rule_line_number", "structure", "use", "hanzi", "pinyin", "explanation"])
+                examples_writer.writeheader()
 
-                    for r in rules:
-                        if number_of_rules <= start_at_rule:
-                            number_of_rules += 1
-                            continue
-                        try:
-                            csv_lines = r.get_csv_lines()
-                        except KeyboardInterrupt:
-                            return
-                        except Exception as e:
-                            logging.warn(f"Error: {e}")
-                            continue
-                        rules_writer.writerow(
-                            csv_lines.as_row(level)
-                        )
+                for r in rules:
+                    if number_of_rules <= start_at_rule:
                         number_of_rules += 1
-                        for e in csv_lines.examples:
-                            examples_writer.writerow(
-                                e.as_row(number_of_rules)
-                            )
+                        continue
+                    try:
+                        csv_lines = r.get_csv_lines()
+                    except KeyboardInterrupt:
+                        return
+                    except Exception as e:
+                        logging.warn(f"Error: {e}")
+                        continue
+                    rules_writer.writerow(
+                        csv_lines.as_row(level)
+                    )
+                    number_of_rules += 1
+                    for e in csv_lines.examples:
+                        examples_writer.writerow(
+                            e.as_row(number_of_rules)
+                        )
 
 
 

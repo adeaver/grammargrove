@@ -71,7 +71,7 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 47,subject + time word + 怎么样,used to ask how someone is,你 最近  怎么样  ？  ,Nǐ zuìjìn  zěnmeyàng  ,explains that how have you been recently?
 47,subject + 怎么样,used to ask how china is,中国  怎么样  ？  ,Zhōngguò  zěnmeyàng  ,explains that how is china?
 49,subject + verb + 了吗,ask about whether dinner was eaten,你 吃饭  了 吗  ？  ,Nǐ chīfàn  le ma ,explains that did you eat?
-53,subject + 是 + manner + 去 + 的,used to emphasize how someone got somewhere,A  我  是   坐 火车  去  的  。  ,Wǒ  shì   zuò huǒchē  qù  de ,explains that i went by train.
-53,subject + 是 + time + verb + 的,used to emphasize what time something was done,B  我们  是   昨天  到  的  。 ,Wǒmen  shì   zuótiān  dào  de ,explains that we arrived yesterday.
-53,subject + 是 + 在 + vplace + verb + 的,used to emphasize where something was done,B  我  是   在 香港  出生  的  。,Wǒ  shì   zài Xiānggǎng  chūshēng  de ,explains that i was born in hong kong.
+53,subject + 是 + manner + 去 + 的,used to emphasize how someone got somewhere,我  是   坐 火车  去  的  。  ,Wǒ  shì   zuò huǒchē  qù  de ,explains that i went by train.
+53,subject + 是 + time + verb + 的,used to emphasize what time something was done,我们  是   昨天  到  的  。 ,Wǒmen  shì   zuótiān  dào  de ,explains that we arrived yesterday.
+53,subject + 是 + 在 + place + verb + 的,used to emphasize where something was done, 我  是   在 香港  出生  的  。,Wǒ  shì   zài Xiānggǎng  chūshēng  de ,explains that i was born in hong kong.
 53,subject + 不是 + 跟 + person + verb + 的,used to emphasize with whom something did not happen,他  不是   跟 我们 一起  去  的  。  ,Tā  bù shì   gēn wǒmen  yīqǐ  qù  de ,explains that he didn't go with us.
