@@ -1,10 +1,11 @@
-from typing import List, Union, NamedTuple
+from typing import List, Union, NamedTuple, Dict
 
 import logging
 
 import requests
 import codecs
 import string
+import csv
 
 from bs4 import BeautifulSoup, Tag
 
@@ -18,21 +19,32 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         #  hsk_levels = [1, 2, 3, 4, 5, 6]
-        grammar_rules_csv_lines = []
-        example_csv_lines = []
+        number_of_rules = 0
         hsk_levels = [1]
         for level in hsk_levels:
             html = _get_html_for_hsk_level(level)
             rules = _get_rules_from_html(html)
-            for r in rules:
-                csv_lines = r.get_csv_lines()
-                grammar_rules_csv_lines.append(
-                    csv_lines.to_text(level)
-                )
-                for e in csv_lines.examples:
-                    example_csv_lines.append(
-                        e.to_text(len(grammar_rules_csv_lines))
-                    )
+            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}.csv", "w") as rules_file:
+                with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples_{level}.csv", "w") as examples_file:
+                    rules_writer = csv.DictWriter(rules_file, fieldnames=["title", "definition", "hanzi", "pinyin", "level"])
+                    rules_writer.writeheader()
+
+                    examples_writer = csv.DictWriter(examples_file, fieldnames=["grammar_rule_line_number", "structure", "use", "hanzi", "pinyin", "explanation"])
+                    examples_writer.writeheader()
+
+                    for r in rules:
+                        try:
+                            csv_lines = r.get_csv_lines()
+                        except:
+                            continue
+                        rules_writer.writerow(
+                            csv_lines.as_row(level)
+                        )
+                        number_of_rules += 1
+                        for e in csv_lines.examples:
+                            examples_writer.writerow(
+                                e.as_row(number_of_rules)
+                            )
 
 
 
@@ -62,8 +74,15 @@ class ProcessedExample(NamedTuple):
     pinyin: str
     explanation: str
 
-    def to_text(self, line_number: int) -> str:
-        return f'{line_number},"{self.example_structure}","{self.use}","{self.hanzi}","{self.pinyin}","{self.explanation}"'
+    def as_row(self, rule_line_number: int) -> Dict[str, str]:
+        return {
+            "grammar_rule_line_number": rule_line_number,
+            "structure": self.example_structure,
+            "use": self.use,
+            "hanzi": self.hanzi,
+            "pinyin": self.pinyin,
+            "explanation": self.explanation
+        }
 
 class CSVLine(NamedTuple):
     title: str
@@ -73,8 +92,14 @@ class CSVLine(NamedTuple):
 
     examples: List[ProcessedExample]
 
-    def to_text(self, level: int) -> str:
-        return f'"{self.title}","{self.definition}","{self.structure}","{self.structure_pinyin}",{level}'
+    def as_row(self, level: int) -> Dict[str, str]:
+        return {
+            "title": self.title,
+            "definition": self.definition,
+            "hanzi": self.structure_pinyin,
+            "pinyin": self.structure_pinyin,
+            "level": str(level),
+        }
 
 class Example(NamedTuple):
     hanzi: str
@@ -185,6 +210,13 @@ class Rule(NamedTuple):
                         ">>> "
                     )
                 )
+            structure = processed_structures[struct_idx]
+            structure_change = input(
+                "\nWould you like to update the structure for this example?\n" +
+                "\n>>> "
+            )
+            if strcture_change.strip():
+                structure = structure_change
             use = input(
                 "What is the use for this example?\n\n" +
                 ">>> "
@@ -192,7 +224,7 @@ class Rule(NamedTuple):
             if not use.strip():
                 use = definition
             examples.append(ProcessedExample(
-                example_structure=processed_structures[struct_idx],
+                example_structure=strcture,
                 use=use,
                 hanzi=p.hanzi.translate
                     (str.maketrans('', '', string.punctuation)),
