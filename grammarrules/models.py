@@ -24,6 +24,7 @@ class PartOfSpeech(IntEnum):
     Subject = 15
     Object = 16
     Place = 17
+    Phrase = 18
 
     @classmethod
     def choices(cls):

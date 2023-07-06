@@ -148,9 +148,10 @@ def _process_example(
         explanation=explanation,
     )
     example.save()
-    structure_parts = structure.split(" ")
+    structure_parts = structure.split("+")
     pinyin_parts = pinyin.split(" ")
     for idx, s in enumerate(structure_parts):
+        s = s.strip()
         if s in parts_of_speech_by_name:
             GrammarRuleHumanVerifiedPromptExampleComponent(
                 prompt_example=example,

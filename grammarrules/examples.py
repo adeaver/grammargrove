@@ -111,11 +111,8 @@ def _make_prompt(
                 for r in example_components
             ]
         )
-        function_examples = ", ".join(
-            [f"{example_words[idx]} is the {PartOfSpeech(r.part_of_speech).to_proper_name()}" for idx, r in enumerate(example_components) if r.word is None]
-        )
         prompt = (
-            f"In Mandarin, the sentence structure {sentence_structure} is used for {example.structure_use}. For example, {example.hanzi_display} {example.explanation}. In this example, {function_examples}. "
+            f"In Mandarin, the sentence structure {sentence_structure} is used for {example.structure_use}. For example, {example.hanzi_display} {example.explanation}. "
         )
         example.uses += 1
         example.save()

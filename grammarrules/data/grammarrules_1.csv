@@ -1,52 +1,44 @@
 title,definition,hanzi,pinyin,level
-Expressing actions in progress,Used to express an action that is currently in progress,subject + zhèngzài + verb + object,subject + zhèngzài + verb + object,1
-"Negation of ""you"" with ""mei""","""you"" is negated using ""mei"" instead of ""bu""",méi + yǒu + (object),méi + yǒu + (object),1
-"Standard negation with ""bu""","Most words are negated with ""bu""",subject + bù + verb + object,subject + bù + verb + object,1
-"The ""all"" adverb ""dou""",Used to create a group involving everyone/everything,subject + dōu + verb,subject + dōu + verb,1
-"The ""also"" adverb ""ye""",Expressing things that are also true,subject + yě + verb,subject + yě + verb,1
-"Asking about degree with ""duo""",Used to ask how much of an adjective something is,subject + duō + adjective,subject + duō + adjective,1
-"Expressing ""not very"" with ""bu tai""","Used to express ""not very""",subject + bù tài + adjective,subject + bù tài + adjective,1
-"Expressing ""and"" with ""he""",Used to link two nouns,noun + hé + noun,noun + hé + noun,1
-"After a specific time with ""yihou""",Used for expressing something happening after a time or event,time + yǐhòu + predicate,time + yǐhòu + predicate,1
-"Before a specific time with ""yiqian""",Used for expressing that something happened before a specific time or event,"time + yǐqián , predicate","time + yǐqián , predicate",1
-Time words and word order,Time words and word order,time + subject + verb + object,time + subject + verb + object,1
-"Age with ""sui""","""sui"" is used to create sentences involving age",subject + number + suì,subject + number + suì,1
-"Measure word ""ge""","Many things are measured with the word ""ge""",number + gè + noun,number + gè + noun,1
-Structure of dates,Structure of dates,number + nián + number + yuè + rnumber + rì,number + nián + number + yuè + rnumber + rì,1
-Structure of numbers,Structure of numbers,shí + number,shí + number,1
-Structure of times (advanced),Structure of times (advanced),number + diǎn + number + fēn,number + diǎn + number + fēn,1
-Structure of times (basic),Structure of times (basic),number + diǎn,number + diǎn,1
-"Expressing close possession without ""de""",Used to express posessions that are close (i.e. family),pronoun + noun,pronoun + noun,1
-"Expressing completion with ""le""",Used to talk about actions that have already completed,subject + verb + le,subject + verb + le,1
-"Expressing ""not anymore"" with ""le""",talking about something that is no longer true,bù + verb + le,bù + verb + le,1
-"Expressing ""now"" with ""le""",A way for expressing right now,predicate + 了,predicate + 了,1
-"Expressing possession with ""de""",Used to express ownership or possession,noun + de + noun,noun + de + noun,1
-"Questions with ""ne""",Repeating a question,predicate + ne,predicate + ne,1
-"Softening speech with ""ba""",Used to soften sentences,predicate + 吧,predicate + 吧,1
-"Suggestions with ""ba""","Suggestions with ""ba""",Predicate + 吧,Predicate + 吧,1
-"Directional verbs ""lai"" and ""qu""",Used to express the direction of motion,lái + qù + place,lái + qù + place,1
-"Expressing existence in a place with ""zai""",Expresses current location,subject + 在 + place,subject + 在 + place,1
-"Expressing existence with ""you""",Used to express that something exists,place + yǒu + object,place + yǒu + object,1
-"Expressing possession with ""you""",expresses that someone/something has something,subject + yǒu + object,subject + yǒu + object,1
-"Polite requests with ""qing""",Makes requests more polite,qǐng + verb,qǐng + verb,1
-Indicating what someone or something is called,Used to indicate what someone or something is called,subject + jiào + name,subject + jiào + name,1
-Expressing going towards,Expressing movement,subject + qù + place,subject + qù + place,1
-"Expressing ability or possibility with ""neng""",Expresses the ability to do something or the possibility of something happening,subject + néng + verb + object,subject + néng + verb + object,1
-"Expressing a learned skill with ""hui""",Used to talk about a skill you can learn,subject + huì + verb + object,subject + huì + verb + object,1
-"Expressing ""will"" with ""hui""",used to indicate that something will happen or that someone will do something,subject + huì + verb + object,subject + huì + verb + object,1
-"Expressing ""would like to"" with ""xiang""","sed to express ""would like to.""",subject + xiǎng + verb + object,subject + xiǎng + verb + object,1
-"How to do something with ""zenme""",used to ask how,subject + zěnme + verb + object,subject + zěnme + verb + object,1
-"Indicating location with ""zai"" before verbs",Used to describe where something was done,subject + zài + place + verb + object,subject + zài + place + verb + object,1
-"Negation of past actions with ""meiyou""","used to say that someone didn't do something, or something didn't happen",subject + méiyǒu / méi + verb,subject + méiyǒu / méi + verb,1
-Basic sentence order,Basic sentence order,subject + verb + object,subject + verb + object,1
-"Connecting nouns with ""shi""",Used to connect nouns,noun + shì + noun,noun + shì + noun,1
-"Expressing ""excessively"" with ""tai""","used to say that something is ""too""",tài + adjective + le,tài + adjective + le,1
-"Simple ""noun + adjective"" sentences","Simple ""noun + adjective"" sentences",noun + hěn + adjective,noun + hěn + adjective,1
-"expresses ""some"" or ""a few""","expresses ""some"" or ""a few""",yīxiē + noun,yīxiē + noun,1
-Counting money,Used to count money,subject + duōshao qián,subject + duōshao qián,1
-Measure words in quantity questions,Measure words in quantity questions,subject + verb + duōshao + measure word + noun,subject + verb + duōshao + measure word + noun,1
-"Asking how something is with ""zenmeyang""",used to ask how something is,subject + zěnmeyàng,subject + zěnmeyàng,1
-Placement of question words,Placement of question words,subject + verb + object,subject + verb + object,1
-"Questions with ""le ma""",Asking questions about things that have been completed,subject + verb + object + lema,subject + verb + object + lema,1
-"Yes-no questions with ""ma""",Used to ask questions that could be answered with a yes or no,predicate + ma,predicate + ma,1
-"The ""shi... de"" construction for emphasizing details",Used to emphasize details of how an action was done,subject + shì + predicate + verb + de,subject + shì + predicate + verb + de,1
+Expressing actions in progress,Used to express that an action is ongoing or in progress,subject +  正在  + verb + object,subject + zhèngzài + verb + object,1
+"Negation of ""you"" with ""mei""",used to negate the verb 有,没  +  有 ( +  Obj.),méi + yǒu + (object),1
+Standard negation,"used to negate a verb in the present or future, or to talk about what you do not do, as a habit",subject +  不  + verb + object,subject + bù + verb + object,1
+"The ""all"" adverb","used to express ""all""",subject +  都  +  [Verb Phrase],subject + dōu + [Verb Phrase],1
+"The ""also"" adverb","Used to express ""too"" or ""also""",subject +  也  +  verb,subject + yě + verb,1
+Asking about degree,Used to express the degree of an adjective,subject +  多  +  adjective,subject + duō + adjective,1
+"Expressing ""not very""","Used to mean ""not very"" or ""not so"" (literally ""not too"").",subject +  不太  + adjective,subject + bùtài + adjective,1
+"Expressing ""and""",Mainly used to link nouns,noun  +  和  +  noun,noun + hé + noun,1
+Expressing something that happened after a specific time,used to describe the events after a specific time,"time  +  以后 + phrase",time + yǐhòu + phrase,1
+Expressing something that happened before a specific time,Used to talk about things that happened before a specific time.,time  +  以前 + phrase,time + yǐqián + phrase,1
+Time words and word order,Referencing a specific time,time + subject + verb + object,time + subject + verb + object,1
+Age,Used to give a person's age,subject +  Number  +  岁,subject + number + suì,1
+Basic measure word,Most commonly used measure word. It can be used in a pinch for any noun if you can't think of a more precise measure word.,Number  +  个  + noun,number + gè + noun,1
+Structure of dates,Dates are arranged from largest unit to smallest,x 年  +  y 月  +  z 日,number + nián + number + yuè + number + rì,1
+Advanced structure of times,A more specific measure of time,number + 点 + number + 零 + number + 分,number + diǎn + líng + number + fēn,1
+Basic structure of time,The basic way to tell time,(Date and/or time of day  + ) x 点,(time) + number + diăn,1
+Expressing close possession,"when certain (especially close) relationships are involved, it's more natural to drop the 的 to express possession",Pronoun  + noun,pronoun + noun,1
+Expressing completion,Used to express the completion of an action,subject + verb +  了,subject + verb + le,1
+"Expressing ""not anymore""","Used to express ""(not) anymore"" or ""no longer.""",不 + phrase + 了,bù + phrase + le,1
+"Expressing ""now"" with ""le""","Used to express ""now"" similar to 现在",phrase + 了,phrase + 了,1
+Expressing possession,Used to express that one noun belongs to another,Noun 1 + 的 + Noun 2,noun + de + noun,1
+"Questions with ""ne""","Used to ask reciprocal questions, also known as ""bounce back"" questions.",phrase + 呢,phrase + 呢,1
+"Softening speech with ""ba""",Used to soften the feel of a sentence.,phrase + 吧,phrase + 吧,1
+"Suggestions with ""ba""",Used to make a suggestion,phrase + 吧,phrase + 吧,1
+"Directional verb ""qu""",Used to express direction from the perspective of the speaker,去 + Place,qù + place,1
+Expressing existence in a place,Expresses existence in a location,subject + 在 + Place,subject + zài + place,1
+Expressing existence,"Used to express existence similar to ""there is"" or ""there are""",Place + 有 + object,place + yǒu + object,1
+"Expressing possession with ""you""","Similar to ""to have""",subject + 有 + object,subject + yǒu + object,1
+"Polite requests with ""qing""","serves the same purpose as adding ""please"" to a request",请 + verb,qǐng + verb,1
+What something or someone is called,"Used to indicate what someone or something is called, or what someone or something's name is.",subject + 叫 + [Name],subject + jiào + name,1
+Going places,Used to talk about going to places,subject + 去 + [Place],subject + qù + place,1
+Expressing ability or possibility,Used to emphasize one's ability or the possibility of something happening,subject + 能 + verb + object,subject + néng + verb + object,1
+Expressing a learned skill,used to express an ability that has been learned (a skill).,subject + 会 + verb + object,subject + huì + verb + object,1
+"Expressing ""will""",Used to express the possibility of an action happening in the future,subject + 会 + verb + object,subject + huì + verb + object,1
+"Expressing ""would like to""","Used to express something that you ""would like to do""",subject + 想 + Verb ( + Obj.),subject + xiǎng + verb + (object),1
+Expressing how to do something,Used to express how to do something,subject + 怎么 + verb + object,subject + zěnme + verb + object,1
+Indicating where an action took place,Used to include the place where an action takes place,subject + 在 + Place + verb + object,subject + zài + place + verb + object,1
+"Negation of past actions with ""meiyou""","Used to negate past actions (to say that someone didn't do something, or something didn't happen).",subject + 没有 + verb,subject + méiyǒu + verb,1
+Connecting nouns,是 is for connecting nouns,Noun 1 + 是 + Noun 2,noun + shì + noun,1
+"Expressing ""excessively""","Used for expressing ""too"" in the sense of ""excessively""",太 + adjective + 了,tài + adjective + le,1
+"Simple ""noun + adjective"" sentences",Used to link nouns to adjectives,noun + 很 + adjective,noun + hěn + adjective,1
+"Expressing ""some"" with ""yixie""","Used to express ""some"" or ""a few""",一些 + noun,yīxiē + noun,1
+Counting money,Used to count money,subject + 多少钱 ?,subject + Duōshaoqián,1

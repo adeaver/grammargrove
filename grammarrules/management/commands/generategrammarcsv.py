@@ -14,6 +14,15 @@ from django.conf import settings
 
 BASE_URL = "https://resources.allsetlearning.com"
 
+REPLACEMENTS = {
+    "subj.": "subject",
+    "verb": "verb",
+    "adj.": "adjective",
+    "obj.": "object",
+    "adv.": "adverb",
+    "noun": "noun",
+}
+
 class Command(BaseCommand):
     help = "Loads the grammar rules"
 
@@ -30,16 +39,20 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         level = 1 if not options["level"] else int(options.get("level"))
         start_at_rule = -1 if not options["start_at_rule"] else int(options.get("start_at_rule"))
+        mode = "w" if start_at_rule == -1 else "a"
         number_of_rules = 0
         html = _get_html_for_hsk_level(level)
         rules = _get_rules_from_html(html)
-        with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}.csv", "w") as rules_file:
-            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples_{level}.csv", "w") as examples_file:
+        with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}.csv", mode) as rules_file:
+            with open(f"{settings.BASE_DIR}/grammarrules/data/grammarruleexamples_{level}.csv", mode) as examples_file:
                 rules_writer = csv.DictWriter(rules_file, fieldnames=["title", "definition", "hanzi", "pinyin", "level"])
-                rules_writer.writeheader()
+                if mode == "w":
+                    rules_writer.writeheader()
 
                 examples_writer = csv.DictWriter(examples_file, fieldnames=["grammar_rule_line_number", "structure", "use", "hanzi", "pinyin", "explanation"])
-                examples_writer.writeheader()
+
+                if mode == "w":
+                    examples_writer.writeheader()
 
                 for r in rules:
                     if number_of_rules <= start_at_rule:
@@ -74,9 +87,6 @@ def _get_text_from_element_list(contents: List[Union[str, Tag]]) -> str:
 
 
 def _get_html_for_hsk_level(level: int) -> str:
-    if level == 1:
-        with open(f"{settings.BASE_DIR}/resp.txt") as f:
-            return f.read()
     request_url = f"{BASE_URL}/chinese/grammar/HSK_{level}_grammar_points"
     resp = requests.get(request_url)
     return resp.content
@@ -111,7 +121,7 @@ class CSVLine(NamedTuple):
         return {
             "title": self.title,
             "definition": self.definition,
-            "hanzi": self.structure_pinyin,
+            "hanzi": self.structure,
             "pinyin": self.structure_pinyin,
             "level": str(level),
         }
@@ -195,7 +205,8 @@ class Rule(NamedTuple):
                     ">>> "
                 )
             )
-        primary_structure = processed_structures[primary_idx]
+        primary_structure = " + ".join([ REPLACEMENTS[p.lower().strip()] if p.lower().strip() in REPLACEMENTS else p.strip() for p in processed_structures[primary_idx].split("+") ])
+
 
         structure_pinyin = input(
             "\nWhat's the pinyin for:\n" +
@@ -225,15 +236,17 @@ class Rule(NamedTuple):
                         ">>> "
                     )
                 )
-            structure = processed_structures[struct_idx]
+            structure = " + ".join([ REPLACEMENTS[p.lower().strip()] if p.lower().strip() in REPLACEMENTS else p.strip() for p in processed_structures[struct_idx].split("+") ])
             structure_change = input(
                 "\nWould you like to update the structure for this example?\n" +
-                "\n>>> "
+                f"It’s currently {structure}\n\n" +
+                ">>> "
             )
             if structure_change.strip():
                 structure = structure_change.strip()
             use = input(
-                "What is the use for this example?\n\n" +
+                "What is the use for this example?\n" +
+                f"Default: {definition}\n\n" +
                 ">>> "
             )
             if not use.strip():

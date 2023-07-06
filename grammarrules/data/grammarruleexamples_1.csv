@@ -1,77 +1,71 @@
 grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
-1,subject + 在 + verb + object,describing an action currently in progress,她  在  看 书。  ,Tā  zài  kànshū,explains that she is reading.
-1,subject + 正在 + verb + object,expressing an action currently in progress,阿姨  正在  打扫 我们 的 房间。  ,Āyí  zhèngzài  dǎsǎo wǒmen de fángjiān,explains that the cleaning lady is cleaning our room right now.
-2,subject + 没有 + object,negating 有,我  没有  问题。   ,Wǒ  méiyǒu  wèntí,explains that i don't have any questions.
-3,subject + bù + verb + object,negating the verb hē jiǔ,我们  不   喝  酒。  ,Wǒmen  bù   hē jiǔ,explains that we don't drink alcohol.
-3,subject + 不 + adjective,negating the adjective è,我  不   饿 。  ,Wǒ  bù   è ,explains that i'm not hungry.
-4,subject + 都 + verb + object,"used for creating a group out of ""they""",他们  都  在 上海 。  ,Tāmen  dōu  zài Shànghǎi,explains that they are all in shanghai.
-4,subject + 都 + verb + object,"Creating a group out of ""us""",我们  都  要 冰水。  ,Wǒmen  dōu  yào bīngshuǐ ,explains that we all want ice water.
-5,subject + 也 + verb,Used to express that I also like something.,我  也  喜欢。   ,Wǒ  yě  xǐhuan,explains that i also like it.
-5,subject + 也 + adverb + adjective,shows that Hunan food is also spicy.,湖南 菜  也   很  辣。   ,Húnán cài  yě   hěn  là,explains that hunan food is very spicy too.
-6,subject + 多 + adjective,asking how tall she is,她  多  高？  ,Tā  duō  gāo,explains that how tall is she?
-7,subject + t不太 + adjective,express that the house is not too big,我 家  不 太  大。  ,Wǒ jiā  bù tài  dà,explains that my house is not too big.
-7,subject + 不太 + verb,expresses that I don't fully understand,我  不 太  懂 。  ,Wǒ  bù tài  dǒng,explains that i don't really understand.
-8,noun + 和 + noun,used to link you and me in a sentence,你   和   我  ,nǐ   hé   wǒ,explains that you and i
-9,"time + 以后 , predicate",express that I will not be home after 3pm,下午 三点   以后 ， 我 不 在 家。   ,Xiàwǔ  sāndiǎn   yǐhòu  wǒ bù zài jiā,"explains that after three p.m., i will not be at home."
-9,"verb + 以后 , predicate","expressing that after we get off work, we will play ball",下班   以后 你 想 跟 我们 一起 去 打球 吗   ,Xiàbān   yǐhòu  nǐ xiǎng gēn wǒmen yīqǐ qù dǎqiú ma,"explains that after we get off work, would you like to go play ball with us?"
-10,"verb + 以前 , predicate",asks about whether I washed my hands before eating,吃饭   以前  ，你 洗 手 了 吗？  ,Chīfàn   yǐqián  nǐ xǐ shǒu le ma,explains that did you wash your hands before eating?
-10,"time + 以前 , predicate",expressing whether I knew someone before two years,两 年   以前  ， 你 认识 他 吗？   ,Liǎng nián   yǐqián   nǐ rènshi tā ma,explains that did you know him two years ago?
-11,time + subject + verb + object,Expressing that something happened yesterday,昨天   我  去 了 酒吧 。   ,Zuótiān   wǒ  qù le jiǔbā,explains that yesterday i went to the bar.
-11,subject + time + verb + object,expressing that something happened yesterday,我   昨天  去 了 酒吧 。   ,Wǒ   zuótiān  qù le jiǔbā,explains that i went to the bar yesterday.
-12,subject + number + 岁,used to express my age,我 20  岁  。  ,Wǒ èrshí  suì ,explains that i am 20 years old.
-12,subject + number + 岁 + 半,used to expressing half time periods,她两岁半。   ,Tā liǎng  suì   bàn ,explains that she is two and a half years old.
-13,Number + 个 + Noun,counting one person,一  个  人   ,yī  gè  rén,explains that one person
-14,number + 年 + number + 月 + number + 号,creating a date,1868  年  1  月  18  号  ,Yībāliùbā  nián  Yī yuè  shíbā  hào,"explains that january 18, 1868"
-14,number + 年 + number + 月 + number + 日,creating a date,2001  年  7  月  20  日  ,èrlínglíngyī  nián  Qī yuè  èrshí  rì,"explains that july 20th, 2001"
-16,number + 点 + number + 分,creating a time,两  点   零  九 分    ,liǎng  diǎn   líng  jiǔ  fēn,explains that 2:09
-17,number + 点,creating a time,九  点  ,jiǔ  diǎn,explains that 9 o'clock
-17,time of day + number + 点,Creating the time of day,上午 七  点  ,shàngwǔ qī  diǎn,explains that 7 o'clock a.m.
-18,pronoun + noun + adjective,"talking about a house, which is a close possession",我 家  很 大。  ,Wǒ jiā  hěn dà,explains that my house is very big.
-18,pronoun + noun + adjective,talking about a brother,你 哥哥  很 高 。  ,Nǐ gēge  hěn gāo,explains that your big brother is very tall.
-19,subject + verb + 了,talking about an action that has completed,他们 到  了  。  ,Tāmen dào  le ,explains that they have arrived.
-19,subject + time + verb + 了 + object,used for talking about an action that is completed,我  今天  吃  了  早饭 。  ,Wǒ  jīntiān  chī  le  zǎofàn,explains that this morning i ate breakfast.
-19,time + subject + verb + 了 + object,used for talking about an action that has already happened,中午  我 见  了  朋友 。  ,Zhōngwǔ  wǒ jiàn  le  péngyou,explains that at noon i met a friend.
-19,time + subject + verb + object + 了,expressing an action that has already completed,上个 月 我 去  台湾   了  。  ,Shàng gè yuè wǒ qù  Táiwān   le ,explains that i went to taiwan last month.
-20,subject + 不 + verb + object + 了,used to talk about something that is no longer true,我  不  想 吃  了  。  ,Wǒ  bù  xiǎng chī  le ,explains that i don't want to eat anymore.
-20,subject + 没 + object + 了,talking about something that is no longer true,手机  没  电  了  。  ,Shǒujī  méi  diàn  le ,explains that my cell phone has run out of power.
-20,subject + 没有 + object + 了,talking about something that is no longer true,他  没有  家  了 。  ,Tā  méiyǒu  jiā  le ,explains that he doesn't have a home anymore.
-21,subject + verb + 了,Expressing that the situation has changed and I'm now 20 years old,我 20 岁  了  ！  ,Wǒ èrshí suì  le ,explains that i'm 20 years old now!
-21,subject + verb + 了,Expressing that a situation has changed and I'm now leaving,我 走  了  。  ,Wǒ zǒu  le ,explains that i'm leaving now.
-22,noun + 的 + noun,expresses that the teacher is mine,我  的  老师   ,wǒ  de  lǎoshī,explains that my teacher
-23,"predicate , subject + 呢",repeating a question,你 爸爸 是 上海 人 ，你 妈妈  呢  ？  ,Nǐ bàba shì Shànghǎi rén nǐ māma  ne ,explains that your father is shanghainese. and your mom?
-24,predicate + 吧,soften the expression,这 不 太 好  吧  。  ,Zhè bù tài hǎo  ba ,explains that this isn't so good.
-26,subject + verb + 去 + place,express going to the supermarket,妈妈 要  去  超市。  ,Māma yào  qù  chāoshì,explains that mom will go to the supermarket.
-26,subject + time + 来 + place,expressing a coming towards,你 现在  来 南京 路 吧。  ,Nǐ xiànzài  lái  Nánjīng Lù ba,explains that come to nanjing road now.
-27,subject + 在 + place,expresses that I'm in shanghai,我  在  上海。  ,Wǒ  zài  Shànghǎi,explains that i'm in shanghai.
-28,place + 有 + object,expresses that there exists puppies in my home,我 家  有  很 多 小 狗。  ,Wǒ jiā  yǒu  hěn duō xiǎo gǒu,explains that there are a lot of puppies in my home.
-29,subject + 有 + object,used for expressing ownership of the money,我  有  钱。  ,Wǒ  yǒu  qián,explains that i have money.
-30,请 + verb,asking politely to enter,请  进 。  ,Qǐng  jìn,explains that please come in.
-31,subject + 叫 + object,asking what something is called,那 个  叫  什么？  ,Nàge  jiào  shénme,explains that what is that called?
-31,subject + 叫 + name,stating someone's name,我们 的 老板  叫  John。  ,Wǒmen de lǎobǎn  jiào  John,explains that our boss is named john.
-32,subject + time + 去 + place,expressing that we are going to a park,我们 现在  去  公园。  ,Wǒmen xiànzài  qù  gōngyuán,explains that we're going to the park now.
-32,subject + 去 + place,expressing motion towards a place,我  去  工作 。  ,Wǒ  qù  gōngzuò,explains that i'm going to work.
-32,subject + 去 + verb,express that an action is going to happen,我们  去  吃饭 吧 。  ,Wǒmen  qù  chīfàn ba,explains that let's go eat.
-33,subject + 能 + verb + adverb,Used to ask if someone is able to do something,你们  能  小声 一点 吗？  ,Nǐmen  néng  xiǎo shēng yīdiǎn ma,explains that could you all lower your voices a bit?
-34,subject + 会 + verb + object,expressing an ability to learn chinese,他  会  说 中文。  ,Tā  huì  shuō Zhōngwén,explains that he can speak chinese.
-34,subject + 会 + verb + object,used for expressing an ability to write chinese,我  会  写 汉字。  ,Wǒ  huì  xiě Hànzì,explains that i can write chinese characters.
-35,subject + 会 + verb + object,used to express what will happen,他  会  来 看 你 吗？   ,Tā  huì  lái kàn nǐ ma,explains that will he come to see you?
-35,subject + 会 + verb + object,used to express what will happen,你 女儿  会  听 你 的 话。  ,Nǐ nǚér  huì  tīng nǐ de huà,explains that your daughter will listen to you.
-36,subject + 想 + verb + object,used to express wanting to eat noodles,我  想   吃  面。  ,Wǒ  xiǎng   chī  miàn,explains that i would like to eat noodles.
-37,subject + 怎么 + verb + object,asking about how something is done,你  怎么  知道 我 喜欢 旅行？  ,Nǐ  zěnme  zhīdào wǒ xǐhuan lǚxíng,explains that how did you know i like to travel?
-37,subject + 怎么 + verb,used to ask how eating mangoes is done,芒果   怎么  吃？  ,Mángguǒ   zěnme  chī,explains that how do you eat mangos?
-38,subject + 在 + place + verb + object,expresses where I went to college,我  在   上海  上大学。  ,Wǒ  zài   Shànghǎi  shàng dàxué,explains that i went to college in shanghai.
-39,subject + 没有 + verb + object,used to say that I didn't go to work,我  没有  去 上班。  ,Wǒ  méiyǒu  qù shàngbān,explains that i didn't go to work.
-41,noun + 是 + noun,used to say that I am a student,我  是  学生。  ,Wǒ  shì  xuésheng,explains that i am a student.
-42,subject  + 太 + adjective + 了,used to say that there is too much rice,米饭  太  多  了  。  ,Mǐfàn  tài  duō  le ,explains that there is too much rice.
-43,noun + 很 + adjective,"used to connect ""good"" to ""I""",我  很  好。   ,Wǒ  hěn  hǎo,explains that i'm good.
-45,subject + 多少钱,used to ask how much a phone costs,你 的 手机  多少 钱 ？  ,Nǐ de shǒujī  duōshao qián ,explains that how much was your cell phone?
-45,number + 块 + number + 毛,used for expressing specific quantities of money,两  块  五  毛    ,liǎng  kuài  wǔ  máo,explains that two kuai five mao (2.5)
-46,subject + verb + 几 + measure word + noun,used to ask about the quantity of children,他 有  几  个 孩子？  ,Tā yǒu  jǐ  gè háizi,explains that how many kids does he have?
-46,subject + verb + 多少 + measure word + noun,used to express the number of countries,你 去 过  多少  个 国家？  ,Nǐ qù guo  duōshao  gè guójiā,explains that how many countries have you been to?
-47,subject + time word + 怎么样,used to ask how someone is,你 最近  怎么样  ？  ,Nǐ zuìjìn  zěnmeyàng  ,explains that how have you been recently?
-47,subject + 怎么样,used to ask how china is,中国  怎么样  ？  ,Zhōngguò  zěnmeyàng  ,explains that how is china?
-49,subject + verb + 了吗,ask about whether dinner was eaten,你 吃饭  了 吗  ？  ,Nǐ chīfàn  le ma ,explains that did you eat?
-53,subject + 是 + manner + 去 + 的,used to emphasize how someone got somewhere,我  是   坐 火车  去  的  。  ,Wǒ  shì   zuò huǒchē  qù  de ,explains that i went by train.
-53,subject + 是 + time + verb + 的,used to emphasize what time something was done,我们  是   昨天  到  的  。 ,Wǒmen  shì   zuótiān  dào  de ,explains that we arrived yesterday.
-53,subject + 是 + 在 + place + verb + 的,used to emphasize where something was done, 我  是   在 香港  出生  的  。,Wǒ  shì   zài Xiānggǎng  chūshēng  de ,explains that i was born in hong kong.
-53,subject + 不是 + 跟 + person + verb + 的,used to emphasize with whom something did not happen,他  不是   跟 我们 一起  去  的  。  ,Tā  bù shì   gēn wǒmen  yīqǐ  qù  de ,explains that he didn't go with us.
+2,subject +  在  + verb + object,Used to express that an action is ongoing or in progress,她  在  看 书。  ,Tā  zài  kànshū,explains that she is reading.
+2,y,Used to express that an action is ongoing or in progress,阿姨  正在  打扫 我们 的 房间。  ,Āyí  zhèngzài  dǎsǎo wǒmen de fángjiān,explains that the cleaning lady is cleaning our room right now.
+3,subject + 没有 + object,used to negate the verb 有,我  没有  问题。   ,Wǒ  méiyǒu  wèntí,explains that i don't have any questions.
+4,subject +  不  + verb + object,"used to negate a verb in the present or future, or to talk about what you do not do, as a habit",我们  不   喝  酒。  ,Wǒmen  bù   hē jiǔ,explains that we don't drink alcohol.
+4,subject +  不  + adjective,"used to negate a verb in the present or future, or to talk about what you do not do, as a habit",我  不   饿 。  ,Wǒ  bù   è ,explains that i'm not hungry.
+5,subject + 都 + phrase,"used to express ""all""",我们  都  要 冰水。  ,Wǒmen  dōu  yào bīngshuǐ ,explains that we all want ice water.
+6,subject + 也 + verb,"Used to express ""too"" or ""also""",我  也  喜欢。   ,Wǒ  yě  xǐhuan,explains that i also like it.
+6,subject + 也 + adverb + adjective,"Used to express ""too"" or ""also""",你  也   很  高。   ,Nǐ  yě   hěn  gāo,explains that you are also tall.
+7,subject + 多 + adjective,Used to express the degree of an adjective,她  多  高？  ,Tā  duō  gāo,explains that how tall is she?
+8,subject +  不太  + adjective,"Used to mean ""not very"" or ""not so"" (literally ""not too"").",我 家  不 太  大。  ,Wǒ jiā  bù tài  dà,explains that my house is not too big.
+8,subject +  不太  + verb,"Used to mean ""not very"" or ""not so"" (literally ""not too"").",我  不 太  懂 。  ,Wǒ  bù tài  dǒng,explains that i don't really understand.
+9,noun + 和 + noun,Mainly used to link nouns,你   和   我  ,nǐ   hé   wǒ,explains that you and i
+10,time + 以后 + phrase,used to describe the events after a specific time,下午 三点   以后 ， 我 不 在 家。   ,Xiàwǔ  sāndiǎn   yǐhòu  wǒ bù zài jiā,"explains that after three p.m., i will not be at home."
+10,verb + 以后 + phrase,used to describe what happened after a specific event,来 中国   以后 ， 她 认识 了 她 的 老公。   ,Lái Zhōngguó   yǐhòu  tā rènshi le tā de lǎogōng,"explains that after coming to china, she met her husband."
+11,verb + 以前 + phrase,used to talk about things that happened before a specific event or action,吃饭   以前  ，你 洗 手 了 吗？  ,Chīfàn   yǐqián  nǐ xǐ shǒu le ma,explains that did you wash your hands before eating?
+11,time + 以前 + phrase,Used to talk about things that happened before a specific time.,两 年   以前  ， 你 认识 他 吗？   ,Liǎng nián   yǐqián   nǐ rènshi tā ma,explains that did you know him two years ago?
+12,time + subject + verb + object,Referencing a specific time,昨天   我  去 了 酒吧 。   ,Zuótiān   wǒ  qù le jiǔbā,explains that yesterday i went to the bar.
+12,subject + time + verb + object,Referencing a specific time,我   昨天  去 了 酒吧 。   ,Wǒ   zuótiān  qù le jiǔbā,explains that i went to the bar yesterday.
+13,subject +  Number  +  岁,Used to give a person's age,我 20  岁  。  ,Wǒ èrshí  suì ,explains that i am 20 years old.
+13,subject +  Number  +  岁  +  半,used to give an age that involves a half,她两岁半。   ,Tā liǎng  suì   bàn ,explains that she is two and a half years old.
+14,Number  +  个  + noun,Counting a person,一  个  人   ,yī  gè  rén,explains that one person
+14,subject + verb + 个 + noun,"If the number is one, it can be omitted to be an indefinite article",他 是  个  老外。  ,Tā shì  gè  lǎowài,explains that he is a foreigner.
+15,number + 年 + number + 月 + number + 号,Dates are arranged from largest unit to smallest,1868  年  1  月  18  号  ,Yībāliùbā  nián  Yī yuè  shíbā  hào,"explains that january 18, 1868"
+15,number + 年 + number + 月 + number + 号,Dates are arranged from largest unit to smallest,1910  年  8  月  9  号  ,Yījiǔyīlíng  nián  Bā yuè  jiǔ  hào,"explains that august 9, 1910"
+15,number + 年 + number + 月 + number + 日,Dates are arranged from largest unit to smallest,2001  年  7  月  20  日  ,èrlínglíngyī  nián  Qī yuè  èrshí  rì,"explains that july 20th, 2001"
+16,number + 点 + 零 + number + 分,A more specific measure of time,两  点   零  九 分    ,liǎng  diǎn   líng  jiǔ  fēn,explains that 2:09
+16,number + 点 + number + 分,A more specific measure of time,一  点  四 十  分  ,yī  diǎn  sìshí  fēn,explains that 1:40
+17,number + 点,The basic way to tell time,九  点  ,jiǔ  diǎn,explains that 9 o'clock
+17,time + number + 点,The basic way to tell time,上午 七  点  ,shàngwǔ qī  diǎn,explains that 7 o'clock a.m.
+18,pronoun + noun + phrase,"when certain (especially close) relationships are involved, it's more natural to drop the 的 to express possession",我 家  很 大。  ,Wǒ jiā  hěn dà,explains that my house is very big.
+19,subject + verb +  了,Used to express the completion of an action,他们 到  了  。  ,Tāmen dào  le ,explains that they have arrived.
+19,subject +  Time  + verb +  了  + object,Used to express the completion of an action with a specific time,我  今天  吃  了  早饭 。  ,Wǒ  jīntiān  chī  le  zǎofàn,explains that this morning i ate breakfast.
+19,Time  + subject + verb +  了  + object,Used to express the completion of an action with a specific time,中午  我 见  了  朋友 。  ,Zhōngwǔ  wǒ jiàn  le  péngyou,explains that at noon i met a friend.
+19,subject + verb + 了 + number + measure word + object,Used to express the completion of an action,我 买  了   三 本  书 。  ,Wǒ mǎi  le   sān běn  shū,explains that i bought three books.
+19,time + subject + 来 + place + verb + 了,Used to express the completion of a certain action after coming to specific place at a specific time,昨天 她  来  我 家  吃饭   了  。  ,Zuótiān tā  lái  wǒ jiā  chīfàn   le ,explains that she came to my place and ate dinner yesterday.
+20,subject + 不 + phrase + 了,"Used to express ""(not) anymore"" or ""no longer.""",我  不  想 吃  了  。  ,Wǒ  bù  xiǎng chī  le ,explains that i don't want to eat anymore.
+20,subject + 没 + phrase + 了,"Used to express ""(not) anymore"" or ""no longer.""",手机  没  电  了  。  ,Shǒujī  méi  diàn  le ,explains that my cell phone has run out of power.
+20,subject + 没有 + phrase + 了,"Used to express ""(not) anymore"" or ""no longer.""",他  没有  家  了 。  ,Tā  méiyǒu  jiā  le ,explains that he doesn't have a home anymore.
+20,subject + 已经 + 不 + phrase + 了,"Used to express ""(not) anymore"" or ""no longer.""",他们  已经   不  在 一起  了  。  ,Tāmen  yǐjīng   bù  zài yīqǐ  le ,explains that they are no longer together.
+21,phrase + 了,Used to express that a situation has changed,我 20 岁  了  ！  ,Wǒ èrshí suì  le ,explains that i'm 20 years old now!
+21,phrase + 了,Used to express that a situation has changed,我 去 睡觉  了  。   ,Wǒ qù shuìjiào  le ,explains that i'm going to bed now.
+22,noun + 的 + noun,Used to express that one noun belongs to another,我  的  老师   ,wǒ  de  lǎoshī,explains that my teacher
+22,noun + 的 + noun,Used to express that one noun belongs to another,你  的  手机   ,nǐ  de   shǒujī,explains that your cell phone
+23,"phrase , + noun + 呢","Used to ask reciprocal questions, also known as ""bounce back"" questions.",这 个 很 好 ， 那 个  呢  ？  ,Zhège hěn hǎo nàge  ne ,explains that this one is good. what about that one?
+24,phrase + 吧,Used to soften the feel of a sentence.,这 不 太 好  吧  。  ,Zhè bù tài hǎo  ba ,explains that this isn't so good.
+25,phrase + 吧,Used to make a suggestion,我们 走  吧 。  This is a suggestion  ,Wǒmen zǒu  ba ,explains that let's go.
+26,subject + 要 + 去 + place,Used to express will go to a place,妈妈 要  去  超市。  ,Māma yào  qù  chāoshì,explains that mom will go to the supermarket.
+26,subject + time + 来 + place,Used to express a time when someone or something will come to the speaker,老板 今天  来  公司 吗？  ,Lǎobǎn jīntiān  lái  gōngsī ma,explains that is the boss coming into the office today?
+27,subject + 在 + Place,Expresses existence in a location,我  在  上海。  ,Wǒ  zài  Shànghǎi,explains that i'm in shanghai.
+28,Place + 有 + object,"Used to express existence similar to ""there is"" or ""there are""",我 家  有  很 多 小 狗。  ,Wǒ jiā  yǒu  hěn duō xiǎo gǒu,explains that there are a lot of puppies in my home.
+29,subject + 有 + object,"expressing possession similar to the verb ""to have""",我  有  钱。  ,Wǒ  yǒu  qián,explains that i have money.
+30,请 + verb,"serves the same purpose as adding ""please"" to a request",请  进 。  ,Qǐng  jìn,explains that please come in.
+31,subject + 叫 + name,"Used to indicate what someone or something is called, or what someone or something's name is.",他  叫  李小龙。 Note this is the real name of Bruce Lee  ,Tā  jiào  Lǐ Xiǎolóng,explains that his name is li xiaolong.
+32,subject + time + 去 + place,Used to talk about going to places,我们 现在  去  公园。  ,Wǒmen xiànzài  qù  gōngyuán,explains that we're going to the park now.
+32,subject + 去 + place,Used to talk about going to places,你  去   哪儿  ？  ,Nǐ  qù   nǎr ,explains that where are you going?
+32,subject + 去 + place,Used to talk about going to places,我  去   学校  。  ,Wǒ  qù   xuéxiào ,explains that i am going to school.
+33,subject + 能 + verb + object,Used to emphasize one's ability or the possibility of something happening,我  能  吃 四 十 个 饺子。  ,Wǒ  néng  chī sìshí gè jiǎozi,explains that i can eat 40 dumplings.
+33,subject + 能 + verb + object,Used to emphasize one's ability or the possibility of something happening,他们 明天  能  早 点 来 吗？  ,Tāmen míngtiān  néng  zǎo diǎn lái ma,explains that would it be possible for them to come a little earlier tomorrow?
+34,subject + 会 + verb + object,used to express an ability that has been learned (a skill).,他  会  说 中文。  ,Tā  huì  shuō Zhōngwén,explains that he can speak chinese.
+35,subject + 会 + verb + object,Used to express the possibility of an action happening in the future,明天 你  会  来 吗 ？   ,Míngtiān nǐ  huì  lái ma,explains that will you come tomorrow?
+35,subject + 会 + verb + object,Used to express the possibility of an action happening in the future,他  会  来 看 你 吗？   ,Tā  huì  lái kàn nǐ ma,explains that will he come to see you?
+36,subject + 想 + verb,"Used to express something that you ""would like to do""",你  想   去  吗？  ,Nǐ  xiǎng   qù  ma,explains that would you like to go?
+36,subject + 想 + verb + object,"Used to express something that you ""would like to do""",我  想   吃  面。  ,Wǒ  xiǎng   chī  miàn,explains that i would like to eat noodles.
+37,subject + 怎么 + verb + object,Used to express how to do something,你们  怎么  学 中文？  ,Nǐmen  zěnme  xué Zhōngwén,explains that how do you study chinese?
+38,subject + 在 + Place + verb + object,Used to include the place where an action takes place,我  在   上海  上大学。  ,Wǒ  zài   Shànghǎi  shàng dàxué,explains that i went to college in shanghai.
+39,subject + 没有 + verb,"Used to negate past actions (to say that someone didn't do something, or something didn't happen).",我  没有  去 上班。  ,Wǒ  méiyǒu  qù shàngbān,explains that i didn't go to work.
+40,noun + 是 + noun,是 is for connecting nouns,我  是  学生。  ,Wǒ  shì  xuésheng,explains that i am a student.
+41,subject + 太 + adjective + 了,"Used for expressing ""too"" in the sense of ""excessively""",米饭  太  多  了  。  ,Mǐfàn  tài  duō  le ,explains that there is too much rice.
+43,phrase + 一些 + noun,"Used to express ""some"" or ""a few""",妈妈 去 超市 买 了  一些  水果。   ,Māma qù chāoshì mǎi le  yīxiē  shuǐguǒ,explains that mom went to the supermarket and bought some fruit.
+44,subject + 多少钱 ?,Used to ask about the price of something,你 的 手机  多少 钱 ？  ,Nǐ de shǒujī  duōshao qián ,explains that how much was your cell phone?
