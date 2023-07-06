@@ -73,3 +73,11 @@ grammar_rule_line_number,structure,use,hanzi,pinyin,explanation
 45,subject + verb + 多少 + Measure Word + Noun ？,"Used for asking questions like ""how much?"" or ""how many?""",你 去 过  多少  个 国家？  ,Nǐ qù guo  duōshao  gè guójiā,explains that how many countries have you been to?
 46,subject + time + 怎么样,"Used for asking how something is, or what it is like",你 最近  怎么样  ？  ,Nǐ zuìjìn  zěnmeyàng  ,explains that how have you been recently?
 46,subject + 怎么样 ?,"Used for asking how something is, or what it is like",中国  怎么样  ？  ,Zhōngguò  zěnmeyàng  ,explains that how is china?
+47,subject + verb + 了吗,Used to ask questions about completed actions,你 吃饭  了 吗  ？  ,Nǐ chīfàn  le ma ,explains that did you eat?
+47,subject + verb + object + 了吗?,Used to ask questions about completed actions,你男朋友 找到 新 工作  了 吗  ？  ,Nǐ nánpéngyou zhǎodào xīn gōngzuò  le ma ,explains that has your boyfriend found a new job yet?
+48,phrase + 吗,Used as a simple way to form questions,你 喜欢 咖啡  吗  ？ question  ,Nǐ xǐhuan kāfēi  ma ,explains that do you like coffee?
+49,subject + 是 + 谁 + person + verb + 的,Used to describe with whom an action happened,你  是   跟 谁  去  的  ？  ,Nǐ  shì   gēn shéi  qù  de ,explains that who did you go with?
+49,subject + 是 + time + verb + 的,Used to draw attention to when an action occurred, 我们  是   昨天  到  的  。,Wǒmen  shì   zuótiān  dào  de ,explains that we arrived yesterday.
+49,subject + 是 + 在 + place + verb + 的,Used to draw attention to where an action took place,我  是   在 香港  出生  的  。 ,Wǒ  shì   zài Xiānggǎng  chūshēng  de ,explains that i was born in hong kong.
+49,subject + 不是 + 在 + place + verb + 的,Used to describe where an action did not happen,他们  不是   在 网上  认识  的  。  ,Tāmen  bù shì   zài wǎngshàng  rènshi  de ,explains that they didn't meet online.
+49,subject + 不是 + 跟 + person + verb + 的,Used to describe with whom an action did not happen,他  不是   跟 我们 一起  去  的  。  ,Tā  bù shì   gēn wǒmen  yīqǐ  qù  de ,explains that he didn't go with us.
