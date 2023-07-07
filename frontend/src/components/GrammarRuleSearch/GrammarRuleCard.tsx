@@ -7,7 +7,6 @@ import Card from '../../components/Card';
 import {
     GrammarRule,
     GrammarRuleComponent,
-    partOfSpeechToDisplay,
 } from '../../common/api';
 import {
     UserGrammarRule,
@@ -105,7 +104,7 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
                     } else if (!!c.part_of_speech) {
                         body = (
                             <Text type={TextType.SectionHeader}>
-                                {partOfSpeechToDisplay(c.part_of_speech)}
+                                {c.part_of_speech}
                             </Text>
                         )
                     }

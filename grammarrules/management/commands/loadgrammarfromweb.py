@@ -123,16 +123,16 @@ def _process_rule(rule: Rule, level: int, is_dry_run: bool):
     html = _get_rule_html(rule)
     description = _get_rule_description(html)
     structures = _get_structures(html)
-    verified_structures = [
-        s
+    verified_structures = {
+        s.get_hashable(): s
         for s in structures
         if any([ p.word is not None for p in s.parts ])
-    ]
+    }
     assert len(verified_structures), (
         f"Rule {rule.title} has no word structures"
     )
-    examples_by_structure = _get_examples(html, verified_structures)
-    for idx, s in enumerate(verified_structures):
+    examples_by_structure = _get_examples(html, list(verified_structures.values()))
+    for idx, s in enumerate(list(verified_structures.values())):
         examples = examples_by_structure[idx]
         if not examples:
             logging.warn(f"Structure {s} has no examples")
@@ -192,6 +192,11 @@ class StructurePart(NamedTuple):
     part_of_speech: Optional[str]
     word: Optional[Word]
 
+    def get_hashable(self) -> str:
+        if self.part_of_speech is not None:
+            return f"part_of_speech:{self.part_of_speech}"
+        return f"word:{self.word.id}"
+
 class Structure(NamedTuple):
     parts: List[StructurePart]
 
@@ -201,6 +206,9 @@ class Structure(NamedTuple):
             for p in self.parts
             if p.word is not None
         }
+
+    def get_hashable(self) -> str:
+        return " ".join([ p.get_hashable() for p in self.parts ])
 
 def _get_structures(rule_html: BeautifulSoup) -> List[Structure]:
     splitter = PinyinSplitter()
@@ -214,7 +222,7 @@ def _get_structures(rule_html: BeautifulSoup) -> List[Structure]:
     for p in processed_structures:
         out_parts: List[List[StructurePart]] = [[]]
         processed = _process_input(p)
-        structure_parts = p.split("+")
+        structure_parts = processed.split("+")
         for sp in structure_parts:
             stripped = sp.strip()
             slash_parts = stripped.split("/")
@@ -249,16 +257,16 @@ def _get_structures(rule_html: BeautifulSoup) -> List[Structure]:
     return out
 
 def _process_input(structure_text: str) -> str:
-    out = structure_text.strip()
-    out = out.replace("(+ ", "+ (")
-    out = out.replace(".", "")
     bad_characters_with_replacement = {
         ",": "+ , + ",
         "?": "+ ? + ",
         "，": "+ , + ",
         "[": "",
         "]": "",
+        ".": "",
+        "(+ ": "+ (",
     }
+    out = structure_text.strip()
     for c, r in bad_characters_with_replacement.items():
         out = out.replace(c, r)
     if out[-1] == "+ ":

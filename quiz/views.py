@@ -42,7 +42,7 @@ class QuizViewSet(viewsets.ModelViewSet):
         queryset = get_queryset_from_user_vocabulary(self.request.user)
         if queryset:
             return queryset
-        return get_queryset_from_user_grammar(self.request_user)
+        return get_queryset_from_user_grammar(self.request.user)
 
     @action(detail=False, methods=["POST"])
     def check(self, request: HttpRequest) -> Response:
