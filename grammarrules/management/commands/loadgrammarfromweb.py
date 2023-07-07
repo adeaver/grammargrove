@@ -20,11 +20,11 @@ DESCRIPTION_SUFFIX = " in Mandarin Chinese. Get clear explanations and lots of e
 BASE_URL = "https://resources.allsetlearning.com"
 
 REPLACEMENTS = {
-    "subj.": "subject",
+    "subj": "subject",
     "verb": "verb",
-    "adj.": "adjective",
-    "obj.": "object",
-    "adv.": "adverb",
+    "adj": "adjective",
+    "obj": "object",
+    "adv": "adverb",
     "noun": "noun",
 }
 
@@ -133,7 +133,7 @@ def _get_structures(rule_html: BeautifulSoup) -> List[Structure]:
     out: List[Structure] = []
     for p in processed_structures:
         out_parts: List[List[StructurePart]] = [[]]
-        p = p.replace("(+ ", "+ (")
+        processed = _process_input(p)
         structure_parts = p.split("+")
         for sp in structure_parts:
             stripped = sp.strip()
@@ -168,6 +168,22 @@ def _get_structures(rule_html: BeautifulSoup) -> List[Structure]:
         out += [ Structure(parts=parts) for parts in out_parts ]
     return out
 
+def _process_input(structure_text: str) -> str:
+    out = structure_text.strip()
+    out = out.replace("(+ ", "+ (")
+    out = out.replace(".", "")
+    bad_characters_with_replacement = {
+        ",": "+ , + ",
+        "?": "+ ? + ",
+        "，": "+ , + ",
+        "[", "",
+        "]", "",
+    }
+    for c, r in bad_characters_with_replacement.items():
+        out = out.replace(c, r)
+    if out[-1] == "+ ":
+        out = out[:len(out)-2]
+    return out.strip()
 
 def _process_structure_part(splitter: PinyinSplitter, pinyin: Dict[str, str], stripped: str) -> StructurePart:
     if stripped.lower() in REPLACEMENTS:
