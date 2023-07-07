@@ -76,22 +76,6 @@ class Command(BaseCommand):
 
 
 
-def _make_text(encoded_text: str) -> str:
-    hex_str, _ = codecs.escape_decode(encoded_text, 'hex')
-    return hex_str.decode("utf-8")
-
-
-def _get_text_from_element_list(contents: List[Union[str, Tag]]) -> str:
-    elements = ' '.join([ _get_text_from_element_list(c.contents) if isinstance(c, Tag) else c for c in contents ])
-    return _make_text(elements).replace("\n", "").strip()
-
-
-def _get_html_for_hsk_level(level: int) -> str:
-    request_url = f"{BASE_URL}/chinese/grammar/HSK_{level}_grammar_points"
-    resp = requests.get(request_url)
-    return resp.content
-
-
 class ProcessedExample(NamedTuple):
     example_structure: str
     use: str

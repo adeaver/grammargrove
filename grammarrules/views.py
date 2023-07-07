@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from billing.permissions import HasValidSubscription
 
 from .pagination import GrammarRulePaginator
-from .models import GrammarRule, GrammarRuleComponent, PartOfSpeech
+from .models import GrammarRule, GrammarRuleComponent
 from .serializers import GrammarRuleSerializer
 
 from words.models import LanguageCode
@@ -19,14 +19,11 @@ class GrammarRuleViewSet(viewsets.ModelViewSet):
     pagination_class = GrammarRulePaginator
 
     def get_queryset(self):
-        parts_of_speech_by_name = { p.name.lower(): p for p in PartOfSpeech }
         search_query: str = self.request.query_params.get("search_query", "").strip().lower()
         query_language_code = LanguageCode(self.request.query_params.get("language_code", LanguageCode.SIMPLIFIED_MANDARIN.value))
         search_query_parts = search_query.split(",")
         valid_component_ids: Optional[Set[str]] = None
         for query in search_query_parts:
-            if query.lower() in parts_of_speech_by_name:
-                continue
             word_queryset = get_queryset_for_query(
                     query_language_code,
                     query

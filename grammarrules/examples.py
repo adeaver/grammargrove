@@ -13,8 +13,6 @@ from .models import (
     GrammarRuleExample,
     GrammarRuleExampleComponent,
     GrammarRuleHumanVerifiedPromptExample,
-    GrammarRuleHumanVerifiedPromptExampleComponent,
-    PartOfSpeech
 )
 from words.models import LanguageCode
 
@@ -92,7 +90,7 @@ def _make_prompt(
         components.sort(key=lambda x: x.rule_index)
         sentence_structure = "+".join(
             [
-                r.word.display if r.word is not None else PartOfSpeech(r.part_of_speech).to_proper_name()
+                r.word.display if r.word is not None else r.part_of_speech.title()
                 for r in components
             ]
         )
@@ -101,18 +99,8 @@ def _make_prompt(
         )
     else:
         example = examples[0]
-        example_words = example.hanzi_display.split(" ")
-        example_components = (
-            GrammarRuleHumanVerifiedPromptExampleComponent.objects.filter(prompt_example=example).order_by("rule_index")
-        )
-        sentence_structure = "+".join(
-            [
-                r.word.display if r.word is not None else PartOfSpeech(r.part_of_speech).to_proper_name()
-                for r in example_components
-            ]
-        )
         prompt = (
-            f"In Mandarin, the sentence structure {sentence_structure} is used for {example.structure_use}. For example, {example.hanzi_display} {example.explanation}. "
+            f"In Mandarin, the sentence structure {example.hanzi_display} is used for {example.structure_use}. For example, {example.hanzi_display} {example.explanation}. "
         )
         example.uses += 1
         example.save()
