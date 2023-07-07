@@ -1,14 +1,17 @@
-from typing import List, Union, NamedTuple, Dict, Optional
+from typing import List, Union, NamedTuple, Dict, Optional, Tuple
 
 import logging
 
+import uuid
 import re
 import requests
 import codecs
 import string
 import csv
 
+from grammarrules.models import GrammarRule, GrammarRuleComponent, GrammarRuleHumanVerifiedPromptExample
 from words.models import Word, LanguageCode
+from words.utils import make_word_id_with_pinyin_list
 from grammargrove.pinyin_utils import PinyinSplitter, convert_to_numeric_form
 
 from bs4 import BeautifulSoup, Tag
@@ -37,14 +40,35 @@ class Command(BaseCommand):
             "--level",
             help="Which level to update",
         )
+        parser.add_argument(
+            "--dry_run",
+            help="Whether or not this is a dry run",
+        )
 
 
     def handle(self, *args, **options):
         level = 1 if not options["level"] else int(options.get("level"))
+        is_dry_run = not options.get("dry_run") or options["dry_run"].lower() != "false"
+        if is_dry_run:
+            logging.warn("This is a dry run")
         html = _get_html_for_hsk_level(level)
         rules = _get_rules_from_html(html)
-        for r in rules:
-            _process_rule(r)
+        with open(f"{settings.BASE_DIR}/grammarrules/data/grammarrules_{level}_errors.csv", "w") as rules_file:
+            rules_writer = csv.DictWriter(rules_file, fieldnames=["rule_url", "title", "error"])
+            rules_writer.writeheader()
+            for r in rules:
+                try:
+                    _process_rule(r, is_dry_run)
+                except KeyboardInterrupt:
+                    return
+                except Exception as e:
+                    rules_writer.writerow({
+                        "rule_url": r.next_url,
+                        "title": r.title,
+                        "error": e,
+                    })
+
+
 
 
 
@@ -95,16 +119,65 @@ def _get_rules_from_html(html: str) -> List[Rule]:
     return out
 
 
-def _process_rule(rule: Rule):
+def _process_rule(rule: Rule, is_dry_run: bool):
     html = _get_rule_html(rule)
     description = _get_rule_description(html)
     structures = _get_structures(html)
-    logging.warn(structures)
+    verified_structures = [
+        s
+        for s in structures
+        if any([ p.word is not None for p in s.parts ])
+    ]
+    assert len(verified_structures), (
+        f"Rule {rule.title} has no word structures"
+    )
+    examples_by_structure = _get_examples(html, verified_structures)
+    for idx, s in enumerate(verified_structures):
+        examples = examples_by_structure[idx]
+        if not examples:
+            logging.warn(f"Structure {s} has no examples")
+        g = GrammarRule(
+            title=rule.title,
+            definition=description,
+            language_code=LanguageCode.SIMPLIFIED_MANDARIN
+        )
+        if not is_dry_run:
+            g.save()
+        else:
+            logging.warn(f"Is dry run, but would save: {g}")
+        components = [
+            GrammarRuleComponent(
+                grammar_rule=(g if g.id is not None else uuid.uuid4()),
+                word=p.word,
+                part_of_speech=p.part_of_speech,
+                rule_index=idx
+            )
+            for idx, p in enumerate(s.parts)
+        ]
+        for c in components:
+            if not is_dry_run:
+                c.save()
+            else:
+                logging.warn(f"Is dry run, but would save: {c}")
+        for e in examples:
+            ex = GrammarRuleHumanVerifiedPromptExample(
+                grammar_rule=(g if g.id is not None else uuid.uuid4()),
+                language_code=LanguageCode.SIMPLIFIED_MANDARIN,
+                hanzi_display=e.hanzi,
+                pinyin_display=e.pinyin,
+                structure_use=e.explanation if e.explanation is not None else description,
+                explanation=e.definition,
+            )
+            if not is_dry_run:
+                ex.save()
+            else:
+                logging.warn(f"Is dry run, but would save: {ex}")
+
+
 
 def _get_rule_html(rule: Rule) -> BeautifulSoup:
     resp = requests.get(rule.next_url)
     return BeautifulSoup(resp.content)
-
 
 def _get_rule_description(rule_html: BeautifulSoup) -> str:
     tag = rule_html.find("meta", attrs = { "property": "og:description" })
@@ -114,13 +187,19 @@ def _get_rule_description(rule_html: BeautifulSoup) -> str:
     contents = contents.strip().lower()
     return contents
 
-
 class StructurePart(NamedTuple):
     part_of_speech: Optional[str]
     word: Optional[Word]
 
 class Structure(NamedTuple):
     parts: List[StructurePart]
+
+    def get_keywords(self) -> Dict[str, bool]:
+        return {
+            p.word.id: True
+            for p in self.parts
+            if p.word is not None
+        }
 
 def _get_structures(rule_html: BeautifulSoup) -> List[Structure]:
     splitter = PinyinSplitter()
@@ -176,8 +255,8 @@ def _process_input(structure_text: str) -> str:
         ",": "+ , + ",
         "?": "+ ? + ",
         "，": "+ , + ",
-        "[", "",
-        "]", "",
+        "[": "",
+        "]": "",
     }
     for c, r in bad_characters_with_replacement.items():
         out = out.replace(c, r)
@@ -238,3 +317,89 @@ def _get_pinyin(rule_html: BeautifulSoup) -> Dict[str, str]:
             out[maybe_hanzi] = maybe_pinyin
     return out
 
+class ScrapedExample(NamedTuple):
+    hanzi: str
+    pinyin: str
+    definition: str
+    explanation: Optional[str]
+    keywords: List[Tuple[str, str]]
+
+def _process_example(e: BeautifulSoup) -> Optional[ScrapedExample]:
+    all_text = _get_text_from_element_list(e)
+    speaker_element = e.find("span", attrs = { 'class': 'speaker' })
+    pinyin_element = e.find("span", attrs = { 'class': 'pinyin' })
+    translation_element = e.find("span", attrs = { 'class': 'trans' })
+    explanation_element = e.find("span", attrs = { 'class': 'expl' })
+    if not pinyin_element or not translation_element:
+        return None
+    pinyin = _get_text_from_element_list(pinyin_element)
+    translation = _get_text_from_element_list(translation_element)
+    explanation: Optional[str] = None
+    if explanation_element:
+        explanation = _get_text_from_element_list(explanation_element)
+    speaker: str = ""
+    if speaker_element:
+        speaker = _get_text_from_element_list(speaker_element)
+    pinyin_keywords = [
+        _get_text_from_element_list(keyword)
+        for keyword in pinyin_element.find_all("em")
+    ]
+    all_keywords = [
+        _get_text_from_element_list(keyword)
+        for keyword in e.find_all("em")
+    ][:-len(pinyin_keywords)]
+    keywords = []
+    if all_keywords and pinyin_keywords:
+        keywords = list(zip(all_keywords, pinyin_keywords))
+    hanzi = all_text.removeprefix(speaker)
+    hanzi = hanzi.replace(translation, "")
+    hanzi = hanzi.replace(pinyin, "")
+    if explanation is not None:
+        hanzi = hanzi.replace(explanation, "")
+    return ScrapedExample(
+        hanzi=hanzi.strip(),
+        pinyin=pinyin.strip(),
+        definition=translation.strip(),
+        explanation=explanation,
+        keywords=keywords,
+    )
+
+def _get_examples(rule_html: BeautifulSoup, structures: List[Structure]) -> List[List[ScrapedExample]]:
+    out: List[List[ScrapedExample]] = [ [] for s in structures ]
+    splitter = PinyinSplitter()
+    example_containers = rule_html.find_all("div", attrs = { 'class': 'liju' })
+    examples = []
+    for ec in example_containers:
+        examples += ec.find_all("li")
+
+    processed_examples: List[ScrapedExample] = []
+    for e in examples:
+        processed = _process_example(e)
+        if processed:
+            processed_examples.append(processed)
+
+    for p in processed_examples:
+        keyword_ids = []
+        for (hanzi, pinyin) in p.keywords:
+            pinyin_split = splitter.split("".join(pinyin.split(" ")), len("".join(hanzi.split(" "))))
+            if pinyin_split.error_reason:
+                logging.warn(f"Could not split pinyin {pinyin} because {pinyin_split.error_reason}")
+            else:
+                numeric_pinyin = [
+                    convert_to_numeric_form(p)
+                    for p in pinyin_split.result[0]
+                ]
+                keyword_ids.append(
+                    make_word_id_with_pinyin_list(
+                        LanguageCode.SIMPLIFIED_MANDARIN,
+                        hanzi.strip(),
+                        numeric_pinyin,
+                    )
+                )
+        for idx, s in enumerate(structures):
+            structure_keyword_ids = list(s.get_keywords().keys())
+            if structure_keyword_ids == keyword_ids:
+                out[idx].append(p)
+                break
+
+    return out
