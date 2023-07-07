@@ -58,7 +58,7 @@ class Command(BaseCommand):
             rules_writer.writeheader()
             for r in rules:
                 try:
-                    _process_rule(r, is_dry_run)
+                    _process_rule(r, level, is_dry_run)
                 except KeyboardInterrupt:
                     return
                 except Exception as e:
@@ -119,7 +119,7 @@ def _get_rules_from_html(html: str) -> List[Rule]:
     return out
 
 
-def _process_rule(rule: Rule, is_dry_run: bool):
+def _process_rule(rule: Rule, level: int, is_dry_run: bool):
     html = _get_rule_html(rule)
     description = _get_rule_description(html)
     structures = _get_structures(html)
@@ -139,7 +139,8 @@ def _process_rule(rule: Rule, is_dry_run: bool):
         g = GrammarRule(
             title=rule.title,
             definition=description,
-            language_code=LanguageCode.SIMPLIFIED_MANDARIN
+            language_code=LanguageCode.SIMPLIFIED_MANDARIN,
+            hsk_level=level,
         )
         if not is_dry_run:
             g.save()

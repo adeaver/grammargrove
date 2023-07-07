@@ -12,6 +12,7 @@ class GrammarRule(models.Model):
     title = models.TextField()
     definition = models.TextField()
     language_code = models.TextField(choices=LanguageCode.choices)
+    hsk_level = models.IntegerField()
     fetch_example_attempts = models.IntegerField(default=0)
 
 class GrammarRuleComponent(models.Model):

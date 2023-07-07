@@ -122,9 +122,6 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
             </div>
             <div class="flex flex-col col-span-4 md:col-span-1 items-center justify-center">
                 <Text>
-                    {props.grammarRule.title}
-                </Text>
-                <Text type={TextType.FinePrint}>
                     {props.grammarRule.definition}
                 </Text>
             </div>
