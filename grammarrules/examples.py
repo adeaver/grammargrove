@@ -110,6 +110,9 @@ def _make_prompt(
         f"Create a CSV file with {number_of_examples} in {language}. The CSV file should have the headers "
         f"\"{language} characters,pinyin,English Definition\". Be sure to include all parts of example structure in your answer and make sure that each line in the CSV file that you respond with is a complete sentence. "
     )
+    if example:
+        hanzi_display = ensure_normalized_hanzi("".join(example.hanzi_display.split(" ")))
+        prompt += f"For example, the first line after the header might be: \"{hanzi_display}\",\"{example.pinyin_display}\",\"{example.explanation.lower()}\" "
     if valid_hsk_levels:
         vocabulary_levels = ", ".join([ f"HSK{level}" for level in valid_hsk_levels ])
         prompt += f" Use only vocabulary from {vocabulary_levels}."
