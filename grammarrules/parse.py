@@ -11,6 +11,7 @@ from django.db import transaction
 
 from grammargrove.pinyin_utils import PinyinSplitter, convert_to_numeric_form
 from .models import (
+    GrammarRuleComponent,
     GrammarRuleExampleParseVersion,
     GrammarRuleExamplePrompt,
     GrammarRuleExample,
@@ -35,6 +36,11 @@ def parse_example_prompt(
     prompt.parse_version = GrammarRuleExampleParseVersion.current_version()
     splitter = PinyinSplitter()
     reader = csv.reader(prompt.response.split("\n"))
+    number_of_components = len(
+        GrammarRuleComponent.objects.filter(
+            grammar_rule=prompt.grammar_rule
+        )
+    )
     for idx, row in enumerate(reader):
         if idx == 0:
             continue
@@ -125,6 +131,11 @@ def parse_example_prompt(
                 words.append(w[0])
         if errors:
             example.parse_error = "; ".join(errors)
+            logging.warn(example.parse_error)
+            example.save()
+            continue
+        if len(words) < number_of_components:
+            example.parse_error = f"The response is too short. It only includes {len(words)} but the rule has {number_of_components} components"
             logging.warn(example.parse_error)
             example.save()
             continue
