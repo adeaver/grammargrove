@@ -166,7 +166,7 @@ def _process_rule(rule: Rule, level: int, is_dry_run: bool):
                 language_code=LanguageCode.SIMPLIFIED_MANDARIN,
                 hanzi_display=e.hanzi,
                 pinyin_display=e.pinyin,
-                structure_use=e.explanation if e.explanation is not None else description,
+                structure_use=description,
                 explanation=e.definition,
             )
             if not is_dry_run:

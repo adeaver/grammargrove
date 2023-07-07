@@ -14,6 +14,7 @@ from .models import (
     GrammarRuleExampleComponent,
     GrammarRuleHumanVerifiedPromptExample,
 )
+from .utils import ensure_normalized_hanzi
 from words.models import LanguageCode
 
 openai.key = os.environ.get("OPENAI_API_KEY", "")
@@ -81,26 +82,27 @@ def _make_prompt(
 ) -> Tuple[str, Optional[GrammarRuleHumanVerifiedPromptExample]]:
     language = "Simplified Mandarin" if language_code == LanguageCode.SIMPLIFIED_MANDARIN else "Traditional Mandarin"
     prompt: str = ""
+    components = list(GrammarRuleComponent.objects.filter(grammar_rule=grammar_rule).all())
+    components.sort(key=lambda x: x.rule_index)
+    sentence_structure = " + ".join(
+        [
+            r.word.display if r.word is not None else r.part_of_speech.title()
+            for r in components
+        ]
+    )
     example: Optional[GrammarRuleHumanVerifiedPromptExample] = None
     examples = (
         GrammarRuleHumanVerifiedPromptExample.objects.filter(grammar_rule=grammar_rule).order_by("uses")
     )
     if not examples:
-        components = list(GrammarRuleComponent.objects.filter(grammar_rule=grammar_rule).all())
-        components.sort(key=lambda x: x.rule_index)
-        sentence_structure = "+".join(
-            [
-                r.word.display if r.word is not None else r.part_of_speech.title()
-                for r in components
-            ]
-        )
         prompt = (
             f"Using the sentence structure \"{sentence_structure}\" for {grammar_rule.title}, "
         )
     else:
         example = examples[0]
+        hanzi_display = ensure_normalized_hanzi("".join(example.hanzi_display.split(" ")))
         prompt = (
-            f"In Mandarin, the sentence structure {example.hanzi_display} is used for {example.structure_use}. For example, {example.hanzi_display} {example.explanation}. "
+            f"In Mandarin, the sentence structure \"{sentence_structure}\" is used for {example.structure_use}. For example, {hanzi_display} means {example.explanation} \n"
         )
         example.uses += 1
         example.save()

@@ -11,7 +11,7 @@ from users.models import User
 from .models import QuizQuestion, QuestionType
 from django.utils import timezone
 from usergrammarrules.models import UserGrammarRuleEntry
-from grammarrules.models import GrammarRuleExample
+from grammarrules.models import GrammarRuleExample, GrammarRuleExamplePrompt
 
 def get_queryset_from_user_grammar(user: User) -> Optional[QuerySet]:
     _ensure_all_possible_quiz_records(user)
@@ -19,6 +19,9 @@ def get_queryset_from_user_grammar(user: User) -> Optional[QuerySet]:
         user=user,
         grammar_rule__in=GrammarRuleExample.objects.filter(
             parse_error__isnull=True,
+            grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(
+                is_usable=True
+            ).values_list("id", flat=True),
             grammar_rule__in=UserGrammarRuleEntry.objects.filter(
                 user=user
             ).values_list("grammar_rule", flat=True)

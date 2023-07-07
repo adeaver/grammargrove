@@ -16,6 +16,7 @@ from .models import (
     GrammarRuleExample,
     GrammarRuleExampleComponent,
 )
+from .utils import ensure_normalized_hanzi
 from words.models import Word, LanguageCode
 from words.utils import make_word_id_with_pinyin_list
 
@@ -42,7 +43,7 @@ def parse_example_prompt(
         except ValueError:
             logging.warn(f"Error on row {row}")
             continue
-        hanzi = _ensure_normalized_hanzi(hanzi)
+        hanzi = ensure_normalized_hanzi(hanzi)
         pinyin = _ensure_normalized_pinyin(pinyin)
         examples = GrammarRuleExample.objects.filter(grammar_rule=prompt.grammar_rule, grammar_rule_example_prompt=prompt, line_idx=idx)
         if examples:

@@ -4,6 +4,7 @@ from enum import IntEnum
 from django.contrib import admin
 from django.db import models
 from django.db.models import Q
+from django.utils.safestring import mark_safe
 
 from words.models import Word, LanguageCode
 
@@ -93,6 +94,7 @@ class GrammarRuleExamplePrompt(models.Model):
     usage_tokens = models.IntegerField()
     language_code = models.TextField(choices=LanguageCode.choices)
     parse_version = models.IntegerField(null=True, choices=GrammarRuleExampleParseVersion.choices())
+    is_usable = models.BooleanField(default=True)
 
     class Meta:
         indexes = [
@@ -122,12 +124,19 @@ class GrammarRuleExample(models.Model):
 
 
 class GrammarRuleExampleAdmin(admin.ModelAdmin):
-    list_display = ( "id", "grammar_rule", "grammar_rule_example_prompt", "hanzi_display", "pinyin_display", "english_definition", "components", "parse_version", "parse_error")
+    def grammar_rule_link(self, obj: GrammarRuleExample):
+        return mark_safe(f'<a href="/admin/grammarrules/grammarrule/{obj.grammar_rule.id}">Grammar Rule ({obj.grammar_rule.id})</a>')
+
+    def grammar_rule_example_link(self, obj: GrammarRuleExample):
+        return mark_safe(f'<a href="/admin/grammarrules/grammarruleexampleprompt/{obj.grammar_rule_example_prompt.id}">Prompt ({obj.grammar_rule_example_prompt.id})</a>')
 
     def components(self, obj: GrammarRuleExample):
         components = GrammarRuleExampleComponent.objects.filter(grammar_rule_example=obj)
         sorted(components, key=lambda x: x.example_index)
         return "".join([ c.word.display for c in components ])
+
+    list_display = ( "id", "grammar_rule_link", "grammar_rule_example_link", "hanzi_display", "pinyin_display", "english_definition", "components", "parse_version", "parse_error")
+
 
 
 class GrammarRuleExampleComponent(models.Model):
