@@ -102,13 +102,13 @@ def _make_prompt(
         example = examples[0]
         hanzi_display = ensure_normalized_hanzi("".join(example.hanzi_display.split(" ")))
         prompt = (
-            f"In Mandarin, the sentence structure \"{sentence_structure}\" is used for {example.structure_use}. For example, {hanzi_display} means {example.explanation} \n"
+            f"In Mandarin, the sentence structure \"{sentence_structure}\" is {example.structure_use}. For example, \"{hanzi_display}\" means \"{example.explanation.lower()}\" \n"
         )
         example.uses += 1
         example.save()
     prompt += (
         f"Create a CSV file with {number_of_examples} in {language}. The CSV file should have the headers "
-        f"\"{language} characters,pinyin,English Definition\". Be sure to include all parts of example structure in your answer. "
+        f"\"{language} characters,pinyin,English Definition\". Be sure to include all parts of example structure in your answer and make sure that each example in your response is a complete sentence. "
     )
     if valid_hsk_levels:
         vocabulary_levels = ", ".join([ f"HSK{level}" for level in valid_hsk_levels ])

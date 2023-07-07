@@ -19,12 +19,27 @@ class GrammarRule(models.Model):
 
 
 class GrammarRuleAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "definition", "hsk_level", "components", "number_of_examples")
+    list_display = ("id", "title", "definition", "hsk_level", "components", "usable_number_of_examples", "nonusable_number_of_examples")
 
-    def number_of_examples(self, obj: GrammarRule):
+    def usable_number_of_examples(self, obj: GrammarRule):
         return len(
-            GrammarRuleExample.objects.filter(grammar_rule=obj, parse_error__isnull=True)
+            GrammarRuleExample.objects.filter(
+                grammar_rule=obj,
+                parse_error__isnull=True,
+                grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(is_usable=True)
+            )
         )
+
+    def nonusable_number_of_examples(self, obj: GrammarRule):
+        return len(
+            GrammarRuleExample.objects.filter(
+                grammar_rule=obj
+            ).exclude(
+                parse_error__isnull=True,
+                grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(is_usable=True)
+            )
+        )
+
 
     def components(self, obj: GrammarRule):
         components = GrammarRuleComponent.objects.filter(grammar_rule=obj)
