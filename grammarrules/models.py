@@ -1,6 +1,7 @@
 import uuid
 from enum import IntEnum
 
+from django.contrib import admin
 from django.db import models
 from django.db.models import Q
 
@@ -14,6 +15,18 @@ class GrammarRule(models.Model):
     language_code = models.TextField(choices=LanguageCode.choices)
     hsk_level = models.IntegerField()
     fetch_example_attempts = models.IntegerField(default=0)
+
+
+class GrammarRuleAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "definition", "hsk_level", "components")
+
+    def components(self, obj: GrammarRule):
+        components = GrammarRuleComponent.objects.filter(grammar_rule=obj)
+        sorted(components, key=lambda x: x.rule_index)
+        return " + ".join([
+            c.word.display if c.word is not None else c.part_of_speech
+            for c in components
+        ])
 
 class GrammarRuleComponent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -65,6 +78,10 @@ class GrammarRuleHumanVerifiedPromptExample(models.Model):
         ]
 
 
+class GrammarRuleHumanVerifiedPromptExampleAdmin(admin.ModelAdmin):
+    list_display = ( "grammar_rule", "hanzi_display", "pinyin_display", "structure_use", "explanation", "uses" )
+
+
 class GrammarRuleExamplePrompt(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -102,6 +119,15 @@ class GrammarRuleExample(models.Model):
             models.UniqueConstraint(fields=['grammar_rule_example_prompt', 'line_idx'], name='grammar_rule_example_line_index_unique'),
             models.UniqueConstraint(fields=['grammar_rule', 'hanzi_display'], name='grammar_rule_display_index_unique')
         ]
+
+
+class GrammarRuleExampleAdmin(admin.ModelAdmin):
+    list_display = ( "id", "grammar_rule", "grammar_rule_example_prompt", "hanzi_display", "pinyin_display", "english_definition", "components", "parse_version", "parse_error")
+
+    def components(self, obj: GrammarRuleExample):
+        components = GrammarRuleExampleComponent.objects.filter(grammar_rule_example=obj)
+        sorted(components, key=lambda x: x.example_index)
+        return "".join([ c.word.display for c in components ])
 
 
 class GrammarRuleExampleComponent(models.Model):

@@ -26,10 +26,10 @@ def is_user_on_free_trial(user: User) -> bool:
 def is_user_subscription_status_valid(user: User) -> bool:
     if is_user_on_free_trial(user):
         return True
-    return _verify_subscription_valid(user)
+    return is_user_paying(user)
 
 
-def _verify_subscription_valid(user: User) -> bool:
+def is_user_paying(user: User) -> bool:
     subs = Subscription.objects.filter(user=user)
     if not subs:
         return False

@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
 from .models import Subscription, AccountType
-from .permissions import is_user_subscription_status_valid, is_user_on_free_trial
+from .permissions import is_user_paying
 from .stripe_utils import (
     get_or_create_customer_from_user,
     get_active_prices,
@@ -26,8 +26,7 @@ class SubscriptionViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["get"])
     def status(self, request: HttpRequest) -> Response:
         if (
-            not is_user_on_free_trial(request.user) and
-            is_user_subscription_status_valid(request.user)
+            is_user_paying(request.user)
         ):
             management_url = get_subscription_management_url(request.user)
             status = SubscriptionStatus(available_plans=None, management_url=management_url)
