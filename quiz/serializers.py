@@ -9,7 +9,7 @@ from uservocabulary.serializers import UserVocabularyEntrySerializer
 
 from usergrammarrules.models import UserGrammarRuleEntry
 
-from grammarrules.models import GrammarRuleExample
+from grammarrules.models import GrammarRuleExample, GrammarRuleExamplePrompt
 from grammarrules.serializers import GrammarRuleExampleSerializer
 
 class QuizQuestionSerializer(serializers.ModelSerializer):
@@ -71,7 +71,8 @@ def _convert_user_vocabulary_entry_to_display(user_vocabulary_entry: UserVocabul
 
 def _convert_user_grammar_rule_to_display(user_grammar_rule: UserGrammarRuleEntry, question_type: QuestionType) -> Tuple[List[Display], str]:
     examples = GrammarRuleExample.objects.filter(
-        grammar_rule=user_grammar_rule.grammar_rule, parse_error__isnull=True
+        grammar_rule=user_grammar_rule.grammar_rule, parse_error__isnull=True,
+        grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(is_usable=True)
     ).order_by("?")
     if not examples:
         raise ValueError(f"Grammar rule {user_grammar_rule.grammar_rule} has no examples")
