@@ -22,22 +22,28 @@ class GrammarRuleAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "definition", "hsk_level", "components", "usable_number_of_examples", "nonusable_number_of_examples")
 
     def usable_number_of_examples(self, obj: GrammarRule):
-        return len(
+        number_of_usable_examples = len(
             GrammarRuleExample.objects.filter(
                 grammar_rule=obj,
                 parse_error__isnull=True,
                 grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(is_usable=True)
             )
         )
+        return mark_safe(
+            f'<a href="/admin/grammarrules/grammarruleexample/?grammar_rule={obj.id}&parse_error__isnull=True">{number_of_usable_examples}</a>'
+        )
 
     def nonusable_number_of_examples(self, obj: GrammarRule):
-        return len(
+        number_of_nonusable_examples = len(
             GrammarRuleExample.objects.filter(
                 grammar_rule=obj
             ).exclude(
                 parse_error__isnull=True,
                 grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(is_usable=True)
             )
+        )
+        return mark_safe(
+            f'<a href="/admin/grammarrules/grammarruleexample/?grammar_rule={obj.id}&parse_error__isnull=False">{number_of_nonusable_examples}</a>'
         )
 
 
