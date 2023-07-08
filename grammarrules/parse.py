@@ -151,18 +151,10 @@ def parse_example_prompt(
         logging.warn(f"Saved {example.id}")
 
 
-def _ensure_normalized_hanzi(hanzi: str) -> str:
-    without_spaces = "".join(hanzi.split(" "))
-    return (
-        re.sub(
-            r"[\s+\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：；《）《》“”()»〔〕-]+",
-            "", without_spaces)
-    )
-
 def _ensure_normalized_pinyin(pinyin: str) -> str:
     for punc in string.punctuation:
         pinyin = pinyin.replace(punc, "")
-    return pinyin
+    return pinyin.lower()
 
 def _fix_language_code(l: str) -> Optional[LanguageCode]:
     possible_name_parts = l.split(".")

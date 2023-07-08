@@ -3,6 +3,7 @@ from typing import List
 import logging
 
 from grammargrove.pinyin_utils import get_tone_number_from_display_form
+from grammargrove.text_utils import remove_punctuation, remove_punctuation_from_hanzi
 
 from grammarrules.models import GrammarRuleExample
 from grammarrules.serializers import GrammarRuleExampleSerializer
@@ -23,9 +24,11 @@ def check_grammar_rule(
     extra_context = []
     if question_type == QuestionType.HanziFromEnglish:
         correct_answer = [
-            ''.join([
-                c["word"]["display"] for c in serialized_example["grammar_rule_example_components"]
-            ])
+            remove_punctuation_from_hanzi(
+                ''.join([
+                    c["word"]["display"] for c in serialized_example["grammar_rule_example_components"]
+                ])
+            )
         ]
     elif question_type == QuestionType.AccentsFromHanzi:
         for c in serialized_example["grammar_rule_example_components"]:
@@ -38,7 +41,7 @@ def check_grammar_rule(
             )
     elif question_type == QuestionType.DefinitionsFromHanzi:
         correct_answer = [
-            serialized_example["english_definition"].lower().strip()
+            remove_punctuation(serialized_example["english_definition"].lower().strip())
         ]
     else:
         raise ValueError(f"Unrecognized question type {question_type}")

@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from billing.permissions import HasValidSubscription
 
+from grammargrove.text_utils import remove_punctuation
 from grammarrules.models import GrammarRuleExample
 
 from .words import get_queryset_from_user_vocabulary
@@ -55,7 +56,7 @@ class QuizViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
         question: QuizQuestion = questions[0]
-        answer: List[str] = [ p.lower().strip() for p in req["answer"] ]
+        answer: List[str] = [ remove_punctuation(p.lower().strip()) for p in req["answer"] ]
         resp: Optional[CheckResponse] = None
         example: Optional[GrammarRuleExample] = None
         if question.user_vocabulary_entry:

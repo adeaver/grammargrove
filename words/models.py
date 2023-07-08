@@ -13,6 +13,7 @@ class Word(models.Model):
     language_code = models.TextField(choices=LanguageCode.choices)
     display = models.TextField()
     pronunciation = models.TextField()
+    hsk_level = models.IntegerField(default=None, null=True)
 
     class Meta:
         indexes = [

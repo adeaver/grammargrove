@@ -34,7 +34,6 @@ REPLACEMENTS = {
 class Command(BaseCommand):
     help = "Loads the grammar rules"
 
-
     def add_arguments(self, parser):
         parser.add_argument(
             "--level",
