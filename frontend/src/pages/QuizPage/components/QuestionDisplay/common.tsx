@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 
+import Form from '../../../../components/Form';
 import Text, { TextFunction, TextType } from '../../../../components/Text';
 import Card from '../../../../components/Card';
 
@@ -43,25 +44,28 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
         props.handleSubmitAnswer([hanzi], props.question.example_id);
     }
 
+    let handleSubmit: () => void = handleSubmitAnswer;
     let action;
     if (props.isCorrect == null) {
         action = (
-            <Button onClick={handleSubmitAnswer}>
+            <Button isSubmit>
                 Submit
             </Button>
         );
     } else if (props.isCorrect) {
+        handleSubmit = props.handleGetNextQuestion;
         action = (
             <div class="flex flex-col space-y-4">
                 <Text type={TextType.Subtitle} function={TextFunction.Confirmation}>
                     That’s correct!
                 </Text>
-                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
+                <Button type={ButtonType.Secondary} isSubmit>
                     Next question
                 </Button>
             </div>
         );
     } else if (!props.isCorrect) {
+        handleSubmit = props.handleGetNextQuestion;
         action = (
             <div class="flex flex-col space-y-4">
                 <Text type={TextType.Subtitle} function={TextFunction.Warning}>
@@ -74,7 +78,7 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
                         </Text>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
+                <Button type={ButtonType.Secondary} isSubmit>
                     Next question
                 </Button>
             </div>
@@ -88,7 +92,7 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
             <Text type={TextType.Subtitle}>
                 {props.question.display[0].display}
             </Text>
-            <div class="w-full flex flex-col space-y-2">
+            <Form className="w-full flex flex-col space-y-2" handleSubmit={handleSubmit}>
                 <Input
                     type={InputType.Text}
                     value={hanzi}
@@ -97,7 +101,7 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
                     placeholder="Translation"
                     name="answer" />
                 {action}
-            </div>
+            </Form>
         </div>
     );
 }
@@ -112,14 +116,16 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
         props.handleSubmitAnswer([definition], props.question.example_id);
     }
 
+    let handleSubmit = handleSubmitAnswer;
     let action;
     if (props.isCorrect == null) {
         action = (
-            <Button onClick={handleSubmitAnswer}>
+            <Button isSubmit>
                 Submit
             </Button>
         );
     } else if (props.isCorrect) {
+        handleSubmit = props.handleGetNextQuestion;
         action = (
             <div class="flex flex-col space-y-4">
                 <Text type={TextType.Subtitle} function={TextFunction.Confirmation}>
@@ -132,12 +138,13 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                         </Text>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
+                <Button type={ButtonType.Secondary} isSubmit>
                     Next question
                 </Button>
             </div>
         );
     } else if (!props.isCorrect) {
+        handleSubmit = props.handleGetNextQuestion;
         action = (
             <div class="flex flex-col space-y-4">
                 <Text type={TextType.Subtitle} function={TextFunction.Warning}>
@@ -152,7 +159,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                         </div>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
+                <Button type={ButtonType.Secondary} isSubmit>
                     Next question
                 </Button>
             </div>
@@ -167,7 +174,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
             <Text type={TextType.Subtitle}>
                 {props.question.display.map((d: Display) => d.display).join('')}
             </Text>
-            <div class="w-full flex flex-col space-y-4">
+            <Form className="w-full flex flex-col space-y-4" handleSubmit={handleSubmit}>
                 <Input
                     type={InputType.Text}
                     value={definition}
@@ -176,7 +183,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                     placeholder="Translation"
                     name="answer" />
                 { action }
-            </div>
+            </Form>
         </div>
     );
 }
@@ -216,25 +223,28 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
         props.handleSubmitAnswer(accents.flat(), props.question.example_id);
     }
 
+    let handleSubmit = handleSubmitAnswer;
     let action;
     if (props.isCorrect == null) {
         action = (
-            <Button onClick={handleSubmitAnswer}>
+            <Button isSubmit>
                 Submit
             </Button>
         );
     } else if (props.isCorrect) {
+        handleSubmit = props.handleGetNextQuestion;
         action = (
             <div class="flex flex-col space-y-4">
                 <Text type={TextType.Subtitle} function={TextFunction.Confirmation}>
                     That’s correct!
                 </Text>
-                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
+                <Button type={ButtonType.Secondary} isSubmit>
                     Next question
                 </Button>
             </div>
         );
     } else if (!props.isCorrect) {
+        handleSubmit = props.handleGetNextQuestion;
         action = (
             <div class="flex flex-col space-y-4">
                 <Text type={TextType.Subtitle} function={TextFunction.Warning}>
@@ -256,7 +266,7 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
                         </div>
                     )
                 }
-                <Button type={ButtonType.Secondary} onClick={props.handleGetNextQuestion}>
+                <Button type={ButtonType.Secondary} isSubmit>
                     Next question
                 </Button>
             </div>
@@ -293,9 +303,9 @@ export const AccentsFromHanziDisplay = (props: QuestionDisplayProps) => {
                 ))
             }
             </div>
-            <div class="w-full flex flex-col space-y-4">
+            <Form className="w-full flex flex-col space-y-4" handleSubmit={handleSubmit}>
                 { action }
-            </div>
+            </Form>
         </div>
     );
 }
