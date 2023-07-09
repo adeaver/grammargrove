@@ -138,6 +138,8 @@ class GrammarRuleExample(models.Model):
     english_definition = models.TextField()
     parse_version = models.IntegerField(null=True, choices=GrammarRuleExampleParseVersion.choices())
     parse_error = models.TextField(null=True)
+    max_hsk_level = models.IntegerField(default=None, null=True)
+    contains_non_labeled_words = models.BooleanField(default=True)
 
     class Meta:
         indexes = [

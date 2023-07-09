@@ -139,15 +139,26 @@ def parse_example_prompt(
             logging.warn(example.parse_error)
             example.save()
             continue
+        max_hsk_level: Optional[int] = None
+        contains_non_labeled_words: bool = False
         with transaction.atomic():
             example.save()
             GrammarRuleExampleComponent.objects.filter(grammar_rule_example=example).delete()
             for idx, word in enumerate(words):
+                max_hsk_level = (
+                    word.hsk_level
+                    if max_hsk_level is None or word.hsk_level is not None and word.hsk_level > max_hsk_level
+                    else max_hsk_level
+                )
+                contains_non_labeled_words = contains_non_labeled_words or word.hsk_level is None
                 GrammarRuleExampleComponent(
                     grammar_rule_example=example,
                     example_index=idx,
                     word=word
                 ).save()
+            example.max_hsk_level = max_hsk_level
+            example.contains_non_labeled_words = contains_non_labeled_words
+            example.save()
         logging.warn(f"Saved {example.id}")
 
 
