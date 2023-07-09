@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 
 import { FeedbackType, submitFeedback } from './api';
 import NoSubscribeFeedbackForm from './forms/NoSubscribeForm';
+import PulseForm from './forms/PulseForm';
 
 export type FeedbackFormProps = {
     type: FeedbackType;
@@ -42,6 +43,14 @@ const FeedbackForm = (props: FeedbackFormProps) => {
                 handleSubmit={handleSubmit} />
         );
 
+    } else if (props.type === FeedbackType.Pulse) {
+        return (
+            <PulseForm
+                response={response}
+                disabled={isLoading}
+                handleResponseChange={setResponse}
+                handleSubmit={handleSubmit} />
+        )
     }
     throw Error(`Unimplemented feedback type ${props.type}`);
 }

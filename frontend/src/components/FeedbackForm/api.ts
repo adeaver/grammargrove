@@ -1,4 +1,4 @@
-import { makePostRequest } from '../../util/gfetch';
+import { makeGetRequest, makePostRequest } from '../../util/gfetch';
 
 export enum FeedbackType {
     Join = 'join',
@@ -32,5 +32,16 @@ export function submitFeedback(
         },
         onSuccess,
         onError,
+    );
+}
+
+export function checkPulseForm(
+    onSuccess: (resp: FeedbackResponse[]) => void,
+    onError: (err: Error) => void
+) {
+    makeGetRequest<FeedbackResponse[]>(
+        "/api/feedback/v1/check?format=json",
+        onSuccess,
+        onError
     );
 }

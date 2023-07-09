@@ -11,8 +11,16 @@ import {
     getNextQuestion,
     Question,
 } from './api';
+import {
+    checkPulseForm,
+    FeedbackResponse,
+    FeedbackType,
+} from '../../components/FeedbackForm/api';
+import FeedbackForm from '../../components/FeedbackForm';
 
 import QuestionDisplay from './components/QuestionDisplay';
+
+const PULSE_QUESTION_LIMIT = 5;
 
 const QuizPage = () => {
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
@@ -20,13 +28,18 @@ const QuizPage = () => {
     const [ error, setError ] = useState<Error | null>(null);
     const [ hasNextQuestion, setHasNextQuestion ] = useState<boolean>(true);
 
-    const handleGetNextQuestion = () => {
+    const [ numberOfQuestions, setNumberOfQuestions ] = useState<number>(0);
+    const [ showPulseForm, setShowPulseForm ] = useState<boolean>(false);
+
+
+    const makeNextQuestionRequest = () => {
         setIsLoading(true);
         getNextQuestion(
             (resp: PaginatedResponse<Question>) => {
                 setIsLoading(false);
                 if (resp.results.length) {
                     const question: Question = resp.results[0];
+                    setNumberOfQuestions(numberOfQuestions + 1);
                     setQuestion(question);
                 } else {
                     setHasNextQuestion(false);
@@ -37,6 +50,33 @@ const QuizPage = () => {
                 setError(err);
            }
         );
+    }
+
+    const handleAdvanceFromPulseQuestion = () => {
+        setShowPulseForm(false);
+        setNumberOfQuestions(numberOfQuestions + 1);
+        makeNextQuestionRequest();
+    }
+
+    const handleGetNextQuestion = () => {
+        setIsLoading(true);
+        if (numberOfQuestions === PULSE_QUESTION_LIMIT) {
+            checkPulseForm(
+                (resp: FeedbackResponse[]) => {
+                    if (!resp.length) {
+                        setShowPulseForm(true);
+                        setIsLoading(false);
+                    } else {
+                        handleAdvanceFromPulseQuestion();
+                    }
+                },
+                (_: Error) => {
+                    handleAdvanceFromPulseQuestion();
+                }
+            );
+        } else {
+            makeNextQuestionRequest();
+        }
     }
 
     useEffect(() => {
@@ -54,6 +94,16 @@ const QuizPage = () => {
                 Something went wrong, try again later.
             </Text>
         )
+    } else if (showPulseForm) {
+        body = (
+            <div class="p-12 w-full flex flex-col justify-center items-center space-y-4">
+                <div class="max-w-2xl">
+                    <FeedbackForm
+                        type={FeedbackType.Pulse}
+                        onSuccess={handleAdvanceFromPulseQuestion} />
+                </div>
+            </div>
+        );
     } else if (!hasNextQuestion) {
         // TODO: handle this case
         body = (
