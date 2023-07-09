@@ -13,8 +13,11 @@ const FeedbackForm = (props: FeedbackFormProps) => {
     const [ response, setResponse ] = useState<string>("");
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
 
-    const handleSubmit = () => {
-        const strippedResponse = response.trim();
+    const handleSubmit = (extraInfo: string[]) => {
+        let strippedResponse = response.trim();
+        if (extraInfo.length) {
+            strippedResponse = `${extraInfo.join(', ')} ${strippedResponse}`;
+        }
         if (strippedResponse) {
             setIsLoading(true);
              submitFeedback(

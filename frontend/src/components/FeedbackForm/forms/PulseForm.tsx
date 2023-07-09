@@ -12,7 +12,7 @@ type PulseFormProps = {
     disabled?: boolean;
 
     handleResponseChange: (v: string) => void;
-    handleSubmit: () => void;
+    handleSubmit: (extraInfo: string[]) => void;
 }
 
 const NoSubscribeFeedbackForm = (props: PulseFormProps) => {
@@ -20,8 +20,7 @@ const NoSubscribeFeedbackForm = (props: PulseFormProps) => {
 
     const handleSubmit = () => {
         const responsePositivity = responseIsPositive ? "[POSITIVE]" : "[NEGATIVE]";
-        props.handleResponseChange(`${responsePositivity} ${props.response}`);
-        props.handleSubmit()
+        props.handleSubmit([responsePositivity])
     }
 
     return (

@@ -7,7 +7,7 @@ type NoSubscribeFeedbackFormProps = {
     disabled?: boolean;
 
     handleResponseChange: (v: string) => void;
-    handleSubmit: () => void;
+    handleSubmit: (extraInfo: string[]) => void;
 }
 
 const NoSubscribeFeedbackForm = (props: NoSubscribeFeedbackFormProps) => {
@@ -20,7 +20,7 @@ const NoSubscribeFeedbackForm = (props: NoSubscribeFeedbackFormProps) => {
                 value={props.response}
                 disabled={props.disabled}
                 onChange={props.handleResponseChange} />
-            <Button isDisabled={props.disabled} onClick={props.handleSubmit}>
+            <Button isDisabled={props.disabled} onClick={() => { props.handleSubmit([]) }}>
                 Decline a GrammarGrove Plan
             </Button>
         </div>
