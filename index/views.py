@@ -22,6 +22,12 @@ def login(request: HttpRequest) -> HttpResponse:
         return redirect("/dashboard/")
 
 @login_required(login_url="/")
+def onboarding(request: HttpRequest):
+    if not is_user_subscription_status_valid(request.user):
+        return redirect("/subscription/")
+    return render(request, 'onboarding.html', {})
+
+@login_required(login_url="/")
 def dashboard(request: HttpRequest) -> HttpResponse:
     if not is_user_subscription_status_valid(request.user):
         return redirect("/subscription/")

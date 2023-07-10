@@ -40,7 +40,7 @@ class UserViewSet(viewsets.ViewSet):
         user.status = UserStatus.VERIFIED
         user.save()
         login(request, user)
-        return redirect("/dashboard/")
+        return redirect("/onboarding/")
 
 
     @action(detail=True, methods=['get'])
