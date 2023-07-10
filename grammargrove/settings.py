@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'grammarrules',
     'uservocabulary',
     'usergrammarrules',
+    'userpreferences',
     'quiz',
 ]
 
