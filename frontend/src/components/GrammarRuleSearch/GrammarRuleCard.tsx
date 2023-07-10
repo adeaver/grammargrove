@@ -84,9 +84,11 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
         )
     }
 
+    const className = `p-6 col-span-4 md:col-span-${!!action ? 2 : 3} flex md:flex-row flex-col`;
+
     return (
         <div class="w-full grid grid-cols-4">
-            <div class="p-6 col-span-4 md:col-span-2 flex md:flex-row flex-col">
+            <div class={className}>
             {
                 props.grammarRule.grammar_rule_components.map((c: GrammarRuleComponent) => {
                     let body = null;
