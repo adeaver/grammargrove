@@ -13,7 +13,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from rest_framework.decorators import action
 from rest_framework import viewsets
-from .models import User, UserStatus, UserLoginEmail, UserLoginEmailType
+from .models import User, UserStatus, UserLoginEmail, UserLoginEmailType, PracticeReminderEmail
 from grammargrove.tasks import send_login_email
 
 class SearchEmailAction(Enum):
@@ -41,6 +41,24 @@ class UserViewSet(viewsets.ViewSet):
         user.save()
         login(request, user)
         return redirect("/dashboard/")
+
+
+    @action(detail=True, methods=['get'])
+    def gotoquiz(self, request: HttpRequest, pk: Optional[str] = None) -> HttpResponse:
+        user_practice_reminder_email_id = uuid.UUID(pk)
+        emails = PracticeReminderEmail.objects.filter(pk=user_practice_reminder_email_id)
+        if not emails:
+            return HttpResponseBadRequest()
+        elif len(emails) > 1:
+            logging.warning(f"User Login Email ID {user_practice_reminder_email_id} returned {len(emails)} results, but expected at most 1")
+            return HttpResponseServerError()
+        email = emails[0]
+        if email.is_expired():
+            logging.warning(f"User Login Email ID {user_practice_reminder_email_id} is expired")
+            return redirect("/?error=expired_auth")
+        user = User.objects.get(pk=email.user.id)
+        login(request, user)
+        return redirect("/quiz/")
 
 
     @action(detail=True, methods=['get'])

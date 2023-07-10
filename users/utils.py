@@ -9,7 +9,7 @@ import os
 from django.template.loader import render_to_string
 
 from grammargrove.utils import get_base_url_for_environment
-from .models import User, UserStatus, UserLoginEmail
+from .models import User, UserStatus, UserLoginEmail, PracticeReminderEmail
 
 def _get_sender_email_format(
     sender_email_name: str,
@@ -129,5 +129,26 @@ def send_login_email_to_user(login_email: UserLoginEmail) -> bool:
         user.email,
         source,
         'Login to GrammarGrove',
+        html_message
+    )
+
+
+def send_daily_practice_email(practice_reminder_email: PracticeReminderEmail) -> bool:
+    user =  practice_reminder_email.user
+    # TODO: check days since free trial expired
+    if user.status != UserStatus.VERIFIED:
+        return False
+    base_url = f"{get_base_url_for_environment()}/api/users/v1"
+    unsubscribe_link = f"{base_url}/{user.id}/unsubscribe/"
+    login_link = f"{base_url}/{practice_reminder_email.id}/gotoquiz/"
+    html_message = render_to_string('practice-reminder-email.html', {
+        'unsubscribe_link': unsubscribe_link,
+        'login_link': login_link,
+    })
+    source = _get_sender_email_format("GrammarGrove Daily Practice Reminder")
+    return _send_email_to_user(
+        user.email,
+        source,
+        'Time to practice Mandarin',
         html_message
     )

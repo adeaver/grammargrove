@@ -30,6 +30,7 @@ def check_grammar_rule(
                 ])
             )
         ]
+        answer = [ remove_punctuation_from_hanzi(a) for a in answer ]
     elif question_type == QuestionType.AccentsFromHanzi:
         for c in serialized_example["grammar_rule_example_components"]:
             pronunciation = c["word"]["pronunciation"].split(" ")

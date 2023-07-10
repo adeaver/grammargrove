@@ -88,3 +88,21 @@ class UserLoginEmail(models.Model):
 
     def is_fulfilled(self) -> bool:
         return self.fulfilled
+
+
+class PracticeReminderEmail(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fulfilled = models.BooleanField(default=False)
+    send_at = models.DateTimeField()
+    expires_at = models.DateTimeField(null=True)
+    unique_key = models.TextField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'unique_key'], name='practice_reminder_email_key')
+        ]
+
+
+    def is_expired(self) -> bool:
+        return self.expires_at is None or timezone.now() > self.expires_at

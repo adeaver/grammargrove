@@ -34,6 +34,21 @@ try:
             logging.warn(f"Enqueuing grammar rule {r.id}")
             fetch_examples_for_grammar_rule(str(r.id))
 
+
+    @cron(15, -1, -1, -1, -1)
+    def create_practice_reminders(num):
+        from users.practice_emails import create_all_practice_emails
+        logging.warn("Creating outstanding practice reminders")
+        create_all_practice_emails()
+
+
+    @cron(8, -1, -1, -1, -1)
+    def send_outstanding_practice_reminders(num):
+        from users.practice_emails import send_outstanding_practice_reminders
+        logging.warn("Sending outstanding practice reminders")
+        send_outstanding_practice_reminders()
+
+
     logger.warning("Imported spool successfully.")
 except Exception:
     logger.warning("Couldn't import spool.")
