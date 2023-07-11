@@ -12,5 +12,6 @@ export type StepProps = {
 export enum Step {
     Welcome = 'welcome',
     HSKLevel = 'hsk-level',
-    CurrentLearning = 'current-learning'
+    CurrentLearning = 'current-learning',
+    Complete = 'complete'
 }

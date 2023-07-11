@@ -15,7 +15,7 @@ type PulseFormProps = {
     handleSubmit: (extraInfo: string[]) => void;
 }
 
-const NoSubscribeFeedbackForm = (props: PulseFormProps) => {
+const PulseForm = (props: PulseFormProps) => {
     const [ responseIsPositive, setResponseIsPositive ] = useState<boolean>(false);
 
     const handleSubmit = () => {
@@ -58,4 +58,4 @@ const NoSubscribeFeedbackForm = (props: PulseFormProps) => {
     );
 }
 
-export default NoSubscribeFeedbackForm;
+export default PulseForm;

@@ -9,9 +9,12 @@ import {
     getUserPreferences,
 } from '../../common/api/userpreferences';
 
+import { setLocation } from '../../util/window';
+
 import { Step } from './common';
 import WelcomeComponent from './components/WelcomeComponent';
 import HSKLevelComponent from './components/HSKLevelComponent';
+import CurrentLearningComponent from './components/CurrentLearningComponent';
 
 const OnboardingPage = () => {
     const [ currentStep, setCurrentStep ] = useState<Step>(Step.Welcome);
@@ -61,7 +64,14 @@ const OnboardingPage = () => {
                 advanceToNextStep={setCurrentStep} />
         );
     } else if (currentStep === Step.CurrentLearning) {
-
+        body = (
+            <CurrentLearningComponent
+                userPreferences={userPreferences}
+                updateUserPreferences={setUserPreferences}
+                advanceToNextStep={setCurrentStep} />
+        );
+    } else if (currentStep === Step.Complete) {
+        setLocation("/dashboard/");
     } else {
         throw Error(`Unrecognized onboarding step ${currentStep}`);
     }
