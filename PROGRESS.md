@@ -5,9 +5,9 @@
 - [ ] add "already have an account?" to index page
 - [X] redo dashboard to include both user vocabulary and word search
 - [X] style quiz page
-- [ ] restyle "How it works" section with styled components from quiz and dashboard pages
-- [ ] management command to apply hsk labels to grammar rules and words
-- [ ] populate grammarrules.csv
+- [X] restyle "How it works" section with styled components from quiz and dashboard pages
+- [X] management command to apply hsk labels to grammar rules and words
+- [X] populate grammarrules.csv
 - [X] Add pagination button to user grammar rules display view
 - [X] Add pagination buttons to grammar rules search result view
 - [ ] How to search page
@@ -24,7 +24,7 @@
 #### Bugs to fix
 - [X] Pinyin search should allow for both numbered and actual pinyin
 - [x] Frontend should display accents not as numbers
-- [ ] Enter should work on forms
+- [X] Enter should work on forms
 - [ ] Infra: frontend doesn't always rerender (fast follow)
 - [X] Word search results should include user vocabulary ID
 - [ ] If there has been a change to user vocabulary or user grammar rules, buttons should change to refresh
@@ -35,9 +35,9 @@
 - [X] See if you can clean up grammar rule examples
 
 #### Add Stripe Payments
-- [ ] redirect to Stripe payment dashboard
-- [ ] webhook for continuing payments
-- [ ] spooler job to check expiring payments
+- [X] redirect to Stripe payment dashboard
+- [X] webhook for continuing payments
+- [X] spooler job to check expiring payments
 
 #### Deployment
 - [ ] create production Dockerfile for web and postgres
