@@ -84,7 +84,7 @@ const GrammarRuleCard = (props: GrammarRuleCardProps) => {
         )
     }
 
-    const className = `p-6 col-span-4 md:col-span-${!!action ? 2 : 3} flex md:flex-row flex-col`;
+    const className = `p-6 col-span-4 ${!!action ? "md:col-span-2" : "md:col-span-3"} flex md:flex-row flex-col`;
 
     return (
         <div class="w-full grid grid-cols-4">
