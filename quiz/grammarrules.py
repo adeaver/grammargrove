@@ -12,20 +12,14 @@ from .models import QuizQuestion, QuestionType
 from django.utils import timezone
 from usergrammarrules.models import UserGrammarRuleEntry
 from grammarrules.models import GrammarRuleExample, GrammarRuleExamplePrompt
+from userpreferences.models import UserPreferences
 
 def get_queryset_from_user_grammar(user: User) -> Optional[QuerySet]:
     _ensure_all_possible_quiz_records(user)
+    usable_grammar_rules = get_usable_grammar_rule_examples(user)
     user_grammar_rules_with_examples = UserGrammarRuleEntry.objects.filter(
         user=user,
-        grammar_rule__in=GrammarRuleExample.objects.filter(
-            parse_error__isnull=True,
-            grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(
-                is_usable=True
-            ),
-            grammar_rule__in=UserGrammarRuleEntry.objects.filter(
-                user=user
-            ).values_list("grammar_rule", flat=True)
-        ).values_list("grammar_rule", flat=True)
+        grammar_rule__in=usable_grammar_rules.values_list("grammar_rule", flat=True)
     ).values_list("id", flat=True)
     if not user_grammar_rules_with_examples:
         return None
@@ -109,3 +103,19 @@ def _ensure_all_possible_quiz_records(user: User) -> None:
                         user_grammar_rule_entry=entry,
                     )
                     q.save()
+
+
+def get_usable_grammar_rule_examples(user: User) -> None:
+    queryset = GrammarRuleExample.objects.filter(
+        parse_error__isnull=True,
+        grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(
+            is_usable=True
+        ),
+        grammar_rule__in=UserGrammarRuleEntry.objects.filter(
+            user=user
+        ).values_list("grammar_rule", flat=True)
+    )
+    user_preferences = UserPreferences.objects.filter(user=user)
+    if user_preferences and user_preferences[0].hsk_level:
+       return queryset.filter(max_hsk_level=user_preferences[0].hsk_level)
+    return queryset
