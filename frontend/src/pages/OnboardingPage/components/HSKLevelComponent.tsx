@@ -33,8 +33,9 @@ const HSKLevelComponent = (props: StepProps) => {
             createUserPreferences({
                 hsk_level: currentHSKLevel,
             },
-            (_: UserPreferences) => {
+            (resp: UserPreferences) => {
                 setIsLoading(false);
+                props.updateUserPreferences(resp);
                 props.advanceToNextStep(Step.CurrentLearning);
             },
             (err: Error) => {
@@ -47,8 +48,10 @@ const HSKLevelComponent = (props: StepProps) => {
                 ...props.userPreferences!,
                 hsk_level: currentHSKLevel,
             },
-            (_: UserPreferences) => {
+            (resp: UserPreferences) => {
                 setIsLoading(false);
+                props.updateUserPreferences(resp);
+                props.advanceToNextStep(Step.CurrentLearning);
             },
             (err: Error) => {
                 setIsLoading(false);

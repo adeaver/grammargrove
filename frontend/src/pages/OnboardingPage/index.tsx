@@ -50,12 +50,14 @@ const OnboardingPage = () => {
         body = (
             <WelcomeComponent
                 userPreferences={userPreferences}
+                updateUserPreferences={setUserPreferences}
                 advanceToNextStep={setCurrentStep} />
         );
     } else if (currentStep === Step.HSKLevel) {
         body = (
             <HSKLevelComponent
                 userPreferences={userPreferences}
+                updateUserPreferences={setUserPreferences}
                 advanceToNextStep={setCurrentStep} />
         );
     } else if (currentStep === Step.CurrentLearning) {

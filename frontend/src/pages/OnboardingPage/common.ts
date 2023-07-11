@@ -6,6 +6,7 @@ export type StepProps = {
     userPreferences: UserPreferences | null;
 
     advanceToNextStep: (s: Step) => void;
+    updateUserPreferences: (userPreferences: UserPreferences) => void;
 }
 
 export enum Step {

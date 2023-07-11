@@ -106,7 +106,7 @@ export function makePutRequest<T, U>(
 ) {
     fetch(url, {
         credentials: 'include',
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'cache': 'no-cache',
