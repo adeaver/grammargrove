@@ -53,3 +53,20 @@ export function updateUserPreferences(
         onError,
     )
 }
+
+export type UpdateUserVocabularyAndGrammarListsRequests = {}
+
+export type UpdateUserVocabularyAndGrammarListsResponse = {}
+
+export function updateUserVocabularyAndGrammarLists(
+    id: string,
+    onSuccess: (resp: UpdateUserVocabularyAndGrammarListsResponse) => void,
+    onError: (err: Error) => void,
+) {
+    makePostRequest<UpdateUserVocabularyAndGrammarListsRequests, UpdateUserVocabularyAndGrammarListsResponse>(
+        `/api/userpreferences/v1/${id}/update_user_list/?format=json`,
+        {},
+        onSuccess,
+        onError,
+    )
+}

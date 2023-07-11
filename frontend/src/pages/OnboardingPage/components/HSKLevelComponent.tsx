@@ -9,6 +9,9 @@ import {
     UserPreferences,
     updateUserPreferences,
     createUserPreferences,
+
+    updateUserVocabularyAndGrammarLists,
+    UpdateUserVocabularyAndGrammarListsResponse,
 } from '../../../common/api/userpreferences';
 
 import { Step, StepProps } from '../common';
@@ -34,9 +37,18 @@ const HSKLevelComponent = (props: StepProps) => {
                 hsk_level: currentHSKLevel,
             },
             (resp: UserPreferences) => {
-                setIsLoading(false);
-                props.updateUserPreferences(resp);
-                props.advanceToNextStep(Step.CurrentLearning);
+                updateUserVocabularyAndGrammarLists(
+                    resp.id,
+                    (_: UpdateUserVocabularyAndGrammarListsResponse) => {
+                        setIsLoading(false);
+                        props.updateUserPreferences(resp);
+                        props.advanceToNextStep(Step.CurrentLearning);
+                    },
+                    (err: Error) => {
+                        setIsLoading(false);
+                        setError(err);
+                    }
+                );
             },
             (err: Error) => {
                 setIsLoading(false);
@@ -49,9 +61,18 @@ const HSKLevelComponent = (props: StepProps) => {
                 hsk_level: currentHSKLevel,
             },
             (resp: UserPreferences) => {
-                setIsLoading(false);
-                props.updateUserPreferences(resp);
-                props.advanceToNextStep(Step.CurrentLearning);
+                updateUserVocabularyAndGrammarLists(
+                    resp.id,
+                    (_: UpdateUserVocabularyAndGrammarListsResponse) => {
+                        setIsLoading(false);
+                        props.updateUserPreferences(resp);
+                        props.advanceToNextStep(Step.CurrentLearning);
+                    },
+                    (err: Error) => {
+                        setIsLoading(false);
+                        setError(err);
+                    }
+                );
             },
             (err: Error) => {
                 setIsLoading(false);
