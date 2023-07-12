@@ -11,7 +11,7 @@ def create_all_practice_emails():
     users = User.objects.filter(status=UserStatus.VERIFIED)
     for user in users:
         send_at = timezone.now()
-        send_at.replace(hour=13, minute=0, second=0, microsecond=0)
+        send_at = send_at.replace(hour=13, minute=0, second=0, microsecond=0)
         unique_key = f"{send_at.year}:{send_at.month}:{send_at.day}"
         try:
             PracticeReminderEmail(

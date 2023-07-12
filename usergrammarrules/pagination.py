@@ -1,6 +1,5 @@
 from grammargrove.pagination import DefaultPaginator
 
 class UserGrammarRuleEntryPaginator(DefaultPaginator):
-    page_size = 10
-    page_size_query_param = 'created_at'
+    page_size = 5
     max_page_size = 10
