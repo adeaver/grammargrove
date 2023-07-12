@@ -45,6 +45,7 @@ urlpatterns = [
     path('privacy-policy/', index.privacy_policy, name='privacy-policy'),
     path('login/', index.login, name='login'),
     path('dashboard/', index.dashboard, name='dashboard'),
+    path('preferences/', index.preferences, name='preferences'),
     path('quiz/', index.quiz, name='quiz'),
     path('subscription/', index.subscription, name='subscription'),
     path('onboarding/', index.onboarding, name='onboarding'),

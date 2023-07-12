@@ -37,6 +37,12 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     return render(request, 'dashboard.html', {})
 
 @login_required(login_url="/")
+def preferences(request: HttpRequest) -> HttpResponse:
+    if not is_user_subscription_status_valid(request.user):
+        return redirect("/subscription/")
+    return render(request, 'preferences.html', {})
+
+@login_required(login_url="/")
 def quiz(request: HttpRequest) -> HttpResponse:
     if not is_user_subscription_status_valid(request.user):
         return redirect("/subscription/")
