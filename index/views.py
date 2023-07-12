@@ -21,6 +21,9 @@ def login(request: HttpRequest) -> HttpResponse:
         login(request, user)
         return redirect("/dashboard/")
 
+def privacy_policy(request: HttpRequest) -> HttpResponse:
+    return render(request, 'privacy-policy.html', {})
+
 @login_required(login_url="/")
 def onboarding(request: HttpRequest):
     if not is_user_subscription_status_valid(request.user):

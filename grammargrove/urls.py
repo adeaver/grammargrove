@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/userpreferences/', include(userpreferences_router.urls), name="userpreferences"),
     path('api/feedback/', include(feedback_router.urls), name="feedback"),
     path('', index.home, name='home'),
+    path('privacy-policy/', index.privacy_policy, name='privacy-policy'),
     path('login/', index.login, name='login'),
     path('dashboard/', index.dashboard, name='dashboard'),
     path('quiz/', index.quiz, name='quiz'),

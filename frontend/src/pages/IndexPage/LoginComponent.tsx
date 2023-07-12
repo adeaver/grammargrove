@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 
 import Text, { TextFunction } from '../../components/Text';
 import Input, { InputType } from '../../components/Input';
+import Link from '../../components/Link';
 import Button from '../../components/Button';
 import { getCSRFToken } from '../../util/gfetch';
 import { setLocation } from '../../util/window';
@@ -94,6 +95,12 @@ const GenericEmailForm = (props: GenericEmailFormProps) => {
                         Get Started
                     </Button>
                 </div>
+                <Text>
+                    By signing up, you are agreeing to our privacy policy.
+                </Text>
+                <Link href="/privacy-policy">
+                    Click here to read
+                </Link>
             </div>
         </div>
     )
