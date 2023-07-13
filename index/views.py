@@ -9,7 +9,9 @@ from billing.permissions import is_user_subscription_status_valid
 
 @ensure_csrf_cookie
 def home(request: HttpRequest) -> HttpResponse:
-    return render(request, 'index.html', {})
+    return render(request, 'index.html', {
+        "title": "GrammarGrove"
+    })
 
 def login(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
@@ -22,32 +24,44 @@ def login(request: HttpRequest) -> HttpResponse:
         return redirect("/dashboard/")
 
 def privacy_policy(request: HttpRequest) -> HttpResponse:
-    return render(request, 'privacy-policy.html', {})
+    return render(request, 'index.html', {
+        "title": "GrammarGrove | Privacy Policy"
+    })
 
 @login_required(login_url="/")
 def onboarding(request: HttpRequest):
     if not is_user_subscription_status_valid(request.user):
         return redirect("/subscription/")
-    return render(request, 'onboarding.html', {})
+    return render(request, 'index.html', {
+        "title": "GrammarGrove | Onboarding"
+    })
 
 @login_required(login_url="/")
 def dashboard(request: HttpRequest) -> HttpResponse:
     if not is_user_subscription_status_valid(request.user):
         return redirect("/subscription/")
-    return render(request, 'dashboard.html', {})
+    return render(request, 'index.html', {
+        "title": "GrammarGrove | Dashboard"
+    })
 
 @login_required(login_url="/")
 def preferences(request: HttpRequest) -> HttpResponse:
     if not is_user_subscription_status_valid(request.user):
         return redirect("/subscription/")
-    return render(request, 'preferences.html', {})
+    return render(request, 'index.html', {
+        "title": "GrammarGrove | Preferences"
+    })
 
 @login_required(login_url="/")
 def quiz(request: HttpRequest) -> HttpResponse:
     if not is_user_subscription_status_valid(request.user):
         return redirect("/subscription/")
-    return render(request, 'quiz.html', {})
+    return render(request, 'index.html', {
+        "title": "GrammarGrove | Quiz"
+    })
 
 @login_required(login_url="/")
 def subscription(request: HttpRequest) -> HttpResponse:
-    return render(request, 'subscription.html', {})
+    return render(request, 'index.html', {
+        "title": "GrammarGrove | Subscription Management"
+    })
