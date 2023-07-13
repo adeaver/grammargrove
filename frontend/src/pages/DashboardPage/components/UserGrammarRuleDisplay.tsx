@@ -11,6 +11,7 @@ import {
 import {
     UserGrammarRule,
 } from '../../../common/api/uservocabulary';
+import { PageNavigationButtons } from './common';
 
 type UserGrammarRulesDisplayProps = {
     grammarRules: UserGrammarRule[];
@@ -36,6 +37,9 @@ const UserGrammarRulesDisplay = (props: UserGrammarRulesDisplayProps) => {
                         Grammar Rules
                     </Text>
                 </div>
+                <PageNavigationButtons
+                    getNextPage={props.getNextPage}
+                    getPreviousPage={props.getPreviousPage} />
             </div>
             <hr class="my-4 border-2 border-slate-600" />
             {

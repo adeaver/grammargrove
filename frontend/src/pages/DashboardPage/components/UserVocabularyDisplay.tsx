@@ -1,7 +1,6 @@
 import { useState } from 'preact/hooks';
 
 import Text, { TextType, TextAlignment, TextFunction } from '../../../components/Text';
-import Button, { ButtonType } from '../../../components/Button';
 
 import { Word } from '../../../common/api';
 import WordSearchBar from '../../../components/WordSearchBar';
@@ -10,6 +9,7 @@ import WordCard from '../../../components/WordSearchBar/WordCard';
 import {
     UserVocabulary
 } from '../../../common/api/uservocabulary';
+import { PageNavigationButtons } from './common';
 
 type UserVocabularyDisplayProps = {
     isLoading: boolean;
@@ -108,32 +108,6 @@ const WordSearchBody = (props: WordSearchBodyProps) => {
                 )
             })
         }
-        </div>
-    )
-}
-
-type PageNavigationButtonsProps = {
-    getNextPage?: () => void;
-    getPreviousPage?: () => void;
-}
-
-const PageNavigationButtons = (props: PageNavigationButtonsProps) => {
-    return (
-        <div class="flex flex-row space-x-4">
-            {
-                !!props.getPreviousPage && (
-                    <Button type={ButtonType.Secondary} onClick={props.getPreviousPage}>
-                        Previous Page
-                    </Button>
-                )
-            }
-            {
-                !!props.getNextPage && (
-                    <Button type={ButtonType.Secondary} onClick={props.getNextPage}>
-                        Next Page
-                    </Button>
-                )
-            }
         </div>
     )
 }
