@@ -7,6 +7,7 @@ type FormProps = {
 }
 
 const Form = (props: FormProps) => {
+    // @ts-ignore
     const handleSubmit = (event) => {
         event.preventDefault();
         props.handleSubmit();
