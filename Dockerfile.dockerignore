@@ -1,5 +1,7 @@
 frontend/node_modules/**
 grammarrules/data/**
+conf/**
+env/**
 Dockerfile.dev
 uwsgi.development.ini
 README.md

@@ -1,0 +1,29 @@
+version: '3'
+services:
+  web:
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - ./grammargrove/log:/var/log/uwsgi
+      - ./grammargrove/uwsgi:/var/uwsgi
+    restart: unless-stopped
+    networks:
+      - web-default
+    proxy:
+      image: nginx:mainline-alpine
+      restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - web-root:/var/www/html
+      - ./conf:/etc/nginx/conf.d
+      - grammargrove/uwsgi:/var/uwsgi
+    depends_on:
+      - web
+    networks:
+      - web-default
+
+  networks:
+    web-default:
+      driver: bridge

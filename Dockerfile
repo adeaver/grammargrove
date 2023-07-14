@@ -44,6 +44,9 @@ RUN rm -rf ./frontend
 COPY --from=frontend-builder /app/dist/assets/index.js ./index/static/index.js
 COPY --from=frontend-builder /app/dist/assets/index.css ./index/static/index.css
 
+RUN mkdir -p /var/log/uwsgi
+RUN mkdir -p /var/uwsgi
+
 RUN poetry run ./manage.py collectstatic --noinput
 
 USER $SERVICE_USER
