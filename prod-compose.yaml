@@ -9,9 +9,10 @@ services:
     restart: unless-stopped
     networks:
       - web_default
-    environment:
-      - ENV=prod
-      - DJANGO_SECRET_KEY=$GRAMMARGROVE_DJANGO_SECRET_KEY
+    depends_on:
+      - database
+    env_file:
+      - env/web.env
   proxy:
     image: nginx:mainline-alpine
     restart: always
@@ -26,9 +27,8 @@ services:
     networks:
       - web_default
   database:
-    build:
-      dockerfile: ./index/migrations/Dockerfile.dev
-      context: ./
+    image: postgres:12.12
+    restart: always
     volumes:
       - ./index/migrations/data:/var/lib/postgresql/data
     ports:
