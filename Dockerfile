@@ -26,6 +26,9 @@ FROM python:3.10.12-bullseye
 
 WORKDIR /app
 
+ENV SERVICE_USER somebody
+RUN groupadd $SERVICE_USER && useradd -m -g $SERVICE_USER -l $SERVICE_USER
+
 RUN apt-get update -y && apt-get install -y postgresql
 RUN pip3 install poetry
 RUN pip3 install uwsgi
@@ -35,7 +38,14 @@ COPY poetry.lock .
 
 RUN poetry install
 
+COPY . .
+RUN rm ./index/static/*
+RUN rm -rf ./frontend
 COPY --from=frontend-builder /app/dist/assets/index.js ./index/static/index.js
 COPY --from=frontend-builder /app/dist/assets/index.css ./index/static/index.css
 
-CMD [ "ls", "/app/index/static" ]
+RUN poetry run ./manage.py collectstatic --noinput
+
+USER $SERVICE_USER
+
+CMD [ "scripts/runserver" ]

@@ -1,0 +1,6 @@
+frontend/node_modules/**
+grammarrules/data/**
+Dockerfile.dev
+uwsgi.development.ini
+README.md
+PROGRESS.md

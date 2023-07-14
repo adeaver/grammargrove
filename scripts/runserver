@@ -29,5 +29,9 @@ if [ $current_attempt -gt $attempts ]; then
     exit 1
 fi
 
-poetry run uwsgi --ini uwsgi.development.ini --py-autoreload 1
-
+if [ "$ENV" == "prod" ]; then
+    poetry run ./manage.py migrate
+    poetry run uwsgi --ini uwsgi.production.ini
+else
+    poetry run uwsgi --ini uwsgi.development.ini --py-autoreload 1
+fi
