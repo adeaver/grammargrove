@@ -8,22 +8,34 @@ services:
       - ./grammargrove/uwsgi:/var/uwsgi
     restart: unless-stopped
     networks:
-      - web-default
-    proxy:
-      image: nginx:mainline-alpine
-      restart: always
+      - web_default
+    environment:
+      - ENV=prod
+      - DJANGO_SECRET_KEY=$GRAMMARGROVE_DJANGO_SECRET_KEY
+  proxy:
+    image: nginx:mainline-alpine
+    restart: always
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - web-root:/var/www/html
       - ./conf:/etc/nginx/conf.d
-      - grammargrove/uwsgi:/var/uwsgi
+      - ./grammargrove/uwsgi:/var/uwsgi
     depends_on:
       - web
     networks:
-      - web-default
+      - web_default
+  database:
+    build:
+      dockerfile: ./index/migrations/Dockerfile.dev
+      context: ./
+    volumes:
+      - ./index/migrations/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - web_default
 
-  networks:
-    web-default:
-      driver: bridge
+networks:
+  web_default:
+    driver: bridge

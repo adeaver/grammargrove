@@ -4,5 +4,4 @@ conf/**
 env/**
 Dockerfile.dev
 uwsgi.development.ini
-README.md
 PROGRESS.md

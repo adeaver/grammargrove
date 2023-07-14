@@ -163,6 +163,7 @@ node_modules/**
 index/static/**
 index/migrations/data/**
 grammargrove/spooler/**
+grammargrove/uwsgi/**
 words/data/**
 
 env/**
