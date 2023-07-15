@@ -22,8 +22,24 @@ services:
     volumes:
       - ./conf:/etc/nginx/conf.d
       - ./grammargrove/uwsgi:/var/uwsgi
+      - web-root:/var/www/html
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - dhparam:/etc/ssl/certs
     depends_on:
       - web
+    networks:
+      - web_default
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+      - /etc/resolv.conf:/etc/resolv.conf
+    depends_on:
+      - proxy
+    command: certonly --webroot --webroot-path=/var/www/html --email deaver.andrew@gmail.com --agree-tos --no-eff-email --force-renewal -d grammargrove.com -d www.grammargrove.com
     networks:
       - web_default
   database:
@@ -35,6 +51,17 @@ services:
       - 5432:5432
     networks:
       - web_default
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+  dhparam:
+    driver: local
+    driver_opts:
+      type: none
+      device: /root/grammargrove/grammargrove/webroot/dhparam/
+      o: bind
 
 networks:
   web_default:

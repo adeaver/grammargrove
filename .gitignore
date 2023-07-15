@@ -164,6 +164,7 @@ index/static/**
 index/migrations/data/**
 grammargrove/spooler/**
 grammargrove/uwsgi/**
+grammargrove/webroot/**
 words/data/**
 
 env/**
