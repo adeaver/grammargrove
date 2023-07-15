@@ -39,3 +39,19 @@ We use Django for the backend. With the exception of `scripts/` and `conf/`, all
 Some special cases to be aware of:
 - `grammargrove/` is the main project directory. Things related to uWSGI also live in here.
 - `index/` is for serving the frontend. React-Router is kind of garbage and makes authentication harder than it needs to be, so we serve everything from the backend.
+
+## Deploying
+
+We run on Digitalocean. If we need to create a new Droplet, add the tag `grammargrove-web` to it so that the firewall rules apply to it.
+
+On the Droplet, [install the official Docker Engine](https://docs.docker.com/engine/install/ubuntu/)
+
+Make the following directories:
+```
+mkdir -p $REPO_HOME/grammargrove/log $REPO_HOME/grammargrove/uwsgi $REPO_HOME/grammargrove/webroot/dhparam
+```
+
+Run the following command:
+```
+sudo openssl dhparam -out $REPO_HOME/grammargrove/webroot/dhparam/dhparam-2048.pem 2048
+```
