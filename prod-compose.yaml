@@ -6,6 +6,7 @@ services:
     volumes:
       - ./grammargrove/log:/var/log/uwsgi
       - ./grammargrove/uwsgi:/var/uwsgi
+      - static-files:/app/index/static
     restart: unless-stopped
     networks:
       - web_default
@@ -26,6 +27,7 @@ services:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
       - dhparam:/etc/ssl/certs
+      - static-files:/www/data/static
     depends_on:
       - web
     networks:
@@ -36,15 +38,16 @@ services:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
       - web-root:/var/www/html
-      - /etc/resolv.conf:/etc/resolv.conf
     depends_on:
       - proxy
-    command: certonly --webroot --webroot-path=/var/www/html --email deaver.andrew@gmail.com --agree-tos --no-eff-email --force-renewal -d grammargrove.com -d www.grammargrove.com
+    command: certonly --webroot --webroot-path=/var/www/html --email deaver.andrew@gmail.com --agree-tos --no-eff-email --force-renewal -d grammargrove.com -d www.grammargrove.com -v
     networks:
       - web_default
   database:
     image: postgres:12.12
     restart: always
+    env_file:
+      - env/db.env
     volumes:
       - ./index/migrations/data:/var/lib/postgresql/data
     ports:
@@ -53,6 +56,7 @@ services:
       - web_default
 
 volumes:
+  static-files:
   certbot-etc:
   certbot-var:
   web-root:
