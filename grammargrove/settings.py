@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import mimetypes
 import os
 from pathlib import Path
 
@@ -20,11 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 if os.environ.get("ENV", "prod") == "prod":
     SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
     DEBUG = False
     ALLOWED_HOSTS = ["www.grammargrove.com", "grammargrove.com"]
+    mimetypes.add_type("text/css", ".css", True)
+    mimetypes.add_type("text/javascript", ".js", True)
 else:
     SECRET_KEY = 'django-insecure-=$5sgkz%%(rbs^##u3=3w7@1$#el(97b2*x%#&q)((n4((7ecw'
     DEBUG = True

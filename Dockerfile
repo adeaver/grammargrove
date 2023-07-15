@@ -33,16 +33,13 @@ RUN apt-get update -y && apt-get install -y postgresql
 RUN pip3 install poetry
 RUN pip3 install uwsgi
 
-COPY --chown=$SERVICE_USER:$SERVICE_USER . .
-RUN rm ./index/static/*
+COPY . .
 RUN rm -rf ./frontend
-COPY --chown=$SERVICE_USER:$SERVICE_USER --from=frontend-builder /app/dist/assets/index.js ./index/static/index.js
-COPY --chown=$SERVICE_USER:$SERVICE_USER --from=frontend-builder /app/dist/assets/index.css ./index/static/index.css
+COPY --from=frontend-builder /app/dist/assets/index.js ./index/static/index.js
+COPY --from=frontend-builder /app/dist/assets/index.css ./index/static/index.css
 
 RUN mkdir -p /var/log/uwsgi
 RUN mkdir -p /var/uwsgi
-
-USER $SERVICE_USER
 
 RUN poetry install
 RUN poetry run ./manage.py collectstatic --noinput
