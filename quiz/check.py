@@ -2,7 +2,11 @@ from typing import List
 
 import logging
 
-from grammargrove.pinyin_utils import get_tone_number_from_numeric_form, convert_to_display_form
+from grammargrove.pinyin_utils import (
+    get_tone_number_from_numeric_form,
+    get_tone_number_from_display_form,
+    convert_to_display_form
+)
 from grammargrove.text_utils import remove_punctuation, remove_punctuation_from_hanzi
 
 from grammarrules.models import GrammarRuleExample
@@ -50,6 +54,7 @@ def check_grammar_rule(
         is_correct=correct_answer == answer,
         correct_answer=correct_answer,
         extra_context=extra_context,
+        words=[],
     )
 
 
