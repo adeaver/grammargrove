@@ -48,7 +48,34 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
         props.handleSubmitAnswer([hanzi], props.question.example_id);
     }
 
+    const getExtraContext = () => {
+        if (props.isCorrect == null) {
+            return null
+        }
+        const correctAnswer: string | null = !!props.correctAnswer && !!props.correctAnswer.length ? (
+            props.correctAnswer.join("")
+        ) : null;
+        const wordDisplay: string | null = !!props.words && !!props.words.length ? (
+            props.words.map((w: Word) => w.display).join("")
+        ) : null;
+        const wordPronunciation: string | null = !!props.words && !!props.words.length ? (
+            props.words.map((w: Word) => w.pronunciation.replace(" ", "")).join(" ")
+        ) : null;
+        const word: string | null = !!wordDisplay && !!wordPronunciation ? (
+            `${wordDisplay} (${wordPronunciation})`
+        ) : correctAnswer;
+
+        if (!word) {
+            return null;
+        } else if (props.isCorrect) {
+            return `${word} is the correct translation!`;
+        } else {
+            return `The correct translation is ${word}`;
+        }
+    }
+
     let handleSubmit: () => void = handleSubmitAnswer;
+    const extraContext = getExtraContext();
     let action;
     if (props.isCorrect == null) {
         action = (
@@ -63,6 +90,13 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
                 <Text type={TextType.Subtitle} function={TextFunction.Confirmation}>
                     That’s correct!
                 </Text>
+                {
+                    !!extraContext && (
+                        <Text>
+                            {extraContext}
+                        </Text>
+                    )
+                }
                 <Button type={ButtonType.Secondary} isSubmit>
                     Next question
                 </Button>
@@ -76,9 +110,9 @@ export const HanziFromDefinitionDisplay = (props: QuestionDisplayProps) => {
                      Looks like this one needs some more practice.
                 </Text>
                 {
-                    !!props.correctAnswer && !!props.correctAnswer.length && (
+                    !!extraContext && (
                         <Text>
-                            {`The right answer is ${ props.correctAnswer.join('') }.`}
+                            {extraContext}
                         </Text>
                     )
                 }
@@ -120,8 +154,52 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
         props.handleSubmitAnswer([definition], props.question.example_id);
     }
 
+    const getExtraContext = () => {
+        if (props.isCorrect == null) {
+            return null
+        }
+        const wordDisplay: string | null = !!props.words && !!props.words.length ? (
+            props.words.map((w: Word) => w.display).join("")
+        ) : null;
+        const wordPronunciation: string | null = !!props.words && !!props.words.length ? (
+            props.words.map((w: Word) => w.pronunciation.replace(" ", "")).join(" ")
+        ) : null;
+        const word: string | null = !!wordDisplay && !!wordPronunciation ? (
+            `${wordDisplay} (${wordPronunciation})`
+        ) : null;
+
+        if (props.isCorrect) {
+            const definition: string | null = !!props.extraContext && !!props.extraContext.length ? (
+                props.extraContext.join("; ")
+            ) : null;
+            if (!!definition && !!word) {
+                return `${word} can also mean ${definition}`;
+            } else if (!definition && !!word) {
+                return `That’s the correct translation of ${word}`;
+            } else if (!!definition && !word) {
+                return `This can also mean ${definition}`;
+            } else {
+                return null
+            }
+        } else {
+            const definition: string | null = !!props.correctAnswer && !!props.correctAnswer.length ? (
+                props.correctAnswer.join("; ")
+            ) : null;
+            if (!!definition && !!word) {
+                return `${word} means ${definition}`;
+            } else if (!definition && !!word) {
+                return `That’s the correct translation of ${word}`;
+            } else if (!!definition && !word) {
+                return `The correct translation is ${definition}`;
+            } else {
+                return null
+            }
+        }
+    }
+
     let handleSubmit = handleSubmitAnswer;
     let action;
+    const extraContext = getExtraContext();
     if (props.isCorrect == null) {
         action = (
             <Button isSubmit>
@@ -136,9 +214,9 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                     That’s correct!
                 </Text>
                 {
-                    !!props.extraContext && !!props.extraContext.length && (
+                    !!extraContext && (
                         <Text>
-                            {`This can also mean: ${props.extraContext.join('; ')}`}
+                            {extraContext}
                         </Text>
                     )
                 }
@@ -155,10 +233,10 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                      Looks like this one needs some more practice.
                 </Text>
                 {
-                    !!props.correctAnswer && !!props.correctAnswer.length && (
+                    !!extraContext && (
                         <div>
                             <Text>
-                                {`The right answer is: "${ props.correctAnswer.join('; ') }."`}
+                                {extraContext}
                             </Text>
                         </div>
                     )
