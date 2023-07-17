@@ -63,25 +63,27 @@ def check_vocabulary_word(
     )
     if not entries:
         raise ValueError(f"User vocabulary entry {user_vocabulary_entry_id} does not exist")
-    entry = UserVocabularyEntrySerializer(entries[0]).data
+    entry = UserVocabularyEntrySerializer(entries[0])
+    word = entry.instance.word
     is_correct = False
     correct_answer = []
     extra_context = []
+    words = [word]
     if question_type == QuestionType.HanziFromEnglish:
         correct_answer = [
-            entry["word"]["display"]
+            word.display
         ]
         is_correct = correct_answer == answer
     elif question_type == QuestionType.DefinitionsFromHanzi:
-        for d in entry["word"]["definitions"]:
-            flattened_definition = d["definition"].lower().strip()
+        for d in word.definitions.all():
+            flattened_definition = d.definition.lower().strip()
             if not flattened_definition:
                 continue
             correct_answer += [ d.strip() for d in flattened_definition.split(";") ]
         is_correct = answer[0].lower().strip() in correct_answer
         extra_context = [ a for a in correct_answer if a != answer[0].lower().strip() ]
     elif question_type == QuestionType.AccentsFromHanzi:
-        pronunciation = entry["word"]["pronunciation"].split(" ")
+        pronunciation = word.pronunciation.split(" ")
         correct_answer = [
             str(get_tone_number_from_display_form(p)) for p in pronunciation
         ]
@@ -95,4 +97,5 @@ def check_vocabulary_word(
         is_correct=is_correct,
         correct_answer=correct_answer,
         extra_context=extra_context,
+        words=words,
     )

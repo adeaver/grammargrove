@@ -4,6 +4,8 @@ import {
     PaginatedResponse
 } from '../../util/gfetch';
 
+import { Word } from '../../common/api';
+
 export enum QuestionType {
     AccentsFromHanzi = 1,
     DefinitionsFromHanzi = 2,
@@ -45,6 +47,7 @@ export type CheckAnswerResponse = {
     is_correct: boolean;
     correct_answer: Array<string>;
     extra_context: Array<string>;
+    words: Array<Word>;
 }
 
 export function checkAnswer(

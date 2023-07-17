@@ -30,7 +30,7 @@ class GrammarRuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GrammarRule
-        fields = '__all__'
+        fields = [ 'id', 'is_user_added', 'definition', 'language_code', 'hsk_level', 'grammar_rule_components' ]
 
     def to_representation(self, instance):
         response = super().to_representation(instance)

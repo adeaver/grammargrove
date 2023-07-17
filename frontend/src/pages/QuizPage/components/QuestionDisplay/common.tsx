@@ -7,6 +7,8 @@ import Card from '../../../../components/Card';
 import Input, { InputType } from '../../../../components/Input';
 import Button, { ButtonType } from '../../../../components/Button';
 
+import { Word } from '../../../../common/api';
+
 import {
     Question,
     Display
@@ -17,6 +19,7 @@ export type QuestionDisplayControllerProps = {
     isCorrect: boolean | null;
     correctAnswer: string[] | null;
     extraContext: string[] | null;
+    words: Word[] | null;
     originalAnswer: string[] | null;
 
     handleSubmitAnswer: (answer: string[], example_id: string | null | undefined) => void;
@@ -29,6 +32,7 @@ type QuestionDisplayProps = {
     isCorrect: boolean | null;
     correctAnswer: string[] | null;
     extraContext: string[] | null;
+    words: Word[] | null;
     originalAnswer: string[] | null;
 
     handleSubmitAnswer: (answer: string[], example_id: string | null | undefined) => void;

@@ -3,6 +3,8 @@ import { useState } from 'preact/hooks';
 import Text, { TextFunction } from '../../../../components/Text';
 import LoadingIcon from '../../../../components/LoadingIcon';
 
+import { Word } from '../../../../common/api';
+
 import {
     Question,
 
@@ -26,6 +28,7 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
     const [ correctAnswer, setCorrectAnswer ] = useState<string[] | null>(null);
     const [ isCorrect, setIsCorrect ] = useState<boolean | null>(null);
     const [ extraContext, setExtraContext ] = useState<string[] | null>(null);
+    const [ words, setWords ] = useState<Word[] | null>(null);
 
     // Used for handle rerenders
     const [ originalAnswer, setOriginalAnswer ] = useState<string[] | null>(null);
@@ -40,6 +43,7 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 setIsCorrect(resp.is_correct);
                 setCorrectAnswer(resp.correct_answer);
                 setExtraContext(resp.extra_context);
+                setWords(resp.words);
             },
             (err: Error) => {
                 setIsLoading(false);
@@ -75,6 +79,7 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 correctAnswer={correctAnswer}
                 extraContext={extraContext}
                 originalAnswer={originalAnswer}
+                words={words}
                 handleSubmitAnswer={handleSubmitAnswer}
                 handleGetNextQuestion={handleGetNextQuestion} />
         );
@@ -86,6 +91,7 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 correctAnswer={correctAnswer}
                 extraContext={extraContext}
                 originalAnswer={originalAnswer}
+                words={words}
                 handleSubmitAnswer={handleSubmitAnswer}
                 handleGetNextQuestion={handleGetNextQuestion} />
 

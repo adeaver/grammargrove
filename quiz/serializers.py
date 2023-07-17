@@ -5,6 +5,8 @@ from rest_framework import serializers
 from .models import QuizQuestion, QuestionType
 from .grammarrules import get_usable_grammar_rule_examples
 
+from words.models import Word
+from words.serializers import WordSerializer
 from uservocabulary.models import UserVocabularyEntry
 from uservocabulary.serializers import UserVocabularyEntrySerializer
 
@@ -112,8 +114,10 @@ class CheckResponse(NamedTuple):
     is_correct: bool
     correct_answer: List[str]
     extra_context: List[str]
+    words: List[Word]
 
 class CheckResponseSerializer(serializers.Serializer):
     is_correct = serializers.BooleanField()
     correct_answer = serializers.ListField(child=serializers.CharField())
     extra_context = serializers.ListField(child=serializers.CharField(required=False, allow_blank=True))
+    words = WordSerializer(many=True, required=False)
