@@ -56,9 +56,21 @@ class UserViewSet(viewsets.ViewSet):
         if email.is_expired():
             logging.warning(f"User Login Email ID {user_practice_reminder_email_id} is expired")
             return redirect("/?error=expired_auth")
+
         user = User.objects.get(pk=email.user.id)
-        login(request, user)
-        return redirect("/quiz/")
+        def handle_redirect():
+            if user.has_usable_password():
+                return redirect("/")
+            login(request, user)
+            return redirect("/quiz/")
+
+        if request.user is not None:
+            if user.id == request.user.id:
+                # user is currently logged in
+                return redirect("/quiz/")
+            # wrong user is currently logged in
+            logout(request)
+        return handle_redirect()
 
 
     @action(detail=True, methods=['get'])
@@ -75,6 +87,8 @@ class UserViewSet(viewsets.ViewSet):
             logging.warning(f"User Login Email ID {user_login_email_id} is expired")
             return redirect("/?error=expired_auth")
         user = User.objects.get(pk=email.user.id)
+        if user.has_usable_password():
+            return redirect("/")
         login(request, user)
         email.expires_at = datetime.datetime.now()
         email.save()

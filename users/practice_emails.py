@@ -1,3 +1,4 @@
+from typing import Optional
 import logging
 
 from datetime import timedelta
@@ -24,12 +25,23 @@ def create_all_practice_emails():
 
 
 def send_outstanding_practice_reminders():
-    outstanding_practice_reminders = PracticeReminderEmail.objects.filter(
-        fulfilled=False, send_at__lt=timezone.now()
-    )
-    for r in outstanding_practice_reminders:
+    should_exit = False
+    while not should_exit:
         with transaction.atomic():
+            r = _lookup_outstanding_practice_reminder()
+            if not r:
+                should_exit = True
+                break
             r.fulfilled = True
             r.expires_at = timezone.now() + timedelta(hours=25)
             r.save()
             send_daily_practice_email(r)
+
+
+def _lookup_outstanding_practice_reminder() -> Optional[PracticeReminderEmail]:
+    outstanding_practice_reminders = PracticeReminderEmail.objects.filter(
+        fulfilled=False, send_at__lt=timezone.now()
+    )
+    if not outstanding_practice_reminders:
+        return None
+    return outstanding_practice_reminders[0]

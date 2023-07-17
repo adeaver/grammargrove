@@ -2,6 +2,7 @@ import uuid
 from enum import IntEnum
 import datetime
 
+from django.contrib import admin
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
@@ -106,3 +107,6 @@ class PracticeReminderEmail(models.Model):
 
     def is_expired(self) -> bool:
         return self.expires_at is None or timezone.now() > self.expires_at
+
+class PracticeReminderEmailAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "fulfilled", "send_at", "expires_at", "unique_key")

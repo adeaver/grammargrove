@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login as login_request
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
@@ -16,11 +16,11 @@ def home(request: HttpRequest) -> HttpResponse:
 def login(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
         return redirect("/?error=bad_req")
-    user = authenticate(username=request.POST["email"], password=request.POST["password"])
+    user = authenticate(request, username=request.POST["email"], password=request.POST["password"])
     if not user:
         return redirect("/?error=bad_auth")
     else:
-        login(request, user)
+        login_request(request, user)
         return redirect("/dashboard/")
 
 def privacy_policy(request: HttpRequest) -> HttpResponse:
