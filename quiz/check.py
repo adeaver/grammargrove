@@ -2,7 +2,7 @@ from typing import List
 
 import logging
 
-from grammargrove.pinyin_utils import get_tone_number_from_display_form
+from grammargrove.pinyin_utils import get_tone_number_from_numeric_form, convert_to_display_form
 from grammargrove.text_utils import remove_punctuation, remove_punctuation_from_hanzi
 
 from grammarrules.models import GrammarRuleExample
@@ -85,10 +85,10 @@ def check_vocabulary_word(
     elif question_type == QuestionType.AccentsFromHanzi:
         pronunciation = word.pronunciation.split(" ")
         correct_answer = [
-            str(get_tone_number_from_display_form(p)) for p in pronunciation
+            str(get_tone_number_from_numeric_form(p)) for p in pronunciation
         ]
         extra_context = [
-            ''.join(pronunciation)
+            ''.join([convert_to_display_form(p) for p in pronunciation])
         ]
         is_correct = answer == correct_answer
     else:
