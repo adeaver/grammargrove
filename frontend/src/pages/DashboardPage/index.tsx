@@ -9,7 +9,8 @@ import {
 
 import Header from '../../components/Header';
 import Button from '../../components/Button';
-import Text from '../../components/Text';
+import Text, { TextFunction } from '../../components/Text';
+import LoadingIcon from '../../components/LoadingIcon';
 
 import {
     UserVocabulary,
@@ -122,37 +123,54 @@ const DashboardPage = () => {
         setLocation("/quiz/")
     }
 
-    if (isLoadingUserGrammarRules) {
-        return <p>Loading...</p>
+    let body;
+    if (isLoadingUserGrammarRules || isLoadingUserVocabulary) {
+        body = (
+            <div class="w-full flex items-center justify-center">
+                <LoadingIcon />
+            </div>
+        );
     } else if (!!userVocabularyError || !!userGrammarRulesError) {
-        return <p>Something went wrong</p>
+        body = (
+            <div class="w-full flex items-center justify-center">
+                <Text function={TextFunction.Warning}>
+                    Something went wrong, try again later.
+                </Text>
+            </div>
+        );
+    } else {
+        body = (
+            <div class="w-full">
+                <div class="w-full flex items-center justify-center">
+                    <div class="max-w-lg flex flex-col space-y-4">
+                        <Text>
+                            Ready for a quiz?
+                        </Text>
+                        <Button onClick={navigateToQuizPage}>
+                            Quiz me!
+                        </Button>
+                    </div>
+                </div>
+                <UserVocabularyDisplay
+                    isLoading={isLoadingUserVocabulary}
+                    vocabulary={userVocabulary}
+                    removeFromUserVocabulary={removeFromUserVocabulary}
+                    handleAddUserVocabulary={handleAddToUserVocabulary}
+                    getNextPage={makeChangeUserVocabularyPageFunc(nextUserVocabularyPage)}
+                    getPreviousPage={makeChangeUserVocabularyPageFunc(previousUserVocabularyPage)} />
+                <UserGrammarRuleDisplay
+                    grammarRules={userGrammarRules}
+                    getNextPage={makeChangeUserGrammarRulesPageFunc(nextUserGrammarRulesPage)}
+                    getPreviousPage={makeChangeUserGrammarRulesPageFunc(previousUserGrammarRulesPage)}
+                    handleAddUserGrammarRule={handleAddUserGrammarRule}
+                    handleRemoveUserGrammarRule={handleRemoveUserGrammarRule} />
+            </div>
+        )
     }
     return (
         <div>
             <Header />
-            <div class="w-full flex items-center justify-center">
-                <div class="max-w-lg flex flex-col space-y-4">
-                    <Text>
-                        Ready for a quiz?
-                    </Text>
-                    <Button onClick={navigateToQuizPage}>
-                        Quiz me!
-                    </Button>
-                </div>
-            </div>
-            <UserVocabularyDisplay
-                isLoading={isLoadingUserVocabulary}
-                vocabulary={userVocabulary}
-                removeFromUserVocabulary={removeFromUserVocabulary}
-                handleAddUserVocabulary={handleAddToUserVocabulary}
-                getNextPage={makeChangeUserVocabularyPageFunc(nextUserVocabularyPage)}
-                getPreviousPage={makeChangeUserVocabularyPageFunc(previousUserVocabularyPage)} />
-            <UserGrammarRuleDisplay
-                grammarRules={userGrammarRules}
-                getNextPage={makeChangeUserGrammarRulesPageFunc(nextUserGrammarRulesPage)}
-                getPreviousPage={makeChangeUserGrammarRulesPageFunc(previousUserGrammarRulesPage)}
-                handleAddUserGrammarRule={handleAddUserGrammarRule}
-                handleRemoveUserGrammarRule={handleRemoveUserGrammarRule} />
+            { body }
         </div>
     );
 }
