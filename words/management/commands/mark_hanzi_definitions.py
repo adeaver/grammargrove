@@ -10,7 +10,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for d in Definition.objects.all():
-            if has_hanzi(d.definition):
-                d.contains_hanzi = True
+            contains_hanzi = has_hanzi(d.definition)
+            is_valid = len(d.definition.strip()) > 0
+            if contains_hanzi or not is_valid:
+                d.contains_hanzi = contains_hanzi
+                d.is_valid = is_valid
                 d.save()
 

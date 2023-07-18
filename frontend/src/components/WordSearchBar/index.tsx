@@ -2,6 +2,8 @@ import { useState } from 'preact/hooks';
 
 import Input, { InputType } from '../Input';
 import Button, { ButtonType } from '../Button';
+import Text, { TextFunction } from '../../components/Text';
+import LoadingIcon from '../../components/LoadingIcon';
 
 import { PaginatedResponse } from '../../util/gfetch'
 import { Word } from '../../common/api';
@@ -67,16 +69,16 @@ const WordSearchBar = (props: WordSearchBarProps) => {
     }
 
 
+    if (isLoading) {
+        return <LoadingIcon />
+    }
     return (
         <div>
             {
-                !!isLoading && (
-                    <p>Loading...</p>
-                )
-            }
-            {
                 !!error && (
-                    <p>There was an error</p>
+                    <Text function={TextFunction.Warning}>
+                        Something went wrong, try again later.
+                    </Text>
                 )
             }
             <Input

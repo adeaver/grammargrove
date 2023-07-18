@@ -2,7 +2,7 @@ from typing import List
 
 from django.db.models import QuerySet
 
-from .models import LanguageCode, Word
+from .models import LanguageCode, Word, Definition
 
 from grammargrove.pinyin_utils import (
     PinyinSplitter,
@@ -42,9 +42,9 @@ def get_queryset_for_query(query_language_code: LanguageCode, search_query: str)
         return Word.objects.filter(
             language_code=query_language_code,
             pronunciation=search_query,
-            id__in=Definitions.objects.filter(
-                language_code=query_language_code,
-                contains_hanzi=False
+            id__in=Definition.objects.filter(
+                contains_hanzi=False,
+                is_valid=True
             ).values_list("word", flat=True)
         )
     elif are_all_parts_display_form:
@@ -64,16 +64,16 @@ def get_queryset_for_query(query_language_code: LanguageCode, search_query: str)
         return Word.objects.filter(
             language_code=query_language_code,
             pronunciation__in=split_results,
-            id__in=Definitions.objects.filter(
-                language_code=query_language_code,
-                contains_hanzi=False
+            id__in=Definition.objects.filter(
+                contains_hanzi=False,
+                is_valid=True
             ).values_list("word", flat=True)
         )
     return Word.objects.filter(
         language_code=query_language_code,
         display=search_query,
-        id__in=Definitions.objects.filter(
-            language_code=query_language_code,
-            contains_hanzi=False
+        id__in=Definition.objects.filter(
+            contains_hanzi=False,
+            is_valid=True
         ).values_list("word", flat=True)
     )

@@ -4,6 +4,8 @@ import { PaginatedResponse } from '../../util/gfetch';
 
 import Input, { InputType } from '../Input';
 import Button, { ButtonType } from '../Button';
+import Text, { TextFunction } from '../../components/Text';
+import LoadingIcon from '../../components/LoadingIcon';
 
 import { GrammarRule } from '../../common/api';
 
@@ -25,6 +27,20 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
         setSearchQuery(searchQuery.concat(null));
     }
 
+    const [ pageTurnSearchQuery, setPageTurnSearchQuery ] = useState<Array<string | null>>([]);
+
+    const [ nextPage, setNextPage ] = useState<number | null>(null);
+    const [ previousPage, setPreviousPage ] = useState<number | null>(null);
+
+    const getPageFunc = (page: number | null) => {
+        if (page == null) {
+            return null;
+        }
+        return () => {
+            handleSearch(pageTurnSearchQuery, page);
+        }
+    }
+
     const handleUpdateSearchQuery = (idx: number) => {
         return (value: string) => {
             setSearchQuery(
@@ -43,14 +59,18 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
         }
     }
 
-    const handleSubmit = () => {
+    const handleSearch = (query: Array<string | null>, pageNumber: number | null) => {
         setIsLoading(true);
         searchForGrammarRule(
-            searchQuery.filter((value: string | null) => !!value) as string[],
+            query.filter((value: string | null) => !!value) as string[],
+            pageNumber,
             (resp: PaginatedResponse<GrammarRule>) => {
                 setIsLoading(false);
                 setError(null);
                 props.onSuccess(resp.results);
+                setNextPage(resp.next);
+                setPreviousPage(resp.previous);
+                setPageTurnSearchQuery(query);
             },
             (err: Error) => {
                 setIsLoading(false);
@@ -60,14 +80,23 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
         );
     }
 
+    const getNextPage = getPageFunc(nextPage);
+    const getPreviousPage = getPageFunc(previousPage);
+
+    const handleSubmit = () => {
+        handleSearch(searchQuery, null);
+    }
+
     if (isLoading) {
-        return <p>Loading ...</p>
+        return <LoadingIcon />;
     }
     return (
         <div>
             {
                 !!error && (
-                    <p>There was an error</p>
+                    <Text function={TextFunction.Warning}>
+                        Something went wrong, try again later.
+                    </Text>
                 )
             }
             <div class="grid grid-cols-4">
@@ -91,13 +120,33 @@ const GrammarRuleSearch = (props: GrammarRuleSearchProps) => {
                 })
             }
             </div>
-            <div class="flex flex-row space-x-4">
-                <Button type={ButtonType.Secondary} onClick={handleAddWordToSearchQuery}>
-                    <p class="font-body">Add Word</p>
-                </Button>
+            <div class="flex flex-row space-x-4 my-2">
                 <Button onClick={handleSubmit}>
                     Search
                 </Button>
+                <Button type={ButtonType.Secondary} onClick={handleAddWordToSearchQuery}>
+                    Add Word
+                </Button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+            {
+                !!previousPage ? (
+                    <Button type={ButtonType.Secondary} onClick={getPreviousPage!}>
+                        Previous Page
+                    </Button>
+                ) : (
+                    <div />
+                )
+            }
+            {
+                !!nextPage ? (
+                    <Button type={ButtonType.Secondary} onClick={getNextPage!}>
+                        Next Page
+                    </Button>
+                ) : (
+                    <div />
+                )
+            }
             </div>
         </div>
     );

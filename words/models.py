@@ -28,6 +28,7 @@ class Definition(models.Model):
     word = models.ForeignKey(Word, related_name="definitions", on_delete=models.CASCADE)
     definition = models.TextField()
     contains_hanzi = models.BooleanField(default=False)
+    is_valid = models.BooleanField(default=True)
 
     class Meta:
         indexes = [

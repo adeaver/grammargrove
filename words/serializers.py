@@ -25,6 +25,7 @@ class WordSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         pronunciation_as_display = " ".join([ convert_to_display_form(p) for p in instance.pronunciation.split(" ")])
         response["pronunciation"] = pronunciation_as_display
+        response["definitions"] = [ d for d in response["definitions"] if not d.get("contains_hanzi", False) and d.get("is_valid", False) ]
         user_vocabulary_entry: Optional[str] = None
         if "request" in self.context:
             user = self.context["request"].user

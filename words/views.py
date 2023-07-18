@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from billing.permissions import HasValidSubscription
 
-from .models import Word, LanguageCode
+from .models import Word, LanguageCode, Definition
 from .serializers import WordSerializer
 from .pagination import WordPaginator
 
@@ -21,9 +21,9 @@ class WordsViewSet(viewsets.ModelViewSet):
         if not search_query:
             return Word.objects.filter(
                 language_code=query_language_code,
-                id__in=Definitions.objects.filter(
-                    language_code=query_language_code,
-                    contains_hanzi=False
+                id__in=Definition.objects.filter(
+                    contains_hanzi=False,
+                    is_valid=True
                 ).values_list("word", flat=True)
             ).order_by("id")
         return get_queryset_for_query(query_language_code, search_query).order_by("id")
