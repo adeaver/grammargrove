@@ -65,7 +65,7 @@ def _convert_user_vocabulary_entry_to_display(user_vocabulary_entry: UserVocabul
     elif question_type == QuestionType.HanziFromEnglish:
         return [
             Display(
-                display="; ".join([ d["definition"].strip() for d in word["definitions"] if len(d.get("definition", "").strip()) ]),
+                display="; ".join([ d["definition"].strip() for d in word["definitions"] if len(d.get("definition", "").strip()) and not d.get("contains_hanzi", False) ]),
                 input_length=1,
             )
         ]

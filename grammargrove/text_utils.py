@@ -14,3 +14,8 @@ def remove_punctuation_from_hanzi(hanzi: str) -> str:
             r"[\s+\.\!\/_,$%^*(+\"\']+|[+——！，。？、~@#￥%……&*（）：；《）《》“”()»〔〕-]+",
             "", without_spaces)
     )
+
+
+def has_hanzi(s: str) -> bool:
+    return re.search(u'[\u4e00-\u9fff]', s) is not None
+

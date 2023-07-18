@@ -82,7 +82,7 @@ def check_vocabulary_word(
     elif question_type == QuestionType.DefinitionsFromHanzi:
         for d in word.definitions.all():
             flattened_definition = d.definition.lower().strip()
-            if not flattened_definition:
+            if not flattened_definition or d.contains_hanzi:
                 continue
             correct_answer += [ d.strip() for d in flattened_definition.split(";") ]
         is_correct = answer[0].lower().strip() in correct_answer

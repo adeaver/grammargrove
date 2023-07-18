@@ -40,7 +40,13 @@ def get_queryset_for_query(query_language_code: LanguageCode, search_query: str)
     are_all_parts_display_form = all([ is_display_form(p) for p in search_query.split(" ") ])
     if are_all_parts_numeric_form:
         return Word.objects.filter(
-            language_code=query_language_code, pronunciation=search_query)
+            language_code=query_language_code,
+            pronunciation=search_query,
+            id__in=Definitions.objects.filter(
+                language_code=query_language_code,
+                contains_hanzi=False
+            ).values_list("word", flat=True)
+        )
     elif are_all_parts_display_form:
         split_results = search_query.split(" ")
         if len(split_results) == 1:
@@ -56,6 +62,18 @@ def get_queryset_for_query(query_language_code: LanguageCode, search_query: str)
         else:
             split_results = [ " ".join([ convert_to_numeric_form(p) for p in split_results ]) ]
         return Word.objects.filter(
-            language_code=query_language_code, pronunciation__in=split_results)
+            language_code=query_language_code,
+            pronunciation__in=split_results,
+            id__in=Definitions.objects.filter(
+                language_code=query_language_code,
+                contains_hanzi=False
+            ).values_list("word", flat=True)
+        )
     return Word.objects.filter(
-        language_code=query_language_code, display=search_query)
+        language_code=query_language_code,
+        display=search_query,
+        id__in=Definitions.objects.filter(
+            language_code=query_language_code,
+            contains_hanzi=False
+        ).values_list("word", flat=True)
+    )

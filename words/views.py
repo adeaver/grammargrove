@@ -19,5 +19,11 @@ class WordsViewSet(viewsets.ModelViewSet):
         search_query: str = self.request.query_params.get("search_query", "").strip().lower()
         query_language_code = LanguageCode(self.request.query_params.get("language_code", LanguageCode.SIMPLIFIED_MANDARIN.value))
         if not search_query:
-            return Word.objects.filter(language_code=query_language_code).order_by("id")
+            return Word.objects.filter(
+                language_code=query_language_code,
+                id__in=Definitions.objects.filter(
+                    language_code=query_language_code,
+                    contains_hanzi=False
+                ).values_list("word", flat=True)
+            ).order_by("id")
         return get_queryset_for_query(query_language_code, search_query).order_by("id")

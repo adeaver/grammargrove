@@ -27,6 +27,7 @@ class Definition(models.Model):
     language_code = models.TextField(choices=LanguageCode.choices)
     word = models.ForeignKey(Word, related_name="definitions", on_delete=models.CASCADE)
     definition = models.TextField()
+    contains_hanzi = models.BooleanField(default=False)
 
     class Meta:
         indexes = [
