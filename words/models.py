@@ -32,5 +32,6 @@ class Definition(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=['word']),
-            models.Index(fields=['word', 'language_code'])
+            models.Index(fields=['word', 'language_code']),
+            models.Index(fields=['word'], condition=models.Q(contains_hanzi=False), name="contains_hanzi_idx")
         ]
