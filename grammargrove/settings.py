@@ -30,7 +30,7 @@ if os.environ.get("ENV", "prod") == "prod":
 else:
     SECRET_KEY = 'django-insecure-=$5sgkz%%(rbs^##u3=3w7@1$#el(97b2*x%#&q)((n4((7ecw'
     DEBUG = True
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ["*"]
     CORS_ORIGIN_ALLOW_ALL = True
 
 
