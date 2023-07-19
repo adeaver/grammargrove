@@ -19,7 +19,7 @@ class GrammarRule(models.Model):
 
 
 class GrammarRuleAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "definition", "hsk_level", "components", "usable_number_of_examples", "nonusable_number_of_examples")
+    list_display = ("id", "title", "definition", "hsk_level", "components", "usable_number_of_examples", "nonusable_number_of_examples", "number_of_prompt_examples")
 
     def usable_number_of_examples(self, obj: GrammarRule):
         number_of_usable_examples = len(
@@ -54,6 +54,15 @@ class GrammarRuleAdmin(admin.ModelAdmin):
             c.word.display if c.word is not None else c.part_of_speech
             for c in components
         ])
+
+
+    def number_of_prompt_examples(self, obj: GrammarRule):
+        prompt_examples = GrammarRuleHumanVerifiedPromptExample.objects.filter(
+            grammar_rule=obj
+        )
+        return mark_safe(
+            f'<a href="/admin/grammarrules/grammarrulehumanverifiedpromptexample/?grammar_rule={obj.id}">{len(prompt_examples)}</a>'
+        )
 
 class GrammarRuleComponent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
