@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 
 from grammargrove.utils import get_base_url_for_environment
 from .models import User, UserStatus, UserLoginEmail, PracticeReminderEmail
+from userpreferences.models import UserPreferences
 
 def _get_sender_email_format(
     sender_email_name: str,
@@ -108,9 +109,6 @@ def send_login_email_to_user(login_email: UserLoginEmail) -> bool:
         logging.warning(f"User ID {user_id} returned multiple users")
         return False
     user = users[0]
-    if user.status == UserStatus.UNSUBSCRIBED:
-        logging.info(f"User {user_id} is unsubscribed")
-        return False
     if user.status == UserStatus.UNVERIFIED:
         logging.info(f"User {user_id} is unverified, sending verification email instead")
         return send_verifcation_email_to_user(login_email)
@@ -135,8 +133,8 @@ def send_login_email_to_user(login_email: UserLoginEmail) -> bool:
 
 def send_daily_practice_email(practice_reminder_email: PracticeReminderEmail) -> bool:
     user =  practice_reminder_email.user
-    # TODO: check days since free trial expired
-    if user.status != UserStatus.VERIFIED:
+    preferences = UserPreferences.objects.filter(user=user)
+    if user.status != UserStatus.VERIFIED or len(preferences) and preferences[0].daily_practice_reminders_enabled:
         return False
     base_url = f"{get_base_url_for_environment()}/api/users/v1"
     unsubscribe_link = f"{base_url}/{user.id}/unsubscribe/"

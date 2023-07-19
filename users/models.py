@@ -2,6 +2,7 @@ import uuid
 from enum import IntEnum
 import datetime
 
+from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -12,9 +13,8 @@ from django.utils import timezone
 class UserStatus(IntEnum):
     UNVERIFIED = 1
     VERIFIED = 2
-    UNSUBSCRIBED = 3
-    BLOCKLISTED = 4
-    DENIED_PLAN = 5
+    BLOCKLISTED = 3
+    DENIED_PLAN = 4
 
     @classmethod
     def choices(cls):

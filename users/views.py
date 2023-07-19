@@ -14,6 +14,7 @@ from django.http import HttpRequest, JsonResponse, HttpResponse, HttpResponseBad
 from rest_framework.decorators import action
 from rest_framework import viewsets
 from .models import User, UserStatus, UserLoginEmail, UserLoginEmailType, PracticeReminderEmail
+from userpreferences.models import UserPreferences
 from grammargrove.tasks import send_login_email
 
 class SearchEmailAction(Enum):
@@ -105,8 +106,10 @@ class UserViewSet(viewsets.ViewSet):
             logging.warning(f"User ID {user_id} returned {len(users)} results, but expected at most 1")
             return HttpResponseServerError()
         user = users[0]
-        user.status = UserStatus.UNSUBSCRIBED
-        user.save()
+        preferences = UserPreferences.objects.filter(user=user)
+        prefs = preferences[0] if preferences else UserPreferences(user=user)
+        prefs.set_unsubscribed_from_emails()
+        prefs.save()
         return redirect("/")
 
 
