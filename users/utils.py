@@ -134,7 +134,7 @@ def send_login_email_to_user(login_email: UserLoginEmail) -> bool:
 def send_daily_practice_email(practice_reminder_email: PracticeReminderEmail) -> bool:
     user =  practice_reminder_email.user
     preferences = UserPreferences.objects.filter(user=user)
-    if user.status != UserStatus.VERIFIED or len(preferences) and preferences[0].daily_practice_reminders_enabled:
+    if user.status != UserStatus.VERIFIED or len(preferences) and not preferences[0].daily_practice_reminders_enabled:
         return False
     base_url = f"{get_base_url_for_environment()}/api/users/v1"
     unsubscribe_link = f"{base_url}/{user.id}/unsubscribe/"
