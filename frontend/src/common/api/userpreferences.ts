@@ -8,6 +8,16 @@ export type UserPreferences = {
     user: string;
     id: string;
     hsk_level: number | null;
+    daily_practice_reminders_enabled: boolean;
+}
+
+export function getDefaultUserPreferences() {
+    return {
+        user: "",
+        id: "",
+        hsk_level: null,
+        daily_practice_reminders_enabled: true,
+    }
 }
 
 export function getUserPreferences(

@@ -1,0 +1,2 @@
+#!/bin/bash
+docker restart grammargrove-frontend-1 && scripts/manage collectstatic --no-input
