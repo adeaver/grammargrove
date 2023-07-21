@@ -3,6 +3,7 @@ import { useState, useEffect } from 'preact/hooks';
 import Header from '../../components/Header';
 import LoadingIcon from '../../components/LoadingIcon';
 import Text, { TextFunction } from '../../components/Text';
+import Link, { LinkTarget } from '../../components/Link';
 
 import {
     UserPreferences,
@@ -62,6 +63,9 @@ const PreferencesPage = () => {
             <div class="p-6 max-w-full flex flex-col space-y-4 items-center justify-center">
                 { body }
             </div>
+            <Link href="/dashboard/" target={LinkTarget.Self}>
+                Click here to return to the dashboard
+            </Link>
         </div>
     );
 }

@@ -7,6 +7,7 @@ import {
 import Header from '../../components/Header';
 import Text, { TextFunction } from '../../components/Text';
 import LoadingIcon from '../../components/LoadingIcon';
+import Link, { LinkTarget } from '../../components/Link';
 
 import {
     UserGrammarRule,
@@ -96,7 +97,18 @@ const UserGrammarRulesPage = () => {
     return (
         <div>
             <Header />
+            <div class="flex flex-col space-y-2">
+                <Text>
+                    Need to update your vocabulary words?
+                </Text>
+                <Link target={LinkTarget.Self} href="/vocabulary/">
+                    Click here
+                </Link>
+            </div>
             { body }
+            <Link target={LinkTarget.Self} href="/dashboard/">
+                Back to the dashboard
+            </Link>
         </div>
     );
 }

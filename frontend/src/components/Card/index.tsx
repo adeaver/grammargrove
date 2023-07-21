@@ -6,7 +6,7 @@ type CardProps = {
 }
 
 const Card = (props: CardProps) => {
-    let className = "m-2 py-4 px-8 bg-white hover:shadow-xl shadow-lg rounded-lg";
+    let className = "m-2 py-4 px-8 border border-slate-300 bg-white hover:shadow-xl shadow-lg rounded-lg";
     if (props.className) {
         className = `${props.className} ${className}`;
     }

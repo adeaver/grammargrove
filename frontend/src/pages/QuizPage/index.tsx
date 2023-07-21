@@ -127,7 +127,7 @@ const QuizPage = () => {
                     Need to add a new word or grammar rule to your list?
                 </Text>
                 <Link href="/dashboard/" target={LinkTarget.Self}>
-                    Click here to return to your list
+                    Click here to return to the dashboard
                 </Link>
             </div>
         </div>
