@@ -11,10 +11,10 @@ export type UserPreferences = {
     daily_practice_reminders_enabled: boolean;
 }
 
-export function getDefaultUserPreferences() {
+export type UserPreferencesBody = Omit<UserPreferences, "user" | "id">;
+
+export function getDefaultUserPreferencesBody() {
     return {
-        user: "",
-        id: "",
         hsk_level: null,
         daily_practice_reminders_enabled: true,
     }
@@ -31,16 +31,12 @@ export function getUserPreferences(
     )
 }
 
-export type CreateUserPreferencesRequest = {
-    hsk_level: number,
-}
-
 export function createUserPreferences(
-    req: CreateUserPreferencesRequest,
+    req: UserPreferencesBody,
     onSuccess: (resp: UserPreferences) => void,
     onError: (err: Error) => void,
 ) {
-    makePostRequest<CreateUserPreferencesRequest, UserPreferences>(
+    makePostRequest<UserPreferencesBody, UserPreferences>(
         "/api/userpreferences/v1/?format=json",
         req,
         onSuccess,
@@ -48,15 +44,13 @@ export function createUserPreferences(
     );
 }
 
-export type UpdateUserPreferencesRequest = Omit<UserPreferences, 'user' | 'id'>;
-
 export function updateUserPreferences(
     id: string,
-    req: UpdateUserPreferencesRequest,
+    req: UserPreferencesBody,
     onSuccess: (resp: UserPreferences) => void,
     onError: (err: Error) => void
 ) {
-    makePutRequest<UpdateUserPreferencesRequest, UserPreferences>(
+    makePutRequest<UserPreferencesBody, UserPreferences>(
         `/api/userpreferences/v1/${id}/?format=json`,
         req,
         onSuccess,

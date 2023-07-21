@@ -7,7 +7,6 @@ import Text, { TextFunction } from '../../components/Text';
 import {
     UserPreferences,
 
-    getDefaultUserPreferences,
     getUserPreferences,
 } from '../../common/api/userpreferences';
 
@@ -26,7 +25,7 @@ const PreferencesPage = () => {
                 if (!!resp.length) {
                     setUserPreferences(resp[0]);
                 } else {
-                    setUserPreferences(getDefaultUserPreferences())
+                    setUserPreferences(null);
                 }
             },
             (err: Error) => {
@@ -51,14 +50,16 @@ const PreferencesPage = () => {
         body = (
             <UserPreferencesBody
                 userPreferences={userPreferences}
-                setUserPreferences={setUserPreferences} />
+                setUserPreferences={setUserPreferences}
+                setIsLoading={setIsLoading}
+                setError={setError} />
         );
     }
 
     return (
         <div class="w-full min-h-screen">
             <Header />
-            <div class="w-full max-w-2xl flex flex-col space-y-4 items-center justify-center">
+            <div class="p-6 max-w-full flex flex-col space-y-4 items-center justify-center">
                 { body }
             </div>
         </div>
