@@ -1,3 +1,5 @@
+from typing import Callable
+
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login as login_request
 from django.contrib.auth.decorators import login_required
@@ -29,39 +31,18 @@ def privacy_policy(request: HttpRequest) -> HttpResponse:
     })
 
 @login_required(login_url="/")
-def onboarding(request: HttpRequest):
-    if not is_user_subscription_status_valid(request.user):
-        return redirect("/subscription/")
-    return render(request, 'index.html', {
-        "title": "GrammarGrove | Onboarding"
-    })
-
-@login_required(login_url="/")
-def dashboard(request: HttpRequest) -> HttpResponse:
-    if not is_user_subscription_status_valid(request.user):
-        return redirect("/subscription/")
-    return render(request, 'index.html', {
-        "title": "GrammarGrove | Dashboard"
-    })
-
-@login_required(login_url="/")
-def preferences(request: HttpRequest) -> HttpResponse:
-    if not is_user_subscription_status_valid(request.user):
-        return redirect("/subscription/")
-    return render(request, 'index.html', {
-        "title": "GrammarGrove | Preferences"
-    })
-
-@login_required(login_url="/")
-def quiz(request: HttpRequest) -> HttpResponse:
-    if not is_user_subscription_status_valid(request.user):
-        return redirect("/subscription/")
-    return render(request, 'index.html', {
-        "title": "GrammarGrove | Quiz"
-    })
-
-@login_required(login_url="/")
 def subscription(request: HttpRequest) -> HttpResponse:
     return render(request, 'index.html', {
         "title": "GrammarGrove | Subscription Management"
     })
+
+def create_view_route(title: str) -> Callable[[HttpRequest], HttpResponse]:
+    @login_required(login_url="/")
+    def view(request: HttpRequest):
+        if not is_user_subscription_status_valid(request.user):
+            return redirect("/subscription/")
+        return render(request, 'index.html', {
+            "title": f"GrammarGrove | {title}"
+        })
+    return view
+

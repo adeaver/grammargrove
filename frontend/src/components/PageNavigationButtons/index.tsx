@@ -1,11 +1,11 @@
-import Button, { ButtonType } from '../../../components/Button';
+import Button, { ButtonType } from '../../components/Button';
 
 type PageNavigationButtonsProps = {
     getNextPage?: () => void;
     getPreviousPage?: () => void;
 }
 
-export const PageNavigationButtons = (props: PageNavigationButtonsProps) => {
+const PageNavigationButtons = (props: PageNavigationButtonsProps) => {
     return (
         <div class="flex flex-row space-x-4">
             {
@@ -25,3 +25,5 @@ export const PageNavigationButtons = (props: PageNavigationButtonsProps) => {
         </div>
     )
 }
+
+export default PageNavigationButtons;

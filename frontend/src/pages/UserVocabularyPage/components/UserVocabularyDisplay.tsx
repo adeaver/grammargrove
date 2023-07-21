@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 
 import Text, { TextType, TextAlignment, TextFunction } from '../../../components/Text';
+import PageNavigationButtons from '../../../components/PageNavigationButtons';
 
 import { Word } from '../../../common/api';
 import WordSearchBar from '../../../components/WordSearchBar';
@@ -9,7 +10,6 @@ import WordCard from '../../../components/WordSearchBar/WordCard';
 import {
     UserVocabulary
 } from '../../../common/api/uservocabulary';
-import { PageNavigationButtons } from './common';
 
 type UserVocabularyDisplayProps = {
     isLoading: boolean;

@@ -1,6 +1,8 @@
 import { useState } from 'preact/hooks';
 
 import Text, { TextType, TextAlignment, TextFunction } from '../../../components/Text';
+import PageNavigationButtons from '../../../components/PageNavigationButtons';
+
 import GrammarRuleSearch from '../../../components/GrammarRuleSearch';
 import GrammarRuleCard from '../../../components/GrammarRuleSearch/GrammarRuleCard';
 
@@ -11,7 +13,6 @@ import {
 import {
     UserGrammarRule,
 } from '../../../common/api/uservocabulary';
-import { PageNavigationButtons } from './common';
 
 type UserGrammarRulesDisplayProps = {
     grammarRules: UserGrammarRule[];
