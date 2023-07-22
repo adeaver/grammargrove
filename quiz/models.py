@@ -11,6 +11,7 @@ from uservocabulary.models import UserVocabularyEntry
 from usergrammarrules.models import UserGrammarRuleEntry
 from words.models import Word, Definition, LanguageCode
 from grammarrules.models import GrammarRuleExample
+from practicesession.models import PracticeSession
 
 class QuestionType(IntEnum):
     AccentsFromHanzi = 1
@@ -52,3 +53,4 @@ class QuizResponse(models.Model):
     is_correct = models.BooleanField(default=False)
     grammar_rule_example = models.ForeignKey(GrammarRuleExample, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(default=timezone.now)
+    practice_session = models.ForeignKey(PracticeSession, on_delete=models.CASCADE, null=True)

@@ -1,9 +1,7 @@
 from typing import Optional
 import datetime
 
-from django.db.models import QuerySet
-
-from django.db.models import Count
+from django.db.models import QuerySet, Count, Q
 from django.utils import timezone
 
 from users.models import User
@@ -30,22 +28,47 @@ def get_queryset_from_user_vocabulary(user: User) -> Optional[QuerySet]:
         (10, 20),
         (5, 10),
     ]:
-        upper_bound = timezone.now() - datetime.timedelta(
-            days=days_since_asked_lower_bound
+        questions = get_questions_by_asking_date(
+            user, days_since_asked_lower_bound, days_since_asked_upper_bound
         )
-        lower_bound = timezone.now() - datetime.timedelta(
-            days=days_since_asked_upper_bound
-        )
-        questions = QuizQuestion.objects.filter(
-            user=user,
-            last_displayed_at__lt=upper_bound,
-            last_displayed_at__gt=lower_bound,
-            user_vocabulary_entry__isnull=False).order_by("?")
         if questions:
             return questions
     return QuizQuestion.objects.filter(
             user=user, user_vocabulary_entry__isnull=False
     ).order_by("?")
+
+
+def get_questions_by_asking_date(
+    user: User,
+    days_since_asked_lower_bound: int,
+    days_since_asked_upper_bound: int,
+    include_not_asked: bool = False
+) -> Optional[QuerySet]:
+    _ensure_all_possible_quiz_records(user)
+    upper_bound = timezone.now() - datetime.timedelta(
+        days=days_since_asked_lower_bound
+    )
+    lower_bound = timezone.now() - datetime.timedelta(
+        days=days_since_asked_upper_bound
+    )
+    if include_not_asked:
+        questions = QuizQuestion.objects.filter(
+            user=user,
+            user_vocabulary_entry__isnull=False
+        ).filter(
+            Q(number_of_times_displayed=0) | Q(last_displayed_at__gt=lower_bound, last_displayed_at__lt=upper_bound)
+        ).order_by("?")
+        if not questions:
+            return None
+        return questions
+    questions = QuizQuestion.objects.filter(
+        user=user,
+        last_displayed_at__lt=upper_bound,
+        last_displayed_at__gt=lower_bound,
+        user_vocabulary_entry__isnull=False).order_by("?")
+    if questions:
+        return questions
+    return None
 
 
 

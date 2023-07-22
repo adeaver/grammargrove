@@ -2,9 +2,7 @@ from typing import Optional
 import datetime
 import logging
 
-from django.db.models import QuerySet
-
-from django.db.models import Count
+from django.db.models import Q, Count, QuerySet
 
 from users.models import User
 
@@ -41,19 +39,7 @@ def get_queryset_from_user_grammar(user: User) -> Optional[QuerySet]:
         (10, 20),
         (5, 10),
     ]:
-        upper_bound = timezone.now() - datetime.timedelta(
-            days=days_since_asked_lower_bound
-        )
-        lower_bound = timezone.now() - datetime.timedelta(
-            days=days_since_asked_upper_bound
-        )
-        questions = QuizQuestion.objects.filter(
-            user=user,
-            last_displayed_at__lt=upper_bound,
-            last_displayed_at__gt=lower_bound,
-            user_grammar_rule_entry__isnull=False,
-            user_grammar_rule_entry__in=user_grammar_rules_with_examples
-        ).order_by("?")
+        questions = get_questions_by_asking_date(user, days_since_asked_lower_bound, days_since_asked_upper_bound)
         if questions:
             return questions
     return QuizQuestion.objects.filter(
@@ -61,6 +47,60 @@ def get_queryset_from_user_grammar(user: User) -> Optional[QuerySet]:
             user_grammar_rule_entry__isnull=False,
             user_grammar_rule_entry__in=user_grammar_rules_with_examples
     ).order_by("?")
+
+
+def get_grammar_rule_questions_queryset_for_user(user: User) -> QuerySet:
+    usable_grammar_rules = get_usable_grammar_rule_examples(user)
+    user_grammar_rules_with_examples = UserGrammarRuleEntry.objects.filter(
+        user=user,
+        grammar_rule__in=usable_grammar_rules.values_list("grammar_rule", flat=True)
+    ).values_list("id", flat=True)
+    return QuizQuestion.objects.filter(
+            user=user,
+            user_grammar_rule_entry__isnull=False,
+            user_grammar_rule_entry__in=user_grammar_rules_with_examples
+    ).order_by("?")
+
+
+def get_questions_by_asking_date(
+    user: User,
+    days_since_asked_lower_bound: int,
+    days_since_asked_upper_bound: int,
+    include_not_asked: bool = False
+) -> Optional[QuerySet]:
+    _ensure_all_possible_quiz_records(user)
+    usable_grammar_rules = get_usable_grammar_rule_examples(user)
+    user_grammar_rules_with_examples = UserGrammarRuleEntry.objects.filter(
+        user=user,
+        grammar_rule__in=usable_grammar_rules.values_list("grammar_rule", flat=True)
+    ).values_list("id", flat=True)
+    upper_bound = timezone.now() - datetime.timedelta(
+        days=days_since_asked_lower_bound
+    )
+    lower_bound = timezone.now() - datetime.timedelta(
+        days=days_since_asked_upper_bound
+    )
+    if include_not_asked:
+        questions = QuizQuestion.objects.filter(
+            user=user,
+            user_grammar_rule_entry__isnull=False,
+            user_grammar_rule_entry__in=user_grammar_rules_with_examples
+        ).filter(
+            Q(number_of_times_displayed=0) | Q(last_displayed_at__gt=lower_bound, last_displayed_at__lt=upper_bound)
+        ).order_by("?")
+        if not questions:
+            return None
+        return questions
+    questions = QuizQuestion.objects.filter(
+        user=user,
+        last_displayed_at__lt=upper_bound,
+        last_displayed_at__gt=lower_bound,
+        user_grammar_rule_entry__isnull=False,
+        user_grammar_rule_entry__in=user_grammar_rules_with_examples
+    ).order_by("?")
+    if questions:
+        return questions
+    return None
 
 
 def _ensure_all_possible_quiz_records(user: User) -> None:
@@ -117,5 +157,5 @@ def get_usable_grammar_rule_examples(user: User) -> None:
     )
     user_preferences = UserPreferences.objects.filter(user=user)
     if user_preferences and user_preferences[0].hsk_level:
-       return queryset.filter(max_hsk_level=user_preferences[0].hsk_level)
+       return queryset.filter(max_hsk_level__lte=user_preferences[0].hsk_level)
     return queryset
