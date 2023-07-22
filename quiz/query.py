@@ -11,8 +11,10 @@ from practicesession.models import PracticeSessionQuestion
 from uservocabulary.models import UserVocabularyEntry
 from usergrammarrules.models import UserGrammarRuleEntry
 
+from practicesession.utils import get_finished_quiz_question_ids
+
 from .models import QuizQuestion, QuestionType
-from .utils import get_user_grammar_rules_with_valid_examples
+from .utils import get_user_grammar_rules_with_valid_examples, get_user_vocabulary_entries_with_valid_definitions
 
 class QuerySetType(Enum):
     GrammarRule = 'grammar-rule'
@@ -63,6 +65,9 @@ def _filter_question_set_by_type(
             user_grammar_rule_entry__in=usable_grammar_rules,
         )
     elif queryset_type == QuerySetType.Vocabulary:
+        usable_vocabulary_entries = get_user_vocabulary_entries_with_valid_definitions(
+            user
+        ).values_list("id", flat=True)
         return current_queryset.filter(
             user_vocabulary_entry__isnull=False
         )
@@ -76,15 +81,20 @@ def _filter_queryset_for_practice_session_id(
     practice_session_id: str,
     current_queryset: QuerySet
 ) -> QuerySet:
+    current_queryset = current_queryset.exclude(
+        id__in=get_finished_quiz_question_ids(practice_session_id)
+    )
     if queryset_type == QuerySetType.GrammarRule:
         return current_queryset.filter(
             user_grammar_rule_entry__in=PracticeSessionQuestion.objects.filter(
+                practice_session_id=practice_session_id,
                 user_grammar_rule_entry__isnull=False,
             ).values_list("user_grammar_rule_entry", flat=True)
         )
     elif queryset_type == QuerySetType.Vocabulary:
         return current_queryset.filter(
             user_vocabulary_entry__in=PracticeSessionQuestion.objects.filter(
+                practice_session_id=practice_session_id,
                 user_vocabulary_entry__isnull=False,
             ).values_list("user_vocabulary_entry", flat=True)
         )

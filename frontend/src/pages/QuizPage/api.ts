@@ -45,6 +45,7 @@ export type CheckAnswerRequest = {
     quiz_question_id: string;
     answer: Array<string>;
     example_id: string | null;
+    practice_session_id: string | null;
 }
 
 export type CheckAnswerResponse = {
@@ -59,6 +60,7 @@ export function checkAnswer(
     question_id: string,
     answer: Array<string>,
     example_id: string | null,
+    practice_session_id: string | null,
     onSuccess: (resp: CheckAnswerResponse) => void,
     onError: (err: Error) => void,
 ) {
@@ -68,6 +70,7 @@ export function checkAnswer(
             quiz_question_id: question_id,
             answer: answer,
             example_id: example_id,
+            practice_session_id: practice_session_id,
         },
         onSuccess,
         onError

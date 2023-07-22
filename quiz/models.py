@@ -54,3 +54,8 @@ class QuizResponse(models.Model):
     grammar_rule_example = models.ForeignKey(GrammarRuleExample, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     practice_session = models.ForeignKey(PracticeSession, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['practice_session']),
+        ]

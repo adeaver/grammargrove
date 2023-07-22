@@ -82,6 +82,7 @@ class QuizViewSet(viewsets.ModelViewSet):
             quiz_question=question,
             grammar_rule_example=example,
             is_correct=resp.is_correct,
+            practice_session_id=req.get("practice_session_id"),
         ).save()
         question.number_of_times_displayed += 1
         question.last_displayed_at = timezone.now()

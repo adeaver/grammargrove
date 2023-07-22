@@ -6,6 +6,7 @@ import Header from '../../components/Header';
 import Text, { TextFunction } from '../../components/Text';
 import LoadingIcon from '../../components/LoadingIcon';
 import Link, { LinkTarget } from '../../components/Link';
+import Button from '../../components/Button';
 
 import {
     PracticeSession,
@@ -48,6 +49,7 @@ const QuizPage = () => {
                     const question: Question = resp.results[0];
                     setNumberOfQuestions(numberOfQuestions + 1);
                     setQuestion(question);
+                    setHasNextQuestion(true);
                 } else {
                     setHasNextQuestion(false);
                 }
@@ -86,22 +88,27 @@ const QuizPage = () => {
         }
     }
 
+    const getNewPracticeSession = () => {
+        setIsLoading(true);
+        createPracticeSession(
+            (resp: PracticeSession) => {
+                setPracticeSessionID(resp.id)
+                handleGetNextQuestion(resp.id);
+                window.history.pushState({ page: "quiz" }, "Quiz", `/quiz/?${SESSION_PARAM}=${resp.id}`);
+            },
+            (err: Error) => {
+                setIsLoading(false);
+                setError(err);
+            }
+        );
+    }
+
     useEffect(() => {
         setIsLoading(true);
         const urlParams = new URLSearchParams(window.location.href.split("?")[1] || "");
         const urlSessionID = urlParams.get(SESSION_PARAM);
         if (!urlSessionID) {
-            createPracticeSession(
-                (resp: PracticeSession) => {
-                    setPracticeSessionID(resp.id)
-                    handleGetNextQuestion(resp.id);
-                    window.history.pushState({ page: "quiz" }, "Quiz", `/quiz/?${SESSION_PARAM}=${resp.id}`);
-                },
-                (err: Error) => {
-                    setIsLoading(false);
-                    setError(err);
-                }
-            );
+            getNewPracticeSession();
         } else {
             setPracticeSessionID(urlSessionID)
             handleGetNextQuestion(urlSessionID);
@@ -129,17 +136,35 @@ const QuizPage = () => {
                 </div>
             </div>
         );
-    } else if (!hasNextQuestion) {
+    } else if (!hasNextQuestion && !!practiceSessionID) {
+        body = (
+            <div class="p-12 w-full flex flex-col justify-center items-center space-y-4">
+                <div class="max-w-2xl flex flex-col space-y-4">
+                    <Text>
+                        You mastered all the words into this session.
+                    </Text>
+                    <Text>
+                        You can start a new one here.
+                    </Text>
+                    <Button onClick={getNewPracticeSession}>
+                        Start a new practice session
+                    </Button>
+                </div>
+            </div>
+        )
+
+    } else if (!hasNextQuestion && !practiceSessionID) {
         // TODO: handle this case
         body = (
             <Text>
-                You’re all out of questions.
+                You
             </Text>
         )
     } else if (!!question) {
         body = (
             <QuestionDisplay
                 question={question}
+                practiceSessionID={practiceSessionID}
                 handleGetNextQuestion={() => handleGetNextQuestion(null)} />
         )
     }

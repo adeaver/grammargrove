@@ -16,6 +16,7 @@ import GrammarRuleQuestionDisplay from './GrammarRuleQuestionDisplay';
 import VocabularyQuestionDisplay from './VocabularyQuestionDisplay';
 
 type QuestionDisplayProps = {
+    practiceSessionID: string | null;
     question: Question;
 
     handleGetNextQuestion: () => void;
@@ -37,7 +38,7 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
         setIsLoading(true);
         setOriginalAnswer(answer);
         checkAnswer(
-            props.question.id, answer, example_id ? example_id : null,
+            props.question.id, answer, example_id ? example_id : null, props.practiceSessionID,
             (resp: CheckAnswerResponse) => {
                 setIsLoading(false);
                 setIsCorrect(resp.is_correct);

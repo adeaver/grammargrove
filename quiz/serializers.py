@@ -108,6 +108,7 @@ class CheckRequestSerializer(serializers.Serializer):
     quiz_question_id = serializers.UUIDField()
     example_id = serializers.UUIDField(allow_null=True)
     answer = serializers.ListField(child=serializers.CharField(required=False, allow_blank=True))
+    practice_session_id = serializers.UUIDField(allow_null=True)
 
 
 class CheckResponse(NamedTuple):
