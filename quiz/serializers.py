@@ -115,9 +115,11 @@ class CheckResponse(NamedTuple):
     correct_answer: List[str]
     extra_context: List[str]
     words: List[Word]
+    is_practice_session_complete: bool
 
 class CheckResponseSerializer(serializers.Serializer):
     is_correct = serializers.BooleanField()
     correct_answer = serializers.ListField(child=serializers.CharField())
     extra_context = serializers.ListField(child=serializers.CharField(required=False, allow_blank=True))
     words = WordSerializer(many=True, required=False)
+    is_practice_session_complete = serializers.BooleanField()

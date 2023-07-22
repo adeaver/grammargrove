@@ -5,15 +5,25 @@ from django.db.models import QuerySet, Count, Q
 from django.utils import timezone
 
 from users.models import User
+from practicesession.models import PracticeSessionQuestion
 
 from .models import QuizQuestion, QuestionType
 from uservocabulary.models import UserVocabularyEntry
 
-def get_queryset_from_user_vocabulary(user: User) -> Optional[QuerySet]:
+def get_queryset_from_user_vocabulary(user: User, practice_session_id: Optional[str]) -> Optional[QuerySet]:
     _ensure_all_possible_quiz_records(user)
-    unasked_questions = QuizQuestion.objects.filter(
+    question_set = QuizQuestion.objects.filter(
         user=user,
-        user_vocabulary_entry__isnull=False,
+        user_vocabulary_entry__isnull=False
+    )
+    if practice_session_id:
+        question_set = question_set.filter(
+            user_vocabulary_entry__in=PracticeSessionQuestion.objects.filter(
+                practice_session_id=practice_session_id,
+                user_vocabulary_entry__isnull=False
+            ).values_list("user_vocabulary_entry", flat=True)
+        )
+    unasked_questions = question_set.filter(
         number_of_times_displayed=0
     ).order_by("?")
     if unasked_questions:
@@ -29,22 +39,26 @@ def get_queryset_from_user_vocabulary(user: User) -> Optional[QuerySet]:
         (5, 10),
     ]:
         questions = get_questions_by_asking_date(
-            user, days_since_asked_lower_bound, days_since_asked_upper_bound
+            user, days_since_asked_lower_bound, days_since_asked_upper_bound, question_set
         )
         if questions:
             return questions
-    return QuizQuestion.objects.filter(
-            user=user, user_vocabulary_entry__isnull=False
-    ).order_by("?")
+    return question_set.order_by("?")
 
 
 def get_questions_by_asking_date(
     user: User,
     days_since_asked_lower_bound: int,
     days_since_asked_upper_bound: int,
-    include_not_asked: bool = False
+    include_not_asked: bool = False,
+    question_set: Optional[QuerySet] = None
 ) -> Optional[QuerySet]:
-    _ensure_all_possible_quiz_records(user)
+    if not question_set:
+        _ensure_all_possible_quiz_records(user)
+        question_set = QuizQuestion.objects.filter(
+            user=user,
+            user_vocabulary_entry__isnull=False
+        )
     upper_bound = timezone.now() - datetime.timedelta(
         days=days_since_asked_lower_bound
     )
@@ -52,20 +66,17 @@ def get_questions_by_asking_date(
         days=days_since_asked_upper_bound
     )
     if include_not_asked:
-        questions = QuizQuestion.objects.filter(
-            user=user,
-            user_vocabulary_entry__isnull=False
-        ).filter(
+        questions = question_set.filter(
             Q(number_of_times_displayed=0) | Q(last_displayed_at__gt=lower_bound, last_displayed_at__lt=upper_bound)
         ).order_by("?")
         if not questions:
             return None
         return questions
-    questions = QuizQuestion.objects.filter(
-        user=user,
+    questions = question_set.filter(
         last_displayed_at__lt=upper_bound,
         last_displayed_at__gt=lower_bound,
-        user_vocabulary_entry__isnull=False).order_by("?")
+        user_vocabulary_entry__isnull=False
+    ).order_by("?")
     if questions:
         return questions
     return None

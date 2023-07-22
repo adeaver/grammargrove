@@ -52,6 +52,7 @@ export type CheckAnswerResponse = {
     correct_answer: Array<string>;
     extra_context: Array<string>;
     words: Array<Word>;
+    is_practice_session_complete: boolean;
 }
 
 export function checkAnswer(

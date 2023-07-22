@@ -35,16 +35,15 @@ class QuizViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         practice_session_id = self.request.GET.get("practice_session_id")
-        logging.warn(practice_session_id)
         if randrange(100) > 50:
-            queryset = get_queryset_from_user_grammar(self.request.user)
+            queryset = get_queryset_from_user_grammar(self.request.user, practice_session_id)
             if queryset:
                 return queryset
-            return get_queryset_from_user_vocabulary(self.request.user)
-        queryset = get_queryset_from_user_vocabulary(self.request.user)
+            return get_queryset_from_user_vocabulary(self.request.user, practice_session_id)
+        queryset = get_queryset_from_user_vocabulary(self.request.user, practice_session_id)
         if queryset:
             return queryset
-        return get_queryset_from_user_grammar(self.request.user)
+        return get_queryset_from_user_grammar(self.request.user, practice_session_id)
 
     @action(detail=False, methods=["POST"])
     def check(self, request: HttpRequest) -> Response:

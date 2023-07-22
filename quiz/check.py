@@ -55,6 +55,7 @@ def check_grammar_rule(
         correct_answer=correct_answer,
         extra_context=extra_context,
         words=[],
+        is_practice_session_complete=False
     )
 
 
@@ -103,4 +104,5 @@ def check_vocabulary_word(
         correct_answer=correct_answer,
         extra_context=extra_context,
         words=words,
+        is_practice_session_complete=False
     )

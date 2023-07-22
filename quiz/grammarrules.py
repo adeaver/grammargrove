@@ -5,6 +5,7 @@ import logging
 from django.db.models import Q, Count, QuerySet
 
 from users.models import User
+from practicesession.models import PracticeSessionQuestion
 
 from .models import QuizQuestion, QuestionType
 from django.utils import timezone
@@ -12,7 +13,7 @@ from usergrammarrules.models import UserGrammarRuleEntry
 from grammarrules.models import GrammarRuleExample, GrammarRuleExamplePrompt
 from userpreferences.models import UserPreferences
 
-def get_queryset_from_user_grammar(user: User) -> Optional[QuerySet]:
+def get_queryset_from_user_grammar(user: User, practice_session_id: Optional[str]) -> Optional[QuerySet]:
     _ensure_all_possible_quiz_records(user)
     usable_grammar_rules = get_usable_grammar_rule_examples(user)
     user_grammar_rules_with_examples = UserGrammarRuleEntry.objects.filter(
@@ -21,11 +22,20 @@ def get_queryset_from_user_grammar(user: User) -> Optional[QuerySet]:
     ).values_list("id", flat=True)
     if not user_grammar_rules_with_examples:
         return None
-    unasked_questions = QuizQuestion.objects.filter(
+    question_set = QuizQuestion.objects.filter(
         user=user,
         user_grammar_rule_entry__isnull=False,
-        number_of_times_displayed=0,
         user_grammar_rule_entry__in=user_grammar_rules_with_examples
+    )
+    if practice_session_id:
+        question_set = question_set.filter(
+            user_grammar_rule_entry__in=PracticeSessionQuestion.objects.filter(
+                practice_session_id=practice_session_id,
+                user_grammar_rule_entry__isnull=False
+            ).values_list("user_grammar_rule_entry", flat=True)
+        )
+    unasked_questions = question_set.filter(
+        number_of_times_displayed=0,
     ).order_by("?")
     if unasked_questions:
         return unasked_questions
@@ -66,14 +76,21 @@ def get_questions_by_asking_date(
     user: User,
     days_since_asked_lower_bound: int,
     days_since_asked_upper_bound: int,
-    include_not_asked: bool = False
+    include_not_asked: bool = False,
+    question_set: Optional[QuerySet] = None
 ) -> Optional[QuerySet]:
-    _ensure_all_possible_quiz_records(user)
-    usable_grammar_rules = get_usable_grammar_rule_examples(user)
-    user_grammar_rules_with_examples = UserGrammarRuleEntry.objects.filter(
-        user=user,
-        grammar_rule__in=usable_grammar_rules.values_list("grammar_rule", flat=True)
-    ).values_list("id", flat=True)
+    if not question_set:
+        _ensure_all_possible_quiz_records(user)
+        usable_grammar_rules = get_usable_grammar_rule_examples(user)
+        user_grammar_rules_with_examples = UserGrammarRuleEntry.objects.filter(
+            user=user,
+            grammar_rule__in=usable_grammar_rules.values_list("grammar_rule", flat=True)
+        ).values_list("id", flat=True)
+        question_set = QuizQuestion.objects.filter(
+            user=user,
+            user_grammar_rule_entry__isnull=False,
+            user_grammar_rule_entry__in=user_grammar_rules_with_examples
+        )
     upper_bound = timezone.now() - datetime.timedelta(
         days=days_since_asked_lower_bound
     )
@@ -81,22 +98,15 @@ def get_questions_by_asking_date(
         days=days_since_asked_upper_bound
     )
     if include_not_asked:
-        questions = QuizQuestion.objects.filter(
-            user=user,
-            user_grammar_rule_entry__isnull=False,
-            user_grammar_rule_entry__in=user_grammar_rules_with_examples
-        ).filter(
+        questions = question_set.filter(
             Q(number_of_times_displayed=0) | Q(last_displayed_at__gt=lower_bound, last_displayed_at__lt=upper_bound)
         ).order_by("?")
         if not questions:
             return None
         return questions
-    questions = QuizQuestion.objects.filter(
-        user=user,
+    questions = question_set.filter(
         last_displayed_at__lt=upper_bound,
         last_displayed_at__gt=lower_bound,
-        user_grammar_rule_entry__isnull=False,
-        user_grammar_rule_entry__in=user_grammar_rules_with_examples
     ).order_by("?")
     if questions:
         return questions
