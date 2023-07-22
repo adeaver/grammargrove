@@ -8,6 +8,10 @@ import LoadingIcon from '../../components/LoadingIcon';
 import Link, { LinkTarget } from '../../components/Link';
 
 import {
+    PracticeSession,
+    createPracticeSession,
+} from '../../common/api/practicesession';
+import {
     getNextQuestion,
     Question,
 } from './api';
@@ -21,20 +25,23 @@ import FeedbackForm from '../../components/FeedbackForm';
 import QuestionDisplay from './components/QuestionDisplay';
 
 const PULSE_QUESTION_LIMIT = 5;
+const SESSION_PARAM = "s";
 
 const QuizPage = () => {
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ error, setError ] = useState<Error | null>(null);
     const [ hasNextQuestion, setHasNextQuestion ] = useState<boolean>(true);
+    const [ practiceSessionID, setPracticeSessionID ] = useState<string | null>(null);
 
     const [ numberOfQuestions, setNumberOfQuestions ] = useState<number>(0);
     const [ showPulseForm, setShowPulseForm ] = useState<boolean>(false);
 
 
-    const makeNextQuestionRequest = () => {
+    const makeNextQuestionRequest = (practiceSessionIDOverride: string | null) => {
         setIsLoading(true);
         getNextQuestion(
+            !!practiceSessionIDOverride ? practiceSessionIDOverride : practiceSessionID,
             (resp: PaginatedResponse<Question>) => {
                 setIsLoading(false);
                 if (resp.results.length) {
@@ -55,10 +62,10 @@ const QuizPage = () => {
     const handleAdvanceFromPulseQuestion = () => {
         setShowPulseForm(false);
         setNumberOfQuestions(numberOfQuestions + 1);
-        makeNextQuestionRequest();
+        makeNextQuestionRequest(null);
     }
 
-    const handleGetNextQuestion = () => {
+    const handleGetNextQuestion = (practiceSessionIDOverride: string | null) => {
         setIsLoading(true);
         if (numberOfQuestions === PULSE_QUESTION_LIMIT) {
             checkPulseForm(
@@ -75,12 +82,30 @@ const QuizPage = () => {
                 }
             );
         } else {
-            makeNextQuestionRequest();
+            makeNextQuestionRequest(practiceSessionIDOverride);
         }
     }
 
     useEffect(() => {
-        handleGetNextQuestion();
+        setIsLoading(true);
+        const urlParams = new URLSearchParams(window.location.href.split("?")[1] || "");
+        const urlSessionID = urlParams.get(SESSION_PARAM);
+        if (!urlSessionID) {
+            createPracticeSession(
+                (resp: PracticeSession) => {
+                    setPracticeSessionID(resp.id)
+                    handleGetNextQuestion(resp.id);
+                    window.history.pushState({ page: "quiz" }, "Quiz", `/quiz/?${SESSION_PARAM}=${resp.id}`);
+                },
+                (err: Error) => {
+                    setIsLoading(false);
+                    setError(err);
+                }
+            );
+        } else {
+            setPracticeSessionID(urlSessionID)
+            handleGetNextQuestion(urlSessionID);
+        }
     }, []);
 
     let body;
@@ -115,7 +140,7 @@ const QuizPage = () => {
         body = (
             <QuestionDisplay
                 question={question}
-                handleGetNextQuestion={handleGetNextQuestion} />
+                handleGetNextQuestion={() => handleGetNextQuestion(null)} />
         )
     }
     return (

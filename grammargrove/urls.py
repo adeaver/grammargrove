@@ -29,6 +29,7 @@ from userpreferences.urls import router as userpreferences_router
 from quiz.urls import router as quiz_router
 from billing.urls import router as billing_router
 from feedback.urls import router as feedback_router
+from practicesession.urls import router as practice_session_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,6 +39,7 @@ urlpatterns = [
     path('api/uservocabulary/', include(uservocabulary_router.urls), name="uservocabulary"),
     path('api/usergrammarrules/', include(usergrammarrules_router.urls), name="usergrammarrules"),
     path('api/quiz/', include(quiz_router.urls), name="quiz"),
+    path('api/practicesession/', include(practice_session_router.urls), name="quiz"),
     path('api/billing/', include(billing_router.urls), name="billing"),
     path('api/userpreferences/', include(userpreferences_router.urls), name="userpreferences"),
     path('api/feedback/', include(feedback_router.urls), name="feedback"),

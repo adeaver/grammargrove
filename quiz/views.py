@@ -34,6 +34,8 @@ class QuizViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, HasValidSubscription]
 
     def get_queryset(self):
+        practice_session_id = self.request.GET.get("practice_session_id")
+        logging.warn(practice_session_id)
         if randrange(100) > 50:
             queryset = get_queryset_from_user_grammar(self.request.user)
             if queryset:

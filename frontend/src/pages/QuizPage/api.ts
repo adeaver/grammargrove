@@ -27,11 +27,15 @@ export type Display = {
 }
 
 export function getNextQuestion(
+    practiceSessionID: string | null,
     onSuccess: (resp: PaginatedResponse<Question>) => void,
     onError: (err: Error) => void
 ) {
+    const practiceSessionComponent = !!practiceSessionID ? (
+        `&practice_session_id=${practiceSessionID}`
+    ) : "";
     makeGetRequest<PaginatedResponse<Question>>(
-        "/api/quiz/v1/?format=json",
+        `/api/quiz/v1/?format=json${practiceSessionComponent}`,
         onSuccess,
         onError,
     )
