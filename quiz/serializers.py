@@ -3,7 +3,7 @@ from typing import Optional, NamedTuple, Tuple, List
 from rest_framework import serializers
 
 from .models import QuizQuestion, QuestionType
-from .grammarrules import get_usable_grammar_rule_examples
+from .utils import get_usable_grammar_rule_examples
 
 from words.models import Word
 from words.serializers import WordSerializer

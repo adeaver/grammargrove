@@ -15,8 +15,7 @@ from billing.permissions import HasValidSubscription
 from grammargrove.text_utils import remove_punctuation
 from grammarrules.models import GrammarRuleExample
 
-from .words import get_queryset_from_user_vocabulary
-from .grammarrules import get_queryset_from_user_grammar
+from .query import get_queryset, QuerySetType
 
 from .models import QuizQuestion, QuizResponse
 from .serializers import (
@@ -35,15 +34,14 @@ class QuizViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         practice_session_id = self.request.GET.get("practice_session_id")
-        if randrange(100) > 50:
-            queryset = get_queryset_from_user_grammar(self.request.user, practice_session_id)
+        queryset_types_ordered = [ QuerySetType.GrammarRule, QuerySetType.Vocabulary ] if randrange(100) > 50 else (
+            [ QuerySetType.Vocabulary, QuerySetType.GrammarRule ]
+        )
+        for qt in queryset_types_ordered:
+            queryset = get_queryset(qt, self.request.user, practice_session_id)
             if queryset:
                 return queryset
-            return get_queryset_from_user_vocabulary(self.request.user, practice_session_id)
-        queryset = get_queryset_from_user_vocabulary(self.request.user, practice_session_id)
-        if queryset:
-            return queryset
-        return get_queryset_from_user_grammar(self.request.user, practice_session_id)
+        return get_queryset(QuerySetType.Vocabulary, self.request.user, practice_session_id)
 
     @action(detail=False, methods=["POST"])
     def check(self, request: HttpRequest) -> Response:

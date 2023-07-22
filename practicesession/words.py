@@ -5,13 +5,14 @@ from django.db.models import QuerySet
 
 from users.models import User
 from quiz.models import QuizQuestion
-from quiz.words import get_questions_by_asking_date
+from quiz.query import QuerySetType, get_queryset, filter_queryset_by_asking_date
 
 def get_user_vocabulary_questions(
     user: User,
     number_of_questions: int = 6
 ) -> List[UUID]:
     num_questions_for_group = number_of_questions // 3
+    queryset = get_queryset(QuerySetType.Vocabulary, user)
     out: Set[UUID] = set([])
     for (
         days_since_asked_lower_bound,
@@ -22,8 +23,8 @@ def get_user_vocabulary_questions(
         (5, 10, False),
         (10, 30, False)
     ]:
-        questions = get_questions_by_asking_date(
-            user,
+        questions = filter_queryset_by_asking_date(
+            queryset,
             days_since_asked_lower_bound,
             days_since_asked_upper_bound,
             should_include_unasked
