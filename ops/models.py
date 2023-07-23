@@ -1,6 +1,7 @@
 import uuid
 from enum import Enum
 
+from django.contrib import admin
 from django.db import models
 from django.utils import timezone
 
@@ -32,3 +33,7 @@ class FeatureFlagName(models.TextChoices):
 class FeatureFlag(models.Model):
     id = models.TextField(primary_key=True, editable=False, choices=FeatureFlagName.choices)
     enabled = models.BooleanField(null=True)
+
+
+class FeatureFlagAdmin(admin.ModelAdmin):
+    list_display = ("id", "enabled")
