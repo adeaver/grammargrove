@@ -42,7 +42,7 @@ Some special cases to be aware of:
 
 ## Deploying
 
-We run on Digitalocean. If we need to create a new Droplet, add the tag `grammargrove-web` to it so that the firewall rules apply to it.
+We run on DigitalOcean. If we need to create a new Droplet, add the tag `grammargrove-web` to it so that the firewall rules apply to it.
 
 On the Droplet, [install the official Docker Engine](https://docs.docker.com/engine/install/ubuntu/)
 
@@ -54,4 +54,16 @@ mkdir -p $REPO_HOME/grammargrove/log $REPO_HOME/grammargrove/uwsgi $REPO_HOME/gr
 Run the following command:
 ```
 sudo openssl dhparam -out $REPO_HOME/grammargrove/webroot/dhparam/dhparam-2048.pem 2048
+```
+
+To start the deployment:
+```
+docker compose -f prod-compose.yaml up --build
+```
+
+A note here: nginx may fail to load because of SSL, comment those lines out of `conf/nginx.conf`
+
+You can deploy the server with:
+```
+./scripts/deploy-web
 ```
