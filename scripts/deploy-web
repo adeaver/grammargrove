@@ -2,4 +2,6 @@
 set -euo pipefail
 
 docker compose -f prod-compose.yaml up --build --force-recreate --no-deps -d web
+docker exec -it grammargrove-web-1 mv /app/index.js /app/index/static/index.js
+docker exec -it grammargrove-web-1 mv /app/index.css /app/index/static/index.css
 docker system prune -af

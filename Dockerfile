@@ -35,8 +35,8 @@ RUN pip3 install uwsgi
 
 COPY . .
 RUN rm -rf ./frontend
-COPY --from=frontend-builder /app/dist/assets/index.js ./index/static/index.js
-COPY --from=frontend-builder /app/dist/assets/index.css ./index/static/index.css
+COPY --from=frontend-builder /app/dist/assets/index.js /app/index.js
+COPY --from=frontend-builder /app/dist/assets/index.css /app/index.css
 
 RUN mkdir -p /var/log/uwsgi
 RUN mkdir -p /var/uwsgi
