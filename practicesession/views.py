@@ -14,7 +14,7 @@ from .serializers import PracticeSessionSerializer
 from .words import get_user_vocabulary_questions
 from .grammarrules import get_grammar_rule_questions
 
-TOTAL_NUMBER_OF_QUESTIONS = 12
+TOTAL_NUMBER_OF_QUESTIONS = 6
 
 class PracticeSessionViewSet(viewsets.ModelViewSet):
     serializer_class = PracticeSessionSerializer
