@@ -16,6 +16,8 @@ try:
 
     @cron(10, -1, -1, -1, -1)
     def start_grammar_rule_fetches(num):
+        from ops.featureflags import get_boolean_feature_flag
+        from ops.models import FeatureFlagName
         from grammarrules.models import GrammarRule
         from grammarrules.examples import (
             is_over_daily_usage_limit,
@@ -24,7 +26,7 @@ try:
         if is_over_daily_usage_limit():
             logging.warn(f"ChatGPT usage is over the daily limit, skipping")
             return
-        if os.environ.get("ENABLE_GRAMMAR_FETCHES", "false") != "true":
+        if get_boolean_feature_flag(FeatureFlagName.GrammarRuleFetchesEnabled):
             logging.warn("Grammar fetching job is disabled")
             return
         rules: List[GrammarRule] = (

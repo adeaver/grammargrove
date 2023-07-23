@@ -1,4 +1,5 @@
 import uuid
+from enum import Enum
 
 from django.db import models
 from django.utils import timezone
@@ -14,3 +15,20 @@ class Ping(models.Model):
 
     def is_ok(self) -> bool:
         return timezone.now() <= (self.created_at + timedelta(seconds=VALID_PING_TIME_SECONDS))
+
+
+class FeatureFlagType(Enum):
+    Boolean = 'boolean'
+
+class FeatureFlagName(models.TextChoices):
+    GrammarRuleFetchesEnabled = "grammar_rule_fetches_enabled", "grammar_rule_fetches_enabled"
+
+    def get_type(self) -> FeatureFlagType:
+        if self == FeatureFlagName.GrammarRuleFetchesEnabled:
+            return FeatureFlagType.Boolean
+        else:
+            raise ValueError(f"{self} does not have a type")
+
+class FeatureFlag(models.Model):
+    id = models.TextField(primary_key=True, editable=False, choices=FeatureFlagName.choices)
+    enabled = models.BooleanField(null=True)
