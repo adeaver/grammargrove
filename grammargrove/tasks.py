@@ -26,7 +26,7 @@ try:
         if is_over_daily_usage_limit():
             logging.warn(f"ChatGPT usage is over the daily limit, skipping")
             return
-        if get_boolean_feature_flag(FeatureFlagName.GrammarRuleFetchesEnabled):
+        if not get_boolean_feature_flag(FeatureFlagName.GrammarRuleFetchesEnabled):
             logging.warn("Grammar fetching job is disabled")
             return
         rules: List[GrammarRule] = (
