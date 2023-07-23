@@ -9,9 +9,10 @@ export type UserPreferences = {
     id: string;
     hsk_level: number | null;
     daily_practice_reminders_enabled: boolean;
+    subscription_management_link?: string | null;
 }
 
-export type UserPreferencesBody = Omit<UserPreferences, "user" | "id">;
+export type UserPreferencesBody = Omit<UserPreferences, "user" | "id" | "subscription_management_link">;
 
 export function getDefaultUserPreferencesBody() {
     return {

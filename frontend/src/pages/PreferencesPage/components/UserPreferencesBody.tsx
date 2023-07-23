@@ -3,6 +3,7 @@ import { useState } from 'preact/hooks';
 import Text, { TextType } from '../../../components/Text';
 import Button from '../../../components/Button';
 import Checkbox from '../../../components/Checkbox';
+import Link from '../../../components/Link';
 
 import {
     UserPreferences,
@@ -105,6 +106,18 @@ const UserPreferencesBodyComponent = (props: UserPreferencesBodyComponentProps) 
                 value="daily_practice_reminders_enabled"
                 onChange={handleUpdateEmailUpdate} />
             <hr />
+            {
+                !!props.userPreferences && !!props.userPreferences.subscription_management_link && (
+                    <div class="py-2 w-full flex flex-col space-y-4">
+                        <Text type={TextType.Subtitle}>
+                            Subscription & Payment
+                        </Text>
+                        <Link href={props.userPreferences.subscription_management_link}>
+                            Click here to manage your payment information
+                        </Link>
+                    </div>
+                )
+            }
             <Button onClick={handleSubmit}>
                 Update your preferences
             </Button>
