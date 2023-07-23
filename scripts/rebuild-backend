@@ -1,0 +1,2 @@
+#!/bin/bash
+export GRAMMARGROVE_GIT_SHA=$(git rev-parse --short HEAD) && docker-compose up --build --force-recreate --no-deps -d web

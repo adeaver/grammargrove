@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 import index.views as index
+from ops.urls import router as ops_router
 from users.urls import router as user_router
 from words.urls import router as word_router
 from grammarrules.urls import router as grammarrules_router
@@ -33,6 +34,7 @@ from practicesession.urls import router as practice_session_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('-/', include(ops_router.urls), name="ops"),
     path('api/users/', include(user_router.urls), name="users"),
     path('api/words/', include(word_router.urls), name="words"),
     path('api/grammarrules/', include(grammarrules_router.urls), name="grammarrules"),

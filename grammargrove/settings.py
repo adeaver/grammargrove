@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     # Local Apps
     'index',
+    'ops',
     'users',
     'feedback',
     'billing',

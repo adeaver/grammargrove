@@ -48,6 +48,11 @@ try:
         logging.warn("Sending outstanding practice reminders")
         send_outstanding_practice_reminders()
 
+    @cron(-5, -1, -1, -1, -1)
+    def do_ops_ping(num):
+        # This is a quick test that spooler, nginx, and the db are all running
+        from ops.utils import register_ping
+        register_ping()
 
     logger.warning("Imported spool successfully.")
 except Exception:
