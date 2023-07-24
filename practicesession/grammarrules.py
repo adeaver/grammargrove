@@ -7,7 +7,7 @@ from .models import PracticeSessionQuestion
 
 from users.models import User
 from quiz.models import QuizQuestion
-from quiz.query import QuerySetType, get_queryset, filter_queryset_by_asking_date
+from quiz.query import QuerySetType, get_queryset, get_queryset_for_user_and_type, filter_queryset_by_asking_date
 from quiz.utils import get_usable_grammar_rule_examples
 
 def get_grammar_rule_questions(
@@ -79,7 +79,7 @@ def get_grammar_rule_questions_for_practice_session(
         practice_session_id=practice_session_id,
         user_grammar_rule_entry__isnull=False,
     ).values_list("user_grammar_rule_entry", flat=True)
-    queryset = get_queryset(QuerySetType.GrammarRule, user)
+    queryset = get_queryset_for_user_and_type(QuerySetType.GrammarRule, user)
     return queryset.filter(
         user_grammar_rule_entry__in=practice_session_questions
     )

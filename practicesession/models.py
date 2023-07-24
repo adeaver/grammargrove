@@ -17,7 +17,7 @@ class PracticeSession(models.Model):
 
 class PracticeSessionQuestion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    practice_session = models.ForeignKey(PracticeSession, on_delete=models.CASCADE, null=False)
+    practice_session = models.ForeignKey(PracticeSession, related_name="questions", on_delete=models.CASCADE, null=False)
     user_vocabulary_entry = models.ForeignKey(UserVocabularyEntry, on_delete=models.CASCADE, null=True)
     user_grammar_rule_entry = models.ForeignKey(UserGrammarRuleEntry, on_delete=models.CASCADE, null=True)
     grammar_rule_example = models.ForeignKey(GrammarRuleExample, on_delete=models.CASCADE, null=True)
