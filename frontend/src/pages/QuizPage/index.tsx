@@ -11,6 +11,7 @@ import Button from '../../components/Button';
 import {
     PracticeSession,
     createPracticeSession,
+    getPracticeSession,
 } from '../../common/api/practicesession';
 import {
     getNextQuestion,
@@ -34,6 +35,8 @@ const QuizPage = () => {
     const [ error, setError ] = useState<Error | null>(null);
     const [ hasNextQuestion, setHasNextQuestion ] = useState<boolean>(true);
     const [ practiceSessionID, setPracticeSessionID ] = useState<string | null>(null);
+    const [ practiceSessionTermsMastered, setPracticeSessionTermsMastered ] = useState<number | null>(null);
+    const [ practiceSessionTotalTerms, setPracticeSessionTotalTerms ] = useState<number | null>(null);
 
     const [ numberOfQuestions, setNumberOfQuestions ] = useState<number>(0);
     const [ showPulseForm, setShowPulseForm ] = useState<boolean>(false);
@@ -94,6 +97,8 @@ const QuizPage = () => {
             (resp: PracticeSession) => {
                 setPracticeSessionID(resp.id)
                 handleGetNextQuestion(resp.id);
+                setPracticeSessionTotalTerms(resp.total_number_of_terms);
+                setPracticeSessionTermsMastered(0);
                 window.history.pushState({ page: "quiz" }, "Quiz", `/quiz/?${SESSION_PARAM}=${resp.id}`);
             },
             (err: Error) => {
@@ -110,8 +115,19 @@ const QuizPage = () => {
         if (!urlSessionID) {
             getNewPracticeSession();
         } else {
-            setPracticeSessionID(urlSessionID)
-            handleGetNextQuestion(urlSessionID);
+            getPracticeSession(
+                urlSessionID,
+                (resp: PracticeSession) => {
+                    setPracticeSessionID(resp.id)
+                    handleGetNextQuestion(resp.id);
+                    setPracticeSessionTotalTerms(resp.total_number_of_terms);
+                    setPracticeSessionTermsMastered(resp.terms_mastered);
+                },
+                (err: Error) => {
+                    setIsLoading(false);
+                    setError(err);
+                }
+            );
         }
     }, []);
 
@@ -136,7 +152,7 @@ const QuizPage = () => {
                 </div>
             </div>
         );
-    } else if (!hasNextQuestion && !!practiceSessionID) {
+    } else if (!hasNextQuestion && !!practiceSessionID && !!practiceSessionTotalTerms) {
         body = (
             <div class="p-12 w-full flex flex-col justify-center items-center space-y-4">
                 <div class="max-w-2xl flex flex-col space-y-4">
@@ -157,7 +173,7 @@ const QuizPage = () => {
         // TODO: handle this case
         body = (
             <Text>
-                You
+                You need to add some words
             </Text>
         )
     } else if (!!question) {
@@ -171,6 +187,18 @@ const QuizPage = () => {
     return (
         <div class="w-full h-screen">
             <Header />
+            {
+                (practiceSessionTotalTerms != null) && (practiceSessionTermsMastered != null) && (
+                    <div class="py-6 w-full flex flex-col space-y-4 items-center justify-center">
+                        <Text>
+                            { practiceSessionTotalTerms - practiceSessionTermsMastered } { (practiceSessionTotalTerms - practiceSessionTermsMastered) == 1 ? "term" : "terms" } left to master
+                        </Text>
+                        <div class="w-full bg-gray-200 h-5">
+                            <div class="bg-confirmation-600 h-5" style={`width: ${(practiceSessionTermsMastered/practiceSessionTotalTerms) * 100}%`}></div>
+                        </div>
+                    </div>
+                )
+            }
             { body }
             <div>
                 <Text>
