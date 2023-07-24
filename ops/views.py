@@ -1,5 +1,7 @@
 import os
 
+from datetime import datetime
+
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser
@@ -17,9 +19,11 @@ class OpsViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"])
     def healthcheck(self, request: HttpRequest) -> Response:
+        now = datetime.now()
         pings = Ping.objects.order_by("-created_at")
+        query_time = datetime.now() - now
         if not pings:
             return Response({}, status.HTTP_503_SERVICE_UNAVAILABLE)
         elif not pings.first().is_ok():
             return Response({}, status.HTTP_503_SERVICE_UNAVAILABLE)
-        return Response({"ok": True}, status.HTTP_200_OK)
+        return Response({"ok": True, "query_time_usec": query_time.microseconds}, status.HTTP_200_OK)
