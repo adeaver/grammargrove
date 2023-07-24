@@ -110,13 +110,15 @@ class CheckRequestSerializer(serializers.Serializer):
     answer = serializers.ListField(child=serializers.CharField(required=False, allow_blank=True))
     practice_session_id = serializers.UUIDField(allow_null=True)
 
-
 class CheckResponse(NamedTuple):
     is_correct: bool
     correct_answer: List[str]
     extra_context: List[str]
     words: List[Word]
     is_practice_session_complete: bool
+    terms_mastered: Optional[int]
+    total_number_of_terms: Optional[int]
+
 
 class CheckResponseSerializer(serializers.Serializer):
     is_correct = serializers.BooleanField()
@@ -124,3 +126,5 @@ class CheckResponseSerializer(serializers.Serializer):
     extra_context = serializers.ListField(child=serializers.CharField(required=False, allow_blank=True))
     words = WordSerializer(many=True, required=False)
     is_practice_session_complete = serializers.BooleanField()
+    terms_mastered = serializers.IntegerField(required=False)
+    total_number_of_terms = serializers.IntegerField(required=False)

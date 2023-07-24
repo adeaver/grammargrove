@@ -181,6 +181,8 @@ const QuizPage = () => {
             <QuestionDisplay
                 question={question}
                 practiceSessionID={practiceSessionID}
+                setPracticeSessionTermsMastered={setPracticeSessionTermsMastered}
+                setPracticeSessionTotalTerms={setPracticeSessionTotalTerms}
                 handleGetNextQuestion={() => handleGetNextQuestion(null)} />
         )
     }

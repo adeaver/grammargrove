@@ -9,6 +9,8 @@ from grammargrove.pinyin_utils import (
 )
 from grammargrove.text_utils import remove_punctuation, remove_punctuation_from_hanzi
 
+from users.models import User
+
 from grammarrules.models import GrammarRuleExample
 from grammarrules.serializers import GrammarRuleExampleSerializer
 
@@ -55,7 +57,9 @@ def check_grammar_rule(
         correct_answer=correct_answer,
         extra_context=extra_context,
         words=[],
-        is_practice_session_complete=False
+        is_practice_session_complete=False,
+        terms_mastered=None,
+        total_number_of_terms=None,
     )
 
 
@@ -100,9 +104,11 @@ def check_vocabulary_word(
     else:
         raise ValueError(f"Unrecognized question type {question_type}")
     return CheckResponse(
-        is_correct=is_correct,
+        is_correct=correct_answer == answer,
         correct_answer=correct_answer,
         extra_context=extra_context,
         words=words,
-        is_practice_session_complete=False
+        is_practice_session_complete=False,
+        terms_mastered=None,
+        total_number_of_terms=None,
     )

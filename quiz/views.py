@@ -1,4 +1,5 @@
 from typing import List, Optional
+from uuid import UUID
 
 import logging
 from random import randrange
@@ -14,6 +15,9 @@ from billing.permissions import HasValidSubscription
 
 from grammargrove.text_utils import remove_punctuation
 from grammarrules.models import GrammarRuleExample
+
+from users.models import User
+from practicesession.mastery import get_mastery_for_session_id
 
 from .query import get_queryset, QuerySetType
 
@@ -59,7 +63,11 @@ class QuizViewSet(viewsets.ModelViewSet):
         resp: Optional[CheckResponse] = None
         example: Optional[GrammarRuleExample] = None
         if question.user_vocabulary_entry:
-            resp = check_vocabulary_word(question.question_type, question.user_vocabulary_entry.id, answer)
+            resp = check_vocabulary_word(
+                question.question_type,
+                question.user_vocabulary_entry.id,
+                answer
+            )
         elif question.user_grammar_rule_entry:
             if not req.get("example_id"):
                 return Response(serializer.errors,
@@ -70,7 +78,11 @@ class QuizViewSet(viewsets.ModelViewSet):
             if not examples:
                 raise ValueError(f"Example {example_id} does not exist")
             example = examples[0]
-            resp = check_grammar_rule(question.question_type, example, answer)
+            resp = check_grammar_rule(
+                question.question_type,
+                example,
+                answer
+            )
         else:
             return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
@@ -87,5 +99,26 @@ class QuizViewSet(viewsets.ModelViewSet):
         question.number_of_times_displayed += 1
         question.last_displayed_at = timezone.now()
         question.save()
-        resp_serializer = CheckResponseSerializer(resp)
+        resp_serializer = _get_check_response_serializer(request.user, req.get("practice_session_id"), resp)
         return Response(resp_serializer.data)
+
+def _get_check_response_serializer(
+    user: User,
+    practice_session_id: Optional[UUID],
+    resp: CheckResponse
+) -> CheckResponseSerializer:
+    if practice_session_id is None:
+        return CheckResponseSerializer(resp)
+    mastery = get_mastery_for_session_id(user, practice_session_id)
+    is_complete = mastery.terms_mastered == mastery.total_number_of_terms
+    return CheckResponseSerializer(
+        CheckResponse(
+            is_correct=resp.is_correct,
+            correct_answer=resp.correct_answer,
+            extra_context=resp.extra_context,
+            words=resp.words,
+            is_practice_session_complete=is_complete,
+            terms_mastered=mastery.terms_mastered,
+            total_number_of_terms=mastery.total_number_of_terms
+        )
+    )

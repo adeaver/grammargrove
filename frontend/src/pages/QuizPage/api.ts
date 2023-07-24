@@ -54,6 +54,8 @@ export type CheckAnswerResponse = {
     extra_context: Array<string>;
     words: Array<Word>;
     is_practice_session_complete: boolean;
+    terms_mastered: number | null;
+    total_number_of_terms: number | null;
 }
 
 export function checkAnswer(

@@ -20,6 +20,8 @@ type QuestionDisplayProps = {
     question: Question;
 
     handleGetNextQuestion: () => void;
+    setPracticeSessionTermsMastered: (n: number) => void;
+    setPracticeSessionTotalTerms: (n: number) => void;
 }
 
 const QuestionDisplay = (props: QuestionDisplayProps) => {
@@ -45,6 +47,8 @@ const QuestionDisplay = (props: QuestionDisplayProps) => {
                 setCorrectAnswer(resp.correct_answer);
                 setExtraContext(resp.extra_context);
                 setWords(resp.words);
+                resp.terms_mastered != null && props.setPracticeSessionTermsMastered(resp.terms_mastered);
+                resp.total_number_of_terms != null && props.setPracticeSessionTotalTerms(resp.total_number_of_terms);
             },
             (err: Error) => {
                 setIsLoading(false);
