@@ -104,7 +104,7 @@ def check_vocabulary_word(
     else:
         raise ValueError(f"Unrecognized question type {question_type}")
     return CheckResponse(
-        is_correct=correct_answer == answer,
+        is_correct=is_correct,
         correct_answer=correct_answer,
         extra_context=extra_context,
         words=words,
