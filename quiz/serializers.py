@@ -1,5 +1,7 @@
 from typing import Optional, NamedTuple, Tuple, List
 
+import logging
+
 from rest_framework import serializers
 
 from .models import QuizQuestion, QuestionType
@@ -11,9 +13,11 @@ from uservocabulary.models import UserVocabularyEntry
 from uservocabulary.serializers import UserVocabularyEntrySerializer
 
 from usergrammarrules.models import UserGrammarRuleEntry
+from practicesession.models import PracticeSessionQuestion
 
 from grammarrules.models import GrammarRuleExample, GrammarRuleExamplePrompt
 from grammarrules.serializers import GrammarRuleExampleSerializer
+
 
 class QuizQuestionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,6 +26,11 @@ class QuizQuestionSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
+        practice_session_id: Optional[str] = (
+            self.context["request"].GET.get("practice_session_id")
+            if "request" in self.context
+            else None
+        )
         if instance.user_vocabulary_entry is not None:
             display = _convert_user_vocabulary_entry_to_display(
                 instance.user_vocabulary_entry,
@@ -29,7 +38,7 @@ class QuizQuestionSerializer(serializers.ModelSerializer):
             )
             response["display"] = DisplaySerializer(display, many=True).data
         elif instance.user_grammar_rule_entry is not None:
-            displays, example_id = _convert_user_grammar_rule_to_display(instance.user_grammar_rule_entry, instance.question_type)
+            displays, example_id = _convert_user_grammar_rule_to_display(instance.user_grammar_rule_entry, instance.question_type, practice_session_id)
             response["display"] = DisplaySerializer(displays, many=True).data
             response["example_id"] = example_id
         else:
@@ -72,12 +81,27 @@ def _convert_user_vocabulary_entry_to_display(user_vocabulary_entry: UserVocabul
     else:
         raise ValueError(f"Unrecognized question type {question_type}")
 
-def _convert_user_grammar_rule_to_display(user_grammar_rule: UserGrammarRuleEntry, question_type: QuestionType) -> Tuple[List[Display], str]:
-    examples_queryset = get_usable_grammar_rule_examples(user_grammar_rule.user)
-    examples = examples_queryset.filter(grammar_rule=user_grammar_rule.grammar_rule).order_by("?")
-    if not examples:
-        raise ValueError(f"Grammar rule {user_grammar_rule.grammar_rule} has no examples")
-    example = examples[0]
+def _convert_user_grammar_rule_to_display(
+    user_grammar_rule: UserGrammarRuleEntry,
+    question_type: QuestionType,
+    practice_session_id: Optional[str]
+) -> Tuple[List[Display], str]:
+    example: Optional[GrammarRuleExample] = None
+    if practice_session_id:
+        practice_session_question = PracticeSessionQuestion.objects.filter(
+            practice_session_id=practice_session_id,
+            user_grammar_rule_entry=user_grammar_rule
+        ).first()
+        example = (
+            practice_session_question.grammar_rule_example
+            if practice_session_question else None
+        )
+    if example is None:
+        examples_queryset = get_usable_grammar_rule_examples(user_grammar_rule.user)
+        examples = examples_queryset.filter(grammar_rule=user_grammar_rule.grammar_rule).order_by("?")
+        if not examples:
+            raise ValueError(f"Grammar rule {user_grammar_rule.grammar_rule} has no examples")
+        example = examples[0]
     serialized = GrammarRuleExampleSerializer(example).data
     if question_type == QuestionType.DefinitionsFromHanzi:
         return [
