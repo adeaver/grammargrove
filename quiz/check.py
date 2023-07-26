@@ -1,6 +1,7 @@
 from typing import List
 
 import logging
+import re
 
 from grammargrove.pinyin_utils import (
     get_tone_number_from_numeric_form,
@@ -89,9 +90,21 @@ def check_vocabulary_word(
             flattened_definition = d.definition.lower().strip()
             if not flattened_definition or d.contains_hanzi:
                 continue
-            correct_answer += [ d.strip() for d in flattened_definition.split(";") ]
-        is_correct = answer[0].lower().strip() in correct_answer
-        extra_context = [ a for a in correct_answer if a != answer[0].lower().strip() ]
+            correct_answer += [ re.sub("\s\s+" , " ", d.strip()) for d in flattened_definition.split(";") ]
+        user_answer = re.sub("\s\s+" , " ", answer[0].lower().strip())
+        for acceptable_answer in correct_answer:
+            if user_answer == acceptable_answer:
+                is_correct = True
+            else:
+                alternate_answer: List[str] = []
+                answer_parts = acceptable_answer.split(" ")
+                for a in answer_parts:
+                    if not re.match("\(.*\)", a.strip()):
+                        alternate_answer.append(a.strip())
+                if len(alternate_answer) and user_answer == " ".join(alternate_answer):
+                    is_correct = True
+                else:
+                    extra_context.append(acceptable_answer)
     elif question_type == QuestionType.AccentsFromHanzi:
         pronunciation = word.pronunciation.split(" ")
         correct_answer = [
