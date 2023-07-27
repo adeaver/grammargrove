@@ -152,3 +152,9 @@ class CheckResponseSerializer(serializers.Serializer):
     is_practice_session_complete = serializers.BooleanField()
     terms_mastered = serializers.IntegerField(required=False)
     total_number_of_terms = serializers.IntegerField(required=False)
+
+
+class AddNoteRequestSerializer(serializers.Serializer):
+    quiz_question_id = serializers.UUIDField()
+    example_id = serializers.UUIDField(allow_null=True)
+    note = serializers.CharField()

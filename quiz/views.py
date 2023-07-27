@@ -17,6 +17,8 @@ from grammargrove.text_utils import remove_punctuation
 from grammarrules.models import GrammarRuleExample
 
 from users.models import User
+from uservocabulary.models import UserVocabularyNote
+from usergrammarrules.models import UserGrammarRuleNote
 from practicesession.mastery import get_mastery_for_session_id
 
 from .query import get_queryset, QuerySetType
@@ -27,6 +29,7 @@ from .serializers import (
     CheckRequestSerializer,
     CheckResponseSerializer,
     CheckResponse,
+    AddNoteRequestSerializer,
 )
 from .pagination import QuizQuestionPaginator
 from .check import check_grammar_rule, check_vocabulary_word
@@ -79,6 +82,7 @@ class QuizViewSet(viewsets.ModelViewSet):
                 raise ValueError(f"Example {example_id} does not exist")
             example = examples[0]
             resp = check_grammar_rule(
+                request.user,
                 question.question_type,
                 example,
                 answer
@@ -103,9 +107,33 @@ class QuizViewSet(viewsets.ModelViewSet):
         return Response(resp_serializer.data)
 
 
-    @action(detail=True, methods=["POST"])
-    def add_note(self, request: HttpRequest, pk: Optional[UUID] = None) -> Response:
-        return Response({"success": True})
+    @action(detail=False, methods=["POST"])
+    def add_note(self, request: HttpRequest) -> Response:
+        serializer = AddNoteRequestSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST)
+        req = serializer.data
+        question = QuizQuestion.objects.filter(id=req["quiz_question_id"]).first()
+        if not question:
+            return Response({"success": False})
+        if question.user_vocabulary_entry is not None:
+            UserVocabularyNote(
+                user=request.user,
+                user_vocabulary_entry=question.user_vocabulary_entry,
+                note=req["note"]
+            ).save()
+            return Response({"success": True})
+        elif question.user_grammar_rule_entry is not None and req.get("example_id") is not None:
+            UserGrammarRuleNote(
+                user=request.user,
+                example_id=req.get("example_id"),
+                note=req["note"]
+            ).save()
+            return Response({"success": True})
+        else:
+            return Response({"success": False})
+
 
 def _get_check_response_serializer(
     user: User,

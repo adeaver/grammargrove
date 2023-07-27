@@ -12,16 +12,18 @@ from grammargrove.text_utils import remove_punctuation, remove_punctuation_from_
 
 from users.models import User
 
+from usergrammarrules.models import UserGrammarRuleNote
 from grammarrules.models import GrammarRuleExample
 from grammarrules.serializers import GrammarRuleExampleSerializer
 
-from uservocabulary.models import UserVocabularyEntry
+from uservocabulary.models import UserVocabularyEntry, UserVocabularyNote
 from uservocabulary.serializers import UserVocabularyEntrySerializer
 
 from .models import QuestionType
 from .serializers import CheckResponse
 
 def check_grammar_rule(
+    user: User,
     question_type: QuestionType,
     example: GrammarRuleExample,
     answer: List[str]
@@ -38,6 +40,7 @@ def check_grammar_rule(
             )
         ]
         answer = [ remove_punctuation_from_hanzi(a) for a in answer ]
+        is_correct = correct_answer == answer
     elif question_type == QuestionType.AccentsFromHanzi:
         for c in serialized_example["grammar_rule_example_components"]:
             pronunciation = c["word"]["pronunciation"].split(" ")
@@ -47,14 +50,23 @@ def check_grammar_rule(
             extra_context.append(
                 ''.join(pronunciation)
             )
+        is_correct = correct_answer == answer
     elif question_type == QuestionType.DefinitionsFromHanzi:
         correct_answer = [
             remove_punctuation(serialized_example["english_definition"].lower().strip())
         ]
+        is_correct = correct_answer == answer
+        if not is_correct:
+            notes = UserGrammarRuleNote.objects.filter(user=user, example_id=example.id)
+            for n in notes:
+                stripped_note = [ re.sub("\s\s+" , " ", n.note.lower().strip()) ]
+                if answer == stripped_note:
+                    is_correct = True
+                    break
     else:
         raise ValueError(f"Unrecognized question type {question_type}")
     return CheckResponse(
-        is_correct=correct_answer == answer,
+        is_correct=is_correct,
         correct_answer=correct_answer,
         extra_context=extra_context,
         words=[],
@@ -105,6 +117,16 @@ def check_vocabulary_word(
                     is_correct = True
                 else:
                     extra_context.append(acceptable_answer)
+        if not is_correct:
+            notes = UserVocabularyNote.objects.filter(
+                user_vocabulary_entry=entries[0]
+            ).all()
+            logging.warn(notes)
+            for n in notes:
+                stripped_note = re.sub("\s\s+" , " ", n.note.lower().strip())
+                if user_answer == stripped_note:
+                    is_correct = True
+                    break
     elif question_type == QuestionType.AccentsFromHanzi:
         pronunciation = word.pronunciation.split(" ")
         correct_answer = [

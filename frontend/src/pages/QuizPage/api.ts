@@ -80,6 +80,8 @@ export function checkAnswer(
 }
 
 export type AddNoteRequest = {
+    quiz_question_id: string;
+    example_id: string | null;
     note: string;
 }
 
@@ -88,16 +90,13 @@ export type AddNoteResponse = {
 }
 
 export function addNote(
-    question_id: string,
-    note: string,
+    req: AddNoteRequest,
     onSuccess: (resp: AddNoteResponse) => void,
     onError: (err: Error) => void,
 ) {
     makePostRequest<AddNoteRequest, AddNoteResponse>(
-        `/api/quiz/v1/${question_id}/add_note/?format=json`,
-        {
-            note: note,
-        },
+        `/api/quiz/v1/add_note/?format=json`,
+        req,
         onSuccess,
         onError,
     );

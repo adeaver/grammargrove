@@ -26,6 +26,7 @@ class UserGrammarRuleNote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     example = models.ForeignKey(GrammarRuleExample, on_delete=models.CASCADE)
+    note = models.TextField()
 
     class Meta:
         indexes = [

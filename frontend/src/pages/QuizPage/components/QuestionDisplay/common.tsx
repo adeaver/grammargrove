@@ -155,9 +155,11 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
     const [ hasUpdatedAcceptedAnswers, setHasUpdatedAcceptedAnswers ] = useState<boolean>(false);
 
     const updateAcceptedAnswers = () => {
-        addNote(
-            props.question.id,
-            definition,
+        addNote({
+                quiz_question_id: props.question.id,
+                example_id: props.question.example_id || null,
+                note: definition
+            },
             (resp: AddNoteResponse) => {
                 setHasUpdatedAcceptedAnswers(resp.success)
             },
@@ -261,24 +263,6 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                 <Button type={ButtonType.Primary} isSubmit>
                     Next question
                 </Button>
-                {
-                    !!definition.trim() && (
-                        !hasUpdatedAcceptedAnswers ? (
-                            <div class="flex flex-col space-y-4">
-                                <Text>
-                                    Was this answer actually correct?
-                                </Text>
-                                <Button type={ButtonType.Secondary} onClick={updateAcceptedAnswers}>
-                                    Accept this answer next time
-                                </Button>
-                            </div>
-                        ) : (
-                            <Text>
-                                Got it! This answer will be counted as correct next time!
-                            </Text>
-                        )
-                    )
-                }
             </div>
         );
     }
@@ -301,6 +285,24 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                     name="answer" />
                 { action }
             </Form>
+            {
+                (props.isCorrect != null && !props.isCorrect && !!definition.trim()) && (
+                    !hasUpdatedAcceptedAnswers ? (
+                        <div class="flex flex-col space-y-4">
+                            <Text>
+                                Was this answer actually correct?
+                            </Text>
+                            <Button type={ButtonType.Secondary} onClick={updateAcceptedAnswers}>
+                                Accept this answer next time
+                            </Button>
+                        </div>
+                    ) : (
+                        <Text>
+                            Got it! This answer will be counted as correct next time!
+                        </Text>
+                    )
+                )
+            }
         </div>
     );
 }
