@@ -22,7 +22,7 @@ from grammarrules.serializers import GrammarRuleExampleSerializer
 class QuizQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuizQuestion
-        fields = [ 'id', 'user_vocabulary_entry', 'user_grammar_rule_entry', 'question_type' ]
+        fields = [ 'id', 'user_vocabulary_entry', 'user_grammar_rule_entry', 'question_type', 'last_displayed_at' ]
 
     def to_representation(self, instance):
         response = super().to_representation(instance)

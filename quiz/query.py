@@ -123,15 +123,15 @@ def filter_queryset_by_asking_date(
     include_not_asked: bool = False,
 ) -> QuerySet:
     upper_bound = timezone.now() - datetime.timedelta(
-        days=days_since_asked_lower_bound
+        days=days_since_asked_upper_bound
     )
     lower_bound = timezone.now() - datetime.timedelta(
-        days=days_since_asked_upper_bound
+        days=days_since_asked_lower_bound
     )
     filter_query = (
         Q(number_of_times_displayed=0) | Q(last_displayed_at__gt=lower_bound, last_displayed_at__lt=upper_bound)
     ) if include_not_asked else (
-        Q(last_displayed_at__gt=lower_bound, last_displayed_at__lt=upper_bound)
+        Q(last_displayed_at__lt=lower_bound, last_displayed_at__gt=upper_bound)
     )
     return current_queryset.filter(filter_query)
 

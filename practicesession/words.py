@@ -21,9 +21,9 @@ def get_user_vocabulary_questions(
         days_since_asked_upper_bound,
         should_include_unasked
     ) in [
-        (1, 5, True),
+        (10, 30, True),
         (5, 10, False),
-        (10, 30, False)
+        (1, 5, False),
     ]:
         questions = filter_queryset_by_asking_date(
             queryset,
