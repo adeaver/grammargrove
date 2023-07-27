@@ -149,6 +149,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
     const [ definition, setDefinition ] = useState<string>(
         !!props.originalAnswer && !!props.originalAnswer.length ? props.originalAnswer[0] : ""
     );
+    const [ hasUpdatedAcceptedAnswers, setHasUpdatedAcceptedAnswers ] = useState<boolean>(false);
 
     const handleSubmitAnswer = () => {
         props.handleSubmitAnswer([definition], props.question.example_id);
@@ -241,9 +242,27 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                         </div>
                     )
                 }
-                <Button type={ButtonType.Secondary} isSubmit>
+                <Button type={ButtonType.Primary} isSubmit>
                     Next question
                 </Button>
+                {
+                    !!definition.trim() && (
+                        !hasUpdatedAcceptedAnswers ? (
+                            <div class="flex flex-col space-y-4">
+                                <Text>
+                                    Was this answer actually correct?
+                                </Text>
+                                <Button type={ButtonType.Secondary} onClick={() => setHasUpdatedAcceptedAnswers(true)}>
+                                    Accept this answer next time
+                                </Button>
+                            </div>
+                        ) : (
+                            <Text>
+                                Got it! This answer will be counted as correct next time!
+                            </Text>
+                        )
+                    )
+                }
             </div>
         );
     }

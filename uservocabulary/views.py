@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from billing.permissions import HasValidSubscription
 
-from .models import UserVocabularyEntry
-from .serializers import UserVocabularyEntrySerializer
+from .models import UserVocabularyEntry, UserVocabularyNote
+from .serializers import UserVocabularyEntrySerializer, UserVocabularyNoteSerializer
 from .pagination import UserVocabularyEntryPaginator
 
 class UserVocabularyEntryViewSet(viewsets.ModelViewSet):
@@ -17,4 +17,3 @@ class UserVocabularyEntryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-

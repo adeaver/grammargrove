@@ -12,10 +12,19 @@ import {
 } from './index';
 
 export type UserVocabulary = {
+    created_at: Date;
     word: Word;
     user: string;
     id: string;
-    notes: string | null;
+    notes: Array<UserVocabularyNote>;
+}
+
+export type UserVocabularyNote = {
+    created_at: Date;
+    id: string;
+    user_vocabulary_entry: string;
+    user: string;
+    note: string;
 }
 
 export type AddUserVocabularyRequest = {
