@@ -78,3 +78,27 @@ export function checkAnswer(
         onError
     )
 }
+
+export type AddNoteRequest = {
+    note: string;
+}
+
+export type AddNoteResponse = {
+    success: boolean;
+}
+
+export function addNote(
+    question_id: string,
+    note: string,
+    onSuccess: (resp: AddNoteResponse) => void,
+    onError: (err: Error) => void,
+) {
+    makePostRequest<AddNoteRequest, AddNoteResponse>(
+        `/api/quiz/v1/${question_id}/add_note/?format=json`,
+        {
+            note: note,
+        },
+        onSuccess,
+        onError,
+    );
+}

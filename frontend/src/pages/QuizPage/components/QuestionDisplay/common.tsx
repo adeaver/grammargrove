@@ -11,7 +11,10 @@ import { Word } from '../../../../common/api';
 
 import {
     Question,
-    Display
+    Display,
+
+    addNote,
+    AddNoteResponse,
 } from '../../api';
 
 export type QuestionDisplayControllerProps = {
@@ -151,6 +154,19 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
     );
     const [ hasUpdatedAcceptedAnswers, setHasUpdatedAcceptedAnswers ] = useState<boolean>(false);
 
+    const updateAcceptedAnswers = () => {
+        addNote(
+            props.question.id,
+            definition,
+            (resp: AddNoteResponse) => {
+                setHasUpdatedAcceptedAnswers(resp.success)
+            },
+            (_err: Error) => {
+                setHasUpdatedAcceptedAnswers(false)
+            }
+        );
+    }
+
     const handleSubmitAnswer = () => {
         props.handleSubmitAnswer([definition], props.question.example_id);
     }
@@ -252,7 +268,7 @@ export const DefinitionFromHanziDisplay = (props: QuestionDisplayProps) => {
                                 <Text>
                                     Was this answer actually correct?
                                 </Text>
-                                <Button type={ButtonType.Secondary} onClick={() => setHasUpdatedAcceptedAnswers(true)}>
+                                <Button type={ButtonType.Secondary} onClick={updateAcceptedAnswers}>
                                     Accept this answer next time
                                 </Button>
                             </div>

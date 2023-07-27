@@ -102,6 +102,11 @@ class QuizViewSet(viewsets.ModelViewSet):
         resp_serializer = _get_check_response_serializer(request.user, req.get("practice_session_id"), resp)
         return Response(resp_serializer.data)
 
+
+    @action(detail=True, methods=["POST"])
+    def add_note(self, request: HttpRequest, pk: Optional[UUID] = None) -> Response:
+        return Response({"success": True})
+
 def _get_check_response_serializer(
     user: User,
     practice_session_id: Optional[UUID],
