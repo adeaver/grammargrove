@@ -1,17 +1,41 @@
+import { useEffect, useState } from 'preact/hooks';
+
 import Header from '../../components/Header';
 import Text, { TextType } from '../../components/Text';
 import Link, { LinkTarget } from '../../components/Link';
+import LoadingIcon from '../../components/LoadingIcon';
+
+import { loadCaptchaScript } from '../../util/grecaptcha';
 
 import LoginComponent from './LoginComponent';
 
 import RadioButton from '../../components/RadioButton';
 
 const IndexPage = () => {
+    const [ hasLoadedCaptcha, setHasLoadedCaptcha ] = useState<boolean>(false);
+
+    useEffect(() => {
+        loadCaptchaScript();
+        setHasLoadedCaptcha(true);
+    }, []);
+
+    let body = (
+        <div class="w-full flex flex-row justify-center items-center">
+            <LoadingIcon />
+        </div>
+    )
+    if (hasLoadedCaptcha) {
+        body = (
+            <div>
+                <IntroSection />
+                <HowItWorksSection />
+            </div>
+        );
+    }
     return (
         <div>
             <Header />
-            <IntroSection />
-            <HowItWorksSection />
+            { body }
         </div>
     )
 }

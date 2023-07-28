@@ -2,6 +2,7 @@ import { makePostRequest } from '../../util/gfetch';
 
 export type SearchByEmailRequest = {
     email: string;
+    token: string;
 }
 
 export type SearchByEmailResponse = {
@@ -16,6 +17,7 @@ export enum SearchByEmailAction {
 
 export function searchByEmail(
     email: string,
+    token: string,
     onSuccess: (resp: SearchByEmailResponse) => void,
     onError: (err: Error) => void
 ) {
@@ -23,6 +25,7 @@ export function searchByEmail(
         "/api/users/v1/search_by_email/",
         {
             email: email,
+            token: token,
         },
         onSuccess,
         onError

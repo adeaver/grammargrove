@@ -19,6 +19,7 @@ jieba = "^0.42.1"
 pygtrie = "^2.5.0"
 stripe = "^5.4.0"
 bs4 = "^0.0.1"
+requests = "^2.31.0"
 
 
 [build-system]

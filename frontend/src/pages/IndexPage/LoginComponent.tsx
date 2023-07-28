@@ -5,6 +5,7 @@ import Input, { InputType } from '../../components/Input';
 import Link from '../../components/Link';
 import Button from '../../components/Button';
 import { getCSRFToken } from '../../util/gfetch';
+import { withCaptchaToken } from '../../util/grecaptcha';
 import { setLocation } from '../../util/window';
 
 import {
@@ -21,20 +22,23 @@ const LoginComponent = () => {
 
     const handleClick = () => {
         setIsLoading(true);
-        searchByEmail(
-            email,
-            (resp: SearchByEmailResponse) => {
-                setIsLoading(false);
-                setError(null);
-                setAction(resp.action)
-            },
-            (err: Error) => {
-                console.log("error");
-                setIsLoading(false);
-                setError(err);
-                setAction(null)
-            }
-        );
+        withCaptchaToken("signup", (token: string) => {
+            searchByEmail(
+                email,
+                token,
+                (resp: SearchByEmailResponse) => {
+                    setIsLoading(false);
+                    setError(null);
+                    setAction(resp.action)
+                },
+                (err: Error) => {
+                    console.log("error");
+                    setIsLoading(false);
+                    setError(err);
+                    setAction(null)
+                }
+            );
+        })
     }
 
     if (isLoading) {

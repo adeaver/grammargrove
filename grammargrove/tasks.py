@@ -87,25 +87,28 @@ def send_login_email(login_email_id: str):
         login_emails = UserLoginEmail.objects.filter(pk=uuid.UUID(login_email_id))
         retryable = False
         if not login_emails:
-            logging.info(f"{login_email_id} is invalid, skipping")
+            logging.warn(f"{login_email_id} is invalid, skipping")
             return uwsgi.SPOOL_OK
         email = login_emails[0]
         if email.is_expired():
-            logging.info(f"UserLoginEmail {login_email_id} is expired, skipping")
+            logging.warn(f"UserLoginEmail {login_email_id} is expired, skipping")
             return uwsgi.SPOOL_OK
         elif email.is_fulfilled():
-            logging.info(f"UserLoginEmail {login_email_id} is already fulfilled, skipping")
+            logging.warn(f"UserLoginEmail {login_email_id} is already fulfilled, skipping")
             return uwsgi.SPOOL_OK
         elif email.email_type == UserLoginEmailType.LOGIN:
+            logging.warn(f"Attempting to send login type UserLoginEmail {login_email_id}")
             retryable = send_login_email_to_user(email)
         elif email.email_type == UserLoginEmailType.VERIFICATION:
+            logging.warn(f"Attempting to send verification type UserLoginEmail {login_email_id}")
             retryable = send_verifcation_email_to_user(email)
         if retryable:
             return uwsgi.SPOOL_RETRY
         email.fulfilled = True
         email.save()
         return uwsgi.SPOOL_OK
-    except:
+    except Exception as e:
+        logging.warn(f"Could not send email: {e}")
         return uwsgi.SPOOL_RETRY
 
 

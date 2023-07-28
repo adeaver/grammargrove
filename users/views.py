@@ -1,11 +1,13 @@
 import json
 import uuid
 import logging
+import requests
 import datetime
 from enum import Enum
 from typing import Optional
 from django.db import IntegrityError
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.auth import logout, login
@@ -115,6 +117,14 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def search_by_email(self, request: HttpRequest) -> JsonResponse:
+        token = request.data["token"]
+        resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data={
+            "response": token,
+            "secret": settings.GRECAPTCHA_SECRET_KEY,
+        })
+        result_json = resp.json()
+        if not result_json.get('success'):
+            return HttpResponseBadRequest()
         email = request.data["email"]
         try:
             validate_email(email)

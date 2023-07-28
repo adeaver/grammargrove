@@ -223,7 +223,7 @@ const QuizPage = () => {
             }
             </div>
             { body }
-            <div>
+            <div class="p-6">
                 <Text>
                     Need to add a new word or grammar rule to your list?
                 </Text>
