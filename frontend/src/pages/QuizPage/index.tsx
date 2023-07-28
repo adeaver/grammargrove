@@ -37,6 +37,8 @@ const QuizPage = () => {
     const [ practiceSessionID, setPracticeSessionID ] = useState<string | null>(null);
     const [ practiceSessionTermsMastered, setPracticeSessionTermsMastered ] = useState<number | null>(null);
     const [ practiceSessionTotalTerms, setPracticeSessionTotalTerms ] = useState<number | null>(null);
+    const [ totalNumberOfQuestions, setTotalNumberOfQuestions ] = useState<number | null>(null);
+    const [ numberOfQuestionsAnsweredCorrectly, setNumberOfQuestionsAnsweredCorrectly ] = useState<number | null>(null);
 
     const [ numberOfQuestions, setNumberOfQuestions ] = useState<number>(0);
     const [ showPulseForm, setShowPulseForm ] = useState<boolean>(false);
@@ -99,6 +101,8 @@ const QuizPage = () => {
                 handleGetNextQuestion(resp.id);
                 setPracticeSessionTotalTerms(resp.total_number_of_terms);
                 setPracticeSessionTermsMastered(0);
+                setNumberOfQuestionsAnsweredCorrectly(0);
+                setTotalNumberOfQuestions(resp.total_number_of_questions);
                 window.history.pushState({ page: "quiz" }, "Quiz", `/quiz/?${SESSION_PARAM}=${resp.id}`);
             },
             (err: Error) => {
@@ -122,6 +126,8 @@ const QuizPage = () => {
                     handleGetNextQuestion(resp.id);
                     setPracticeSessionTotalTerms(resp.total_number_of_terms);
                     setPracticeSessionTermsMastered(resp.terms_mastered);
+                    setNumberOfQuestionsAnsweredCorrectly(resp.number_of_questions_answered_correctly);
+                    setTotalNumberOfQuestions(resp.total_number_of_questions);
                 },
                 (err: Error) => {
                     setIsLoading(false);
@@ -183,15 +189,17 @@ const QuizPage = () => {
                 practiceSessionID={practiceSessionID}
                 setPracticeSessionTermsMastered={setPracticeSessionTermsMastered}
                 setPracticeSessionTotalTerms={setPracticeSessionTotalTerms}
+                setNumberOfQuestionsAnsweredCorrectly={setNumberOfQuestionsAnsweredCorrectly}
                 handleGetNextQuestion={() => handleGetNextQuestion(null)} />
         )
     }
     return (
         <div class="w-full h-screen">
             <Header />
+            <div class="py-6">
             {
                 (practiceSessionTotalTerms != null) && (practiceSessionTermsMastered != null) && (
-                    <div class="py-6 w-full flex flex-col space-y-4 items-center justify-center">
+                    <div class="w-full flex flex-col space-y-4 items-center justify-center">
                         <Text>
                             { practiceSessionTotalTerms - practiceSessionTermsMastered } { (practiceSessionTotalTerms - practiceSessionTermsMastered) == 1 ? "term" : "terms" } left to master
                         </Text>
@@ -201,6 +209,19 @@ const QuizPage = () => {
                     </div>
                 )
             }
+            {
+                (totalNumberOfQuestions != null) && (numberOfQuestionsAnsweredCorrectly != null) && (
+                    <div class="w-full flex flex-col space-y-4 items-center justify-center">
+                        <div class="w-full bg-gray-200 h-2.5">
+                            <div class="bg-confirmation-600 h-2.5" style={`width: ${(numberOfQuestionsAnsweredCorrectly/totalNumberOfQuestions) * 100}%`}></div>
+                        </div>
+                        <Text>
+                            { totalNumberOfQuestions - numberOfQuestionsAnsweredCorrectly } { (totalNumberOfQuestions - numberOfQuestionsAnsweredCorrectly) == 1 ? "question" : "questions" } left
+                        </Text>
+                    </div>
+                )
+            }
+            </div>
             { body }
             <div>
                 <Text>

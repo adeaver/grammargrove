@@ -152,6 +152,8 @@ def _get_check_response_serializer(
             words=resp.words,
             is_practice_session_complete=is_complete,
             terms_mastered=mastery.terms_mastered,
-            total_number_of_terms=mastery.total_number_of_terms
+            total_number_of_terms=mastery.total_number_of_terms,
+            total_number_of_questions=mastery.total_number_of_questions,
+            number_of_questions_answered_correctly=mastery.number_of_questions_answered_correctly,
         )
     )

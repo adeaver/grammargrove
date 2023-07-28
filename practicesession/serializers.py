@@ -29,4 +29,6 @@ class PracticeSessionSerializer(serializers.ModelSerializer):
         mastery = get_mastery_for_session_id(instance.user, instance.id)
         response["terms_mastered"] = mastery.terms_mastered
         response["total_number_of_terms"] = mastery.total_number_of_terms
+        response["number_of_questions_answered_correctly"] = mastery.number_of_questions_answered_correctly
+        response["total_number_of_questions"] = mastery.total_number_of_questions
         return response

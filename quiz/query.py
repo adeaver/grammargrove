@@ -129,9 +129,9 @@ def filter_queryset_by_asking_date(
         days=days_since_asked_lower_bound
     )
     filter_query = (
-        Q(number_of_times_displayed=0) | Q(last_displayed_at__gt=lower_bound, last_displayed_at__lt=upper_bound)
+        Q(number_of_times_displayed=0) | (Q(last_displayed_at__lt=lower_bound) & Q(last_displayed_at__gt=upper_bound))
     ) if include_not_asked else (
-        Q(last_displayed_at__lt=lower_bound, last_displayed_at__gt=upper_bound)
+        (Q(last_displayed_at__lt=lower_bound) & Q(last_displayed_at__gt=upper_bound))
     )
     return current_queryset.filter(filter_query)
 

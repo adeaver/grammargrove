@@ -142,6 +142,8 @@ class CheckResponse(NamedTuple):
     is_practice_session_complete: bool
     terms_mastered: Optional[int]
     total_number_of_terms: Optional[int]
+    total_number_of_questions: Optional[int]
+    number_of_questions_answered_correctly: Optional[int]
 
 
 class CheckResponseSerializer(serializers.Serializer):
@@ -152,6 +154,9 @@ class CheckResponseSerializer(serializers.Serializer):
     is_practice_session_complete = serializers.BooleanField()
     terms_mastered = serializers.IntegerField(required=False)
     total_number_of_terms = serializers.IntegerField(required=False)
+    total_number_of_questions = serializers.IntegerField(required=False)
+    number_of_questions_answered_correctly = serializers.IntegerField(required=False)
+
 
 
 class AddNoteRequestSerializer(serializers.Serializer):

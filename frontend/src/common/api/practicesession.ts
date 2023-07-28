@@ -9,6 +9,8 @@ export type PracticeSession = {
     terms_mastered: number,
     total_number_of_terms: number,
     questions: Array<PracticeSessionQuestion>;
+    total_number_of_questions: number,
+    number_of_questions_answered_correctly: number,
 }
 
 export type PracticeSessionQuestion = {

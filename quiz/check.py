@@ -73,6 +73,8 @@ def check_grammar_rule(
         is_practice_session_complete=False,
         terms_mastered=None,
         total_number_of_terms=None,
+        total_number_of_questions=None,
+        number_of_questions_answered_correctly=None,
     )
 
 
@@ -146,4 +148,6 @@ def check_vocabulary_word(
         is_practice_session_complete=False,
         terms_mastered=None,
         total_number_of_terms=None,
+        total_number_of_questions=None,
+        number_of_questions_answered_correctly=None,
     )

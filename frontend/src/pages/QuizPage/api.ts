@@ -56,6 +56,8 @@ export type CheckAnswerResponse = {
     is_practice_session_complete: boolean;
     terms_mastered: number | null;
     total_number_of_terms: number | null;
+    total_number_of_questions: number | null;
+    number_of_questions_answered_correctly: number | null;
 }
 
 export function checkAnswer(
