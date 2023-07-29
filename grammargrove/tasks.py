@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 import django
 
@@ -52,9 +52,13 @@ try:
 
     @cron(-1, -1, -1, -1, -1)
     def send_outstanding_login_emails(num):
-        from users.login_emails import fulfill_all_login_emails
+        from users.login_emails import get_outstanding_login_emails
         logging.warn("Sending outstanding login emails")
-        fulfill_all_login_emails()
+        login_email_ids = get_outstanding_login_emails()
+        for email in login_email_ids:
+            logging.warning(f"Spooling ID {email}")
+            fulfill_login_email.spool({ "login_email_id".encode("utf-8"): str(email).encode("utf-8") })
+
 
 
     @cron(-5, -1, -1, -1, -1)
@@ -83,6 +87,17 @@ except Exception:
         if callable(pass_arguments):
             return decorator(pass_arguments)
         return decorator
+
+@spool(pass_arguments=True)
+def fulfill_login_email(args: Dict[str, str]):
+    from uuid import UUID
+    from users.login_emails import fulfill_login_email_by_id
+    key = b"login_email_id"
+    if key not in args:
+        logging.warning(f"Key is not in args")
+        return uwsgi.SPOOL_OK
+    login_email_id = args[key].decode("utf-8")
+    fulfill_login_email_by_id(UUID(login_email_id))
 
 
 @spool(pass_arguments=True)
@@ -113,4 +128,3 @@ def parse_grammar_rule_example(grammar_rule_example_id: str):
     except Exception as e:
         logging.warn(f"Got exception {e}")
     return uwsgi.SPOOL_OK
-
