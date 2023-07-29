@@ -17,7 +17,6 @@ from rest_framework.decorators import action
 from rest_framework import viewsets
 from .models import User, UserStatus, UserLoginEmail, UserLoginEmailType, PracticeReminderEmail
 from userpreferences.models import UserPreferences
-from grammargrove.tasks import send_login_email
 
 from ops.models import FeatureFlagName
 from ops.featureflags import get_boolean_feature_flag
@@ -145,7 +144,6 @@ class UserViewSet(viewsets.ViewSet):
             login_email = UserLoginEmail(user=new_user, email_type=UserLoginEmailType.VERIFICATION)
             try:
                 login_email.save()
-                send_login_email(str(login_email.id))
             except IntegrityError:
                 logging.info("User already has a login email, skipping")
         elif request.user and request.user.id != user.id:
@@ -157,7 +155,6 @@ class UserViewSet(viewsets.ViewSet):
                 login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.VERIFICATION)
                 try:
                     login_email.save()
-                    send_login_email(str(login_email.id))
                 except IntegrityError:
                     logging.info("User already has a login email, skipping")
             elif not user.has_usable_password():
@@ -165,7 +162,6 @@ class UserViewSet(viewsets.ViewSet):
                 login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.LOGIN)
                 try:
                     login_email.save()
-                    send_login_email(str(login_email.id))
                 except IntegrityError:
                     logging.info("User already has a login email, skipping")
         elif request.user and request.user.id == user.id:
@@ -177,7 +173,6 @@ class UserViewSet(viewsets.ViewSet):
                 login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.VERIFICATION)
                 try:
                     login_email.save()
-                    send_login_email(str(login_email.id))
                 except IntegrityError:
                     logging.info("User already has a login email, skipping")
             elif not user.has_usable_password():
@@ -185,7 +180,6 @@ class UserViewSet(viewsets.ViewSet):
                 login_email = UserLoginEmail(user=user, email_type=UserLoginEmailType.LOGIN)
                 try:
                     login_email.save()
-                    send_login_email(str(login_email.id))
                 except IntegrityError:
                     logging.info("User already has a login email, skipping")
         else:

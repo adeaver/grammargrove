@@ -1,10 +1,25 @@
+from typing import Optional
+
 import logging
 from uuid import UUID
+
+from django.utils import timezone
+from django.db import transaction
 
 from .utils import send_login_email_to_user, send_verifcation_email_to_user
 from .models import UserLoginEmail, UserLoginEmailType
 
-def fulfill_login_email_by_id(login_email_id: UUID) -> bool:
+def fulfill_all_login_emails():
+    while True:
+        with transaction.atomic():
+            outstanding_login_email = _get_outstanding_login_emails()
+            if not outstanding_login_email:
+                return
+            _fulfill_login_email_by_id(outstanding_login_email.id)
+
+
+
+def _fulfill_login_email_by_id(login_email_id: UUID) -> bool:
     retryable = False
     login_email = UserLoginEmail.objects.filter(id=login_email_id).first()
     if not login_email:
@@ -27,3 +42,10 @@ def fulfill_login_email_by_id(login_email_id: UUID) -> bool:
     login_email.fulfilled = True
     login_email.save()
     return False
+
+def _get_outstanding_login_emails() -> Optional[UserLoginEmail]:
+    login_emails = UserLoginEmail.objects.filter(
+        fulfilled=False, expires_at__gt=timezone.now()
+    )
+    return login_emails.first()
+

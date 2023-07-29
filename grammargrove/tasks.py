@@ -44,62 +44,24 @@ try:
         logging.warn("Creating outstanding practice reminders")
         create_all_practice_emails()
 
-
     @cron(8, -1, -1, -1, -1)
     def send_outstanding_practice_reminders(num):
         from users.practice_emails import send_outstanding_practice_reminders
         logging.warn("Sending outstanding practice reminders")
         send_outstanding_practice_reminders()
 
+    @cron(-1, -1, -1, -1, -1)
+    def send_outstanding_login_emails(num):
+        from users.login_emails import fulfill_all_login_emails
+        logging.warn("Sending outstanding login emails")
+        fulfill_all_login_emails()
+
+
     @cron(-5, -1, -1, -1, -1)
     def do_ops_ping(num):
         # This is a quick test that spooler, nginx, and the db are all running
         from ops.utils import register_ping
         register_ping()
-
-    @spool(pass_arguments=True)
-    def send_login_email(login_email_id: str):
-        import uwsgi
-        from users.login_emails import fulfill_login_email_by_id
-        from uuid import UUID
-        email_id = UUID(login_email_id)
-        try:
-            retryable = fulfill_login_email_by_id(email_id)
-            return uwsgi.SPOOL_RETRY if retryable else uswgi.SPOOL_OK
-        except Exception as e:
-            logging.warn(f"Could not send email: {e}")
-            traceback.print_exc()
-            return uwsgi.SPOOL_RETRY
-
-
-    @spool(pass_arguments=True)
-    def fetch_examples_for_grammar_rule(grammar_rule_id: str):
-        import uwsgi
-        from grammarrules.examples import fetch_grammar_rule_examples
-        from grammarrules.examples import is_over_daily_usage_limit
-        logging.warn(f"Fetching examples for rule {grammar_rule_id}")
-        try:
-            if is_over_daily_usage_limit():
-                logging.warn(f"ChatGPT usage is over the daily limit, skipping")
-                return uwsgi.SPOOL_OK
-            example_prompt_id = fetch_grammar_rule_examples(grammar_rule_id, valid_hsk_levels=[1, 2])
-            parse_grammar_rule_example(example_prompt_id)
-            logging.warn(f"Fetched examples for rule {grammar_rule_id}")
-        except Exception as e:
-            logging.warn(f"Got exception {e}")
-        return uwsgi.SPOOL_OK
-
-    @spool(pass_arguments=True)
-    def parse_grammar_rule_example(grammar_rule_example_id: str):
-        import uwsgi
-        from grammarrules.parse import parse_example_prompt
-        logging.warn(f"Parsing example {grammar_rule_example_id}")
-        try:
-            parse_example_prompt(grammar_rule_example_id)
-            logging.warn(f"Parsed example {grammar_rule_example_id}")
-        except Exception as e:
-            logging.warn(f"Got exception {e}")
-        return uwsgi.SPOOL_OK
 
     logger.warning("Imported spool successfully.")
 except Exception:
@@ -122,4 +84,33 @@ except Exception:
             return decorator(pass_arguments)
         return decorator
 
+
+@spool(pass_arguments=True)
+def fetch_examples_for_grammar_rule(grammar_rule_id: str):
+    import uwsgi
+    from grammarrules.examples import fetch_grammar_rule_examples
+    from grammarrules.examples import is_over_daily_usage_limit
+    logging.warn(f"Fetching examples for rule {grammar_rule_id}")
+    try:
+        if is_over_daily_usage_limit():
+            logging.warn(f"ChatGPT usage is over the daily limit, skipping")
+            return uwsgi.SPOOL_OK
+        example_prompt_id = fetch_grammar_rule_examples(grammar_rule_id, valid_hsk_levels=[1, 2])
+        parse_grammar_rule_example(example_prompt_id)
+        logging.warn(f"Fetched examples for rule {grammar_rule_id}")
+    except Exception as e:
+        logging.warn(f"Got exception {e}")
+    return uwsgi.SPOOL_OK
+
+@spool(pass_arguments=True)
+def parse_grammar_rule_example(grammar_rule_example_id: str):
+    import uwsgi
+    from grammarrules.parse import parse_example_prompt
+    logging.warn(f"Parsing example {grammar_rule_example_id}")
+    try:
+        parse_example_prompt(grammar_rule_example_id)
+        logging.warn(f"Parsed example {grammar_rule_example_id}")
+    except Exception as e:
+        logging.warn(f"Got exception {e}")
+    return uwsgi.SPOOL_OK
 
