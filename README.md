@@ -35,6 +35,7 @@ All frontend files live in the conveniently named `frontend/` directory. We use 
 We use Django for the backend. With the exception of `scripts/` and `conf/`, all the remaining directories are django apps.
 - `scripts/` is for various scripts that improve our lives
 - `conf/` is for our nginx configuration
+- `cron.d/` is any crontab scripts that need to get run on the server. For Python cron jobs, use `grammargrove/tasks.py` instead
 
 Some special cases to be aware of:
 - `grammargrove/` is the main project directory. Things related to uWSGI also live in here.
