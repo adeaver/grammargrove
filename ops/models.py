@@ -24,11 +24,14 @@ class FeatureFlagType(Enum):
 class FeatureFlagName(models.TextChoices):
     GrammarRuleFetchesEnabled = "grammar_rule_fetches_enabled", "grammar_rule_fetches_enabled"
     PracticeReminderEmailsEnabled = "practice_reminder_emails_enabled", "practice_reminder_emails_enabled"
+    RecaptchaEnabled = "recaptcha_enabled", "recaptcha_enabled"
 
     def get_type(self) -> FeatureFlagType:
         if self == FeatureFlagName.GrammarRuleFetchesEnabled:
             return FeatureFlagType.Boolean
         elif self == FeatureFlagName.PracticeReminderEmailsEnabled:
+            return FeatureFlagType.Boolean
+        elif self == FeatureFlagName.RecaptchaEnabled:
             return FeatureFlagType.Boolean
         else:
             raise ValueError(f"{self} does not have a type")

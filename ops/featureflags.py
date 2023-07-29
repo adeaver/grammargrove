@@ -6,6 +6,7 @@ from .models import FeatureFlag, FeatureFlagName, FeatureFlagType
 _DEFAULT_BOOLEAN_VALUES: Dict[FeatureFlagName, bool]  = {
     FeatureFlagName.GrammarRuleFetchesEnabled: False,
     FeatureFlagName.PracticeReminderEmailsEnabled: True,
+    FeatureFlagName.RecaptchaEnabled: False,
 }
 
 def get_boolean_feature_flag(name: FeatureFlagName) -> bool:

@@ -55,11 +55,16 @@ def _send_email_to_user(
             Source=source_address
         )
     except ClientError as e:
-        logging.warn(e.response['Error']['Message'])
+        message_error = e.response['Error']['Message']
+        logging.warn(f"Got error from SES: {message_error}")
+        raise e
         return True
+    except Exception as e:
+        logging.warn(f"Got error sending email {e}")
+        raise e
     else:
         message_id = response['MessageId']
-        logging.warn(f"Email sent! Message ID: ${message_id}"),
+        logging.warn(f"Email sent! Message ID: {message_id}"),
     return False
 
 def send_verifcation_email_to_user(login_email: UserLoginEmail) -> bool:

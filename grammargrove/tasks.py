@@ -5,6 +5,7 @@ import django
 import os
 import logging
 import uuid
+import traceback
 from functools import wraps
 
 logger = logging.getLogger(__name__)
@@ -81,34 +82,15 @@ except Exception:
 @spool(pass_arguments=True)
 def send_login_email(login_email_id: str):
     import uwsgi
-    from users.utils import send_login_email_to_user, send_verifcation_email_to_user
-    from users.models import UserLoginEmail, UserLoginEmailType
+    from users.login_emails import fulfill_login_email_by_id
+    from uuid import UUID
+    email_id = UUID(login_email_id)
     try:
-        login_emails = UserLoginEmail.objects.filter(pk=uuid.UUID(login_email_id))
-        retryable = False
-        if not login_emails:
-            logging.warn(f"{login_email_id} is invalid, skipping")
-            return uwsgi.SPOOL_OK
-        email = login_emails[0]
-        if email.is_expired():
-            logging.warn(f"UserLoginEmail {login_email_id} is expired, skipping")
-            return uwsgi.SPOOL_OK
-        elif email.is_fulfilled():
-            logging.warn(f"UserLoginEmail {login_email_id} is already fulfilled, skipping")
-            return uwsgi.SPOOL_OK
-        elif email.email_type == UserLoginEmailType.LOGIN:
-            logging.warn(f"Attempting to send login type UserLoginEmail {login_email_id}")
-            retryable = send_login_email_to_user(email)
-        elif email.email_type == UserLoginEmailType.VERIFICATION:
-            logging.warn(f"Attempting to send verification type UserLoginEmail {login_email_id}")
-            retryable = send_verifcation_email_to_user(email)
-        if retryable:
-            return uwsgi.SPOOL_RETRY
-        email.fulfilled = True
-        email.save()
-        return uwsgi.SPOOL_OK
+        retryable = fulfill_login_email_by_id(email_id)
+        return uwsgi.SPOOL_RETRY if retryable else uswgi.SPOOL_OK
     except Exception as e:
         logging.warn(f"Could not send email: {e}")
+        traceback.print_exc()
         return uwsgi.SPOOL_RETRY
 
 

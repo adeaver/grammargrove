@@ -19,6 +19,9 @@ from .models import User, UserStatus, UserLoginEmail, UserLoginEmailType, Practi
 from userpreferences.models import UserPreferences
 from grammargrove.tasks import send_login_email
 
+from ops.models import FeatureFlagName
+from ops.featureflags import get_boolean_feature_flag
+
 class SearchEmailAction(Enum):
     RequireLogin = 'require-login'
     RequireSignup = 'require-signup'
@@ -118,13 +121,14 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'])
     def search_by_email(self, request: HttpRequest) -> JsonResponse:
         token = request.data["token"]
-        resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data={
-            "response": token,
-            "secret": settings.GRECAPTCHA_SECRET_KEY,
-        })
-        result_json = resp.json()
-        if not result_json.get('success'):
-            return HttpResponseBadRequest()
+        if get_boolean_feature_flag(FeatureFlagName.RecaptchaEnabled):
+            resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data={
+                "response": token,
+                "secret": settings.GRECAPTCHA_SECRET_KEY,
+            })
+            result_json = resp.json()
+            if not result_json.get('success'):
+                return HttpResponseBadRequest()
         email = request.data["email"]
         try:
             validate_email(email)
