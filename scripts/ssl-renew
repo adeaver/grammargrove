@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-docker-compose --no-ansi -f /root/grammargrove/prod-compose.yaml run certbot renew
-docker-compose --no-ansi -f /root/grammargrove/prod-compose.yaml kill -s SIGHUP proxy
+export GRAMMARGROVE_GIT_SHA=$(git rev-parse --short HEAD) && docker compose --no-ansi -f /root/grammargrove/prod-compose.yaml run certbot renew
+docker compose --no-ansi -f /root/grammargrove/prod-compose.yaml kill -s SIGHUP proxy
 docker system prune -af
