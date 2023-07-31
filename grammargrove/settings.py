@@ -106,6 +106,7 @@ DATABASES = {
         'PASSWORD': os.environ.get("DATABASE_PASSWORD", "password"),
         'HOST': os.environ.get("DATABASE_HOST", "database"),
         'PORT': os.environ.get("DATABASE_PORT", "5432"),
+        'CONN_HEALTH_CHECKS': True,
     }
 }
 

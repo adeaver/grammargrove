@@ -24,6 +24,8 @@ try:
             is_over_daily_usage_limit,
             get_best_candidate_grammar_rules_for_examples
         )
+        from django.db import close_old_connections
+        close_old_connections()
         if is_over_daily_usage_limit():
             logging.warn(f"ChatGPT usage is over the daily limit, skipping")
             return
@@ -41,18 +43,24 @@ try:
     @cron(15, -1, -1, -1, -1)
     def create_practice_reminders(num):
         from users.practice_emails import create_all_practice_emails
+        from django.db import close_old_connections
+        close_old_connections()
         logging.warn("Creating outstanding practice reminders")
         create_all_practice_emails()
 
     @cron(8, -1, -1, -1, -1)
     def send_outstanding_practice_reminders(num):
         from users.practice_emails import send_outstanding_practice_reminders
+        from django.db import close_old_connections
+        close_old_connections()
         logging.warn("Sending outstanding practice reminders")
         send_outstanding_practice_reminders()
 
     @cron(-1, -1, -1, -1, -1)
     def send_outstanding_login_emails(num):
         from users.login_emails import get_outstanding_login_emails
+        from django.db import close_old_connections
+        close_old_connections()
         logging.warn("Sending outstanding login emails")
         login_email_ids = get_outstanding_login_emails()
         for email in login_email_ids:
@@ -65,6 +73,8 @@ try:
     def do_ops_ping(num):
         # This is a quick test that spooler, nginx, and the db are all running
         from ops.utils import register_ping
+        from django.db import close_old_connections
+        close_old_connections()
         register_ping()
 
     logger.warning("Imported spool successfully.")
@@ -92,6 +102,8 @@ except Exception:
 def fulfill_login_email(args: Dict[str, str]):
     from uuid import UUID
     from users.login_emails import fulfill_login_email_by_id
+    from django.db import close_old_connections
+    close_old_connections()
     key = b"login_email_id"
     if key not in args:
         logging.warning(f"Key is not in args")
@@ -105,6 +117,8 @@ def fetch_examples_for_grammar_rule(grammar_rule_id: str):
     import uwsgi
     from grammarrules.examples import fetch_grammar_rule_examples
     from grammarrules.examples import is_over_daily_usage_limit
+    from django.db import close_old_connections
+    close_old_connections()
     logging.warn(f"Fetching examples for rule {grammar_rule_id}")
     try:
         if is_over_daily_usage_limit():
@@ -121,6 +135,8 @@ def fetch_examples_for_grammar_rule(grammar_rule_id: str):
 def parse_grammar_rule_example(grammar_rule_example_id: str):
     import uwsgi
     from grammarrules.parse import parse_example_prompt
+    from django.db import close_old_connections
+    close_old_connections()
     logging.warn(f"Parsing example {grammar_rule_example_id}")
     try:
         parse_example_prompt(grammar_rule_example_id)
