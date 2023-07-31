@@ -79,6 +79,7 @@ def get_checkout_session_url(user: User, price_id: str) -> str:
                 "quantity": 1,
             }
         ],
+        allow_promotion_codes=True,
         mode="subscription",
         customer=customer_id,
         success_url=f"{get_base_url_for_environment()}/subscription/?result=success",
