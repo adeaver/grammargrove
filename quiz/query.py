@@ -32,7 +32,7 @@ def get_queryset(
     if practice_session_id:
         return _filter_queryset_for_practice_session_id(
             queryset_type, practice_session_id, queryset
-        ).order_by("?")
+        ).order_by("-last_displayed_at")
     for (
         days_since_asked_lower_bound,
         days_since_asked_upper_bound,

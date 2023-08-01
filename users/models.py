@@ -73,6 +73,7 @@ def _get_expiration_time():
     return timezone.now() + datetime.timedelta(minutes=15)
 
 class UserLoginEmail(models.Model):
+    created_at = models.DateTimeField(default=timezone.now)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     fulfilled = models.BooleanField(default=False)

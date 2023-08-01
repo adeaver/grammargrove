@@ -2,6 +2,7 @@ from typing import List, Optional
 
 import logging
 from uuid import UUID
+from datetime import timedelta
 
 from django.utils import timezone
 from django.db import transaction
@@ -12,7 +13,8 @@ from .models import UserLoginEmail, UserLoginEmailType
 def get_outstanding_login_emails() -> List[UUID]:
     return list(
         UserLoginEmail.objects.filter(
-            fulfilled=False, expires_at__gt=timezone.now()
+            fulfilled=False, expires_at__gt=timezone.now(),
+            created_at__gt=(timezone.now()-timedelta(minutes=5))
         )
         .values_list("id", flat=True)
     )

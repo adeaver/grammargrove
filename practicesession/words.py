@@ -30,7 +30,7 @@ def get_user_vocabulary_questions(
             days_since_asked_lower_bound,
             days_since_asked_upper_bound,
             should_include_unasked
-        )
+        ).order_by("-number_of_times_displayed")
         out = _get_questions(out, questions, num_questions_for_group)
     all_questions = QuizQuestion.objects.filter(
             user=user, user_vocabulary_entry__isnull=False)
