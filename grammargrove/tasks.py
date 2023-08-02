@@ -115,8 +115,11 @@ def fulfill_login_email(args: Dict[str, str]):
 @spool(pass_arguments=True)
 def fetch_examples_for_grammar_rule(grammar_rule_id: str):
     import uwsgi
-    from grammarrules.examples import fetch_grammar_rule_examples
-    from grammarrules.examples import is_over_daily_usage_limit
+    from grammarrules.examples import (
+        fetch_grammar_rule_examples,
+        is_over_daily_usage_limit,
+        get_best_target_hsk_level_for_grammar_rule
+    )
     from django.db import close_old_connections
     close_old_connections()
     logging.warn(f"Fetching examples for rule {grammar_rule_id}")
@@ -124,7 +127,8 @@ def fetch_examples_for_grammar_rule(grammar_rule_id: str):
         if is_over_daily_usage_limit():
             logging.warn(f"ChatGPT usage is over the daily limit, skipping")
             return uwsgi.SPOOL_OK
-        example_prompt_id = fetch_grammar_rule_examples(grammar_rule_id, valid_hsk_levels=[1, 2])
+        valid_hsk_levels = get_best_target_hsk_level_for_grammar_rule(grammar_rule_id)
+        example_prompt_id = fetch_grammar_rule_examples(grammar_rule_id, valid_hsk_levels=valid_hsk_levels)
         parse_grammar_rule_example(example_prompt_id)
         logging.warn(f"Fetched examples for rule {grammar_rule_id}")
     except Exception as e:

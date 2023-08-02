@@ -1,7 +1,10 @@
 from typing import Optional, List, Tuple, Optional, NamedTuple
 import os
 import logging
+import random
+from uuid import UUID
 
+from django.db.models import Count
 from django.utils import timezone
 
 import openai
@@ -125,4 +128,44 @@ def _make_prompt(
 def get_best_candidate_grammar_rules_for_examples(
     max_number_of_rules: int = 5
 ) -> List[GrammarRule]:
-    return list(GrammarRule.objects.order_by("fetch_example_attempts")[:max_number_of_rules])
+    unused_grammar_rules = GrammarRule.objects.exclude(
+        id__in=GrammarRuleExample.objects.filter(
+            parse_error__isnull=True,
+            parse_version__isnull=False
+        ).values_list("grammar_rule_id", flat=True)
+    ).order_by("fetch_example_attempts")
+    if unused_grammar_rules:
+        return unused_grammar_rules[:max_number_of_rules]
+ordered_grammar_rules = (
+    GrammarRuleExample.objects.filter(
+        parse_error__isnull=True,
+        parse_version__isnull=False
+    ).values_list("grammar_rule")
+     .annotate(dcount=Count("grammar_rule"))
+     .order_by("dcount")
+)
+    return ordered_grammar_rules[:max_number_of_rules]
+
+
+def get_best_target_hsk_level_for_grammar_rule(
+    grammar_rule_id: UUID
+) -> List[int]:
+    current_hsk_levels_with_counts = {
+        hsk_level: count
+        for hsk_level, count in list(
+            GrammarRuleExample.objects.filter(
+                grammar_rule_id=grammar_rule_id,
+                parse_error__isnull=True,
+                parse_version__isnull=False
+            )
+            .values_list("max_hsk_level")
+            .annotate(dcount=Count("max_hsk_level"))
+        )
+    }
+    valid_hsk_levels = [1, 2, 3, 4, 5, 6]
+    random.shuffle(valid_hsk_levels)
+    sorted(valid_hsk_levels, key=lambda x: current_hsk_levels_with_counts.get(x, 0))
+    hsk_level = valid_hsk_levels[0]
+    next_hsk_level = 5 if hsk_level == 6 else hsk_level + 1
+    return [ hsk_level, next_hsk_level ]
+
