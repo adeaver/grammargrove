@@ -9,7 +9,6 @@ import { loadCaptchaScript } from '../../util/grecaptcha';
 
 import LoginComponent from './LoginComponent';
 
-import RadioButton from '../../components/RadioButton';
 
 const IndexPage = () => {
     const [ hasLoadedCaptcha, setHasLoadedCaptcha ] = useState<boolean>(false);
@@ -87,7 +86,6 @@ const HowItWorksSection = () => {
                         Existing flashcard systems required a lot of user input.
                     </Text>
                     <div class="w-full flex flex-row space-x-2 items-center justify-center">
-                        <RadioButton isSelected />
                         <Text>
                             Ours just works.
                         </Text>
@@ -98,7 +96,6 @@ const HowItWorksSection = () => {
                         Courses include grammar rules, but you have to go through the whole course to study the rules that you want
                     </Text>
                     <div class="w-full flex flex-row space-x-2 items-center justify-center">
-                        <RadioButton isSelected />
                         <Text>
                             Customize your practice experience with GrammarGrove’s grammar rule flashcards.
                         </Text>
@@ -112,7 +109,6 @@ const HowItWorksSection = () => {
                         Some flashcard systems try to limit you to one or two quizzes.
                     </Text>
                     <div class="w-full flex flex-row space-x-2 items-center justify-center">
-                        <RadioButton isSelected />
                         <Text>
                             With GrammarGrove, you can practice as much as you’d like
                         </Text>

@@ -38,7 +38,7 @@ type PageLinkProps = {
 const PageLink = (props: PageLinkProps) => {
     return (
         <div class="cursor-pointer col-span-2 md:col-span-1" onClick={() => setLocation(props.url)}>
-            <Card className="flex flex-col space-y-2">
+            <Card className="h-full flex flex-col space-y-2">
                 <Text
                     type={TextType.Subtitle}
                     alignment={TextAlignment.Left}

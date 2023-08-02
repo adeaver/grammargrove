@@ -26,7 +26,7 @@ const HSKLevelDisplay = (props: HSKLevelDisplayProps) => {
         <div class="w-full">
         {
             options.map((o: Option) => (
-                <div class="flex flex-row space-x-2" onClick={() => props.setCurrentHSKLevel(o.hskLevel)}>
+                <div class="flex flex-row space-x-2 items-center" onClick={() => props.setCurrentHSKLevel(o.hskLevel)}>
                     <RadioButton isSelected={props.currentHSKLevel === o.hskLevel} />
                     <Text>
                         { o.text }
