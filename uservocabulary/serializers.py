@@ -12,7 +12,7 @@ class UserVocabularyNoteSerializer(serializers.ModelSerializer):
         read_only_fields = ["user"]
 
 class UserVocabularyEntrySerializer(serializers.ModelSerializer):
-    notes = UserVocabularyNoteSerializer(many=True)
+    notes = UserVocabularyNoteSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserVocabularyEntry
