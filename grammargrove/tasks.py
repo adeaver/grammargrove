@@ -15,6 +15,25 @@ try:
 
     django.setup()
 
+    @cron(33, -1, -1, -1, -1)
+    def scavenge_unparsed_examples(num):
+        from grammarrules.parse import get_unparsed_examples
+        from ops.featureflags import get_boolean_feature_flag
+        from ops.models import FeatureFlagName
+        from django.db import close_old_connections
+        close_old_connections()
+        if not get_boolean_feature_flag(FeatureFlagName.GrammarRuleScavengerEnabled):
+            logging.warning("Grammar rule example scavenger is disabled")
+            return
+        unparsed_examples = get_unparsed_examples()
+        logging.warn(f"Scavenging {len(unparsed_examples)} examples")
+        for example in unparsed_examples:
+            parse_grammar_rule_example.spool({
+                b"grammar_rule_example_id": str(example.grammar_rule_example_prompt.id).encode("utf-8"),
+                b"grammar_rule_example_line_idx": str(example.line_idx).encode("utf-8")
+            })
+
+
     @cron(10, -1, -1, -1, -1)
     def start_grammar_rule_fetches(num):
         from ops.featureflags import get_boolean_feature_flag
@@ -147,7 +166,10 @@ def fetch_examples_for_grammar_rule(args: Dict[str, str]):
 @spool(pass_arguments=True)
 def parse_grammar_rule_example(args: Dict[str, str]):
     import uwsgi
-    from grammarrules.parse import parse_example_prompt
+    from grammarrules.parse import (
+        parse_example_prompt,
+        reparse_example_prompt_line_number
+    )
     from django.db import close_old_connections
     close_old_connections()
     key = b"grammar_rule_example_id"
@@ -155,10 +177,23 @@ def parse_grammar_rule_example(args: Dict[str, str]):
         logging.warning("key is not in args")
         return uwsgi.SPOOL_OK
     grammar_rule_example_id = args[key].decode("utf-8")
-    logging.warn(f"Parsing example {grammar_rule_example_id}")
-    try:
-        parse_example_prompt(grammar_rule_example_id)
-        logging.warn(f"Parsed example {grammar_rule_example_id}")
-    except Exception as e:
-        logging.warn(f"Got exception {e}")
-    return uwsgi.SPOOL_OK
+    line_idx_key = b"grammar_rule_example_line_idx"
+    line_idx = args.get(line_idx_key)
+    if line_idx is None:
+        logging.warn(f"Parsing example {grammar_rule_example_id}")
+        try:
+            parse_example_prompt(grammar_rule_example_id)
+            logging.warn(f"Parsed example {grammar_rule_example_id}")
+        except Exception as e:
+            logging.warn(f"Got exception {e}")
+        return uwsgi.SPOOL_OK
+    else:
+        logging.warn(f"Parsing line {line_idx} for example {grammar_rule_example_id}")
+        try:
+            line_idx = int(line_idx.decode("utf-8"))
+            reparse_example_prompt_line_number(grammar_rule_example_id, line_idx)
+            logging.warn(f"Reparsed example {grammar_rule_example_id}")
+        except Exception as e:
+            logging.warn(f"Got exception {e}")
+        return uwsgi.SPOOL_OK
+
