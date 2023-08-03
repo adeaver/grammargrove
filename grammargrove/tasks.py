@@ -37,7 +37,9 @@ try:
         )
         for r in rules:
             logging.warn(f"Enqueuing grammar rule {r.id}")
-            fetch_examples_for_grammar_rule(str(r.id))
+            fetch_examples_for_grammar_rule.spool({
+                b"grammar_rule_id": str(r.id).encode("utf-8")
+            })
 
 
     @cron(15, -1, -1, -1, -1)
@@ -113,7 +115,7 @@ def fulfill_login_email(args: Dict[str, str]):
 
 
 @spool(pass_arguments=True)
-def fetch_examples_for_grammar_rule(grammar_rule_id: str):
+def fetch_examples_for_grammar_rule(args: Dict[str, str]):
     import uwsgi
     from grammarrules.examples import (
         fetch_grammar_rule_examples,
@@ -122,6 +124,11 @@ def fetch_examples_for_grammar_rule(grammar_rule_id: str):
     )
     from django.db import close_old_connections
     close_old_connections()
+    key = b"grammar_rule_id"
+    if key not in args:
+        logging.warning("key is not in args")
+        return uwsgi.SPOOL_OK
+    grammar_rule_id = args[key].decode("utf-8")
     logging.warn(f"Fetching examples for rule {grammar_rule_id}")
     try:
         if is_over_daily_usage_limit():
@@ -129,18 +136,25 @@ def fetch_examples_for_grammar_rule(grammar_rule_id: str):
             return uwsgi.SPOOL_OK
         valid_hsk_levels = get_best_target_hsk_level_for_grammar_rule(grammar_rule_id)
         example_prompt_id = fetch_grammar_rule_examples(grammar_rule_id, valid_hsk_levels=valid_hsk_levels)
-        parse_grammar_rule_example(example_prompt_id)
+        parse_grammar_rule_example.spool({
+            b"grammar_rule_example_id": str(example_prompt_id).encode("utf-8")
+        })
         logging.warn(f"Fetched examples for rule {grammar_rule_id}")
     except Exception as e:
         logging.warn(f"Got exception {e}")
     return uwsgi.SPOOL_OK
 
 @spool(pass_arguments=True)
-def parse_grammar_rule_example(grammar_rule_example_id: str):
+def parse_grammar_rule_example(args: Dict[str, str]):
     import uwsgi
     from grammarrules.parse import parse_example_prompt
     from django.db import close_old_connections
     close_old_connections()
+    key = b"grammar_rule_example_id"
+    if key not in args:
+        logging.warning("key is not in args")
+        return uwsgi.SPOOL_OK
+    grammar_rule_example_id = args[key].decode("utf-8")
     logging.warn(f"Parsing example {grammar_rule_example_id}")
     try:
         parse_example_prompt(grammar_rule_example_id)

@@ -136,19 +136,19 @@ def get_best_candidate_grammar_rules_for_examples(
     ).order_by("fetch_example_attempts")
     if unused_grammar_rules:
         return unused_grammar_rules[:max_number_of_rules]
-ordered_grammar_rules = (
-    GrammarRuleExample.objects.filter(
-        parse_error__isnull=True,
-        parse_version__isnull=False
-    ).values_list("grammar_rule")
-     .annotate(dcount=Count("grammar_rule"))
-     .order_by("dcount")
-)
+    ordered_grammar_rules = (
+        GrammarRuleExample.objects.filter(
+            parse_error__isnull=True,
+            parse_version__isnull=False
+        ).values_list("grammar_rule")
+         .annotate(dcount=Count("grammar_rule"))
+         .order_by("dcount")
+    )
     return ordered_grammar_rules[:max_number_of_rules]
 
 
 def get_best_target_hsk_level_for_grammar_rule(
-    grammar_rule_id: UUID
+    grammar_rule_id: str
 ) -> List[int]:
     current_hsk_levels_with_counts = {
         hsk_level: count
