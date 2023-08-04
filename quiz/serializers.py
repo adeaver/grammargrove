@@ -15,7 +15,7 @@ from uservocabulary.serializers import UserVocabularyEntrySerializer
 from usergrammarrules.models import UserGrammarRuleEntry
 from practicesession.models import PracticeSessionQuestion
 
-from grammarrules.models import GrammarRuleExample, GrammarRuleExamplePrompt
+from grammarrules.models import GrammarRuleExample
 from grammarrules.serializers import GrammarRuleExampleSerializer
 
 

@@ -75,12 +75,11 @@ class QuizViewSet(viewsets.ModelViewSet):
             if not req.get("example_id"):
                 return Response(serializer.errors,
                     status=status.HTTP_400_BAD_REQUEST)
-            examples = GrammarRuleExample.objects.filter(
+            example = GrammarRuleExample.objects.filter(
                 id=req["example_id"]
-            )
-            if not examples:
+            ).first()
+            if not example:
                 raise ValueError(f"Example {example_id} does not exist")
-            example = examples[0]
             resp = check_grammar_rule(
                 request.user,
                 question.question_type,

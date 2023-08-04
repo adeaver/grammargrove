@@ -27,6 +27,7 @@ class FeatureFlagName(models.TextChoices):
     RecaptchaEnabled = "recaptcha_enabled", "recaptcha_enabled"
     GrammarRuleScavengerEnabled = "grammar_rule_scavenger_enabled", "grammar_rule_scavenger_enabled"
     GrammarRuleValidationEnabled = "grammar_rule_validation_enabled", "grammar_rule_validation_enabled"
+    UseOnlyHighQualityGrammarRuleExamples = "use_only_high_quality_grammar_rules_examples_enabled", "use_only_high_quality_grammar_rules_examples_enabled"
 
     def get_type(self) -> FeatureFlagType:
         if self == FeatureFlagName.GrammarRuleFetchesEnabled:
@@ -38,6 +39,8 @@ class FeatureFlagName(models.TextChoices):
         elif self == FeatureFlagName.GrammarRuleScavengerEnabled:
             return FeatureFlagType.Boolean
         elif self == FeatureFlagName.GrammarRuleValidationEnabled:
+            return FeatureFlagType.Boolean
+        elif self == FeatureFlagName.UseOnlyHighQualityGrammarRuleExamples:
             return FeatureFlagType.Boolean
         else:
             raise ValueError(f"{self} does not have a type")

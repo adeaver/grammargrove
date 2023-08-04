@@ -1,18 +1,19 @@
 from django.db.models import QuerySet
 
 from users.models import User
-from grammarrules.models import GrammarRuleExample, GrammarRuleExamplePrompt
+from grammarrules.query import get_all_valid_grammar_rules
 from usergrammarrules.models import UserGrammarRuleEntry
 from uservocabulary.models import UserVocabularyEntry
 from userpreferences.models import UserPreferences
 from words.models import Word, Definition
+from ops.models import FeatureFlagName
+from ops.featureflags import get_boolean_feature_flag
 
 def get_usable_grammar_rule_examples(user: User) -> QuerySet:
-    queryset = GrammarRuleExample.objects.filter(
-        parse_error__isnull=True,
-        grammar_rule_example_prompt__in=GrammarRuleExamplePrompt.objects.filter(
-            is_usable=True
-        ),
+    queryset = get_all_valid_grammar_rules(
+        use_only_high_quality=get_boolean_feature_flag(FeatureFlagName.UseOnlyHighQualityGrammarRuleExamples)
+    )
+    queryset.filter(
         grammar_rule__in=UserGrammarRuleEntry.objects.filter(
             user=user
         ).values_list("grammar_rule", flat=True)

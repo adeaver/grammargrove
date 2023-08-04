@@ -33,7 +33,7 @@ def get_grammar_rule_questions(
             days_since_asked_lower_bound,
             days_since_asked_upper_bound,
             should_include_unasked
-        ).order_by("-number_of_times_displayed")
+        ).order_by("number_of_times_displayed")
         grammar_rules, examples = _get_questions(
             possible_examples, grammar_rules, examples, questions, num_questions_for_group
         )
