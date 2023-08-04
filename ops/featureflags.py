@@ -8,6 +8,7 @@ _DEFAULT_BOOLEAN_VALUES: Dict[FeatureFlagName, bool]  = {
     FeatureFlagName.PracticeReminderEmailsEnabled: True,
     FeatureFlagName.RecaptchaEnabled: False,
     FeatureFlagName.GrammarRuleScavengerEnabled: False,
+    FeatureFlagName.GrammarRuleValidationEnabled: False,
 }
 
 def get_boolean_feature_flag(name: FeatureFlagName) -> bool:

@@ -149,6 +149,8 @@ class GrammarRuleExample(models.Model):
     parse_error = models.TextField(null=True)
     max_hsk_level = models.IntegerField(default=None, null=True)
     contains_non_labeled_words = models.BooleanField(default=True)
+    validation_score = models.IntegerField(null=True)
+    validation_result = models.TextField(null=True)
 
     class Meta:
         indexes = [

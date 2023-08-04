@@ -1,4 +1,5 @@
-from typing import NamedTuple, List, Tuple, Optional
+from typing import NamedTuple, List, Tuple, Optional, Set
+from uuid import UUID
 
 import logging
 
@@ -75,10 +76,8 @@ def _parse_example_prompt_line(
     line_idx: int,
     reparse_non_errored: bool = False
 ) -> Optional[GrammarRuleExample]:
-    number_of_components = len(
-        GrammarRuleComponent.objects.filter(
-            grammar_rule=prompt.grammar_rule
-        )
+    number_of_components, words = _get_component_information(
+        prompt.grammar_rule.id
     )
     splitter = PinyinSplitter()
     try:
@@ -185,11 +184,12 @@ def _parse_example_prompt_line(
         example.save()
         GrammarRuleExampleComponent.objects.filter(grammar_rule_example=example).delete()
         for idx, word in enumerate(words):
-            max_hsk_level = (
-                word.hsk_level
-                if max_hsk_level is None or word.hsk_level is not None and word.hsk_level > max_hsk_level
-                else max_hsk_level
-            )
+            if (
+                word.id not in words and
+                word.hsk_level is not None and
+                (max_hsk_level is None or word.hsk_level > max_hsk_level)
+            ):
+                max_hsk_level = word.hsk_level
             contains_non_labeled_words = contains_non_labeled_words or word.hsk_level is None
             GrammarRuleExampleComponent(
                 grammar_rule_example=example,
@@ -201,6 +201,18 @@ def _parse_example_prompt_line(
         example.save()
     logging.warn(f"Saved {example.id}")
     return example
+
+
+def _get_component_information(grammar_rule_id: UUID) -> Tuple[int, Set[str]]:
+    components = GrammarRuleComponent.objects.filter(
+        grammar_rule_id=grammar_rule_id
+    )
+    number_of_components = len(components)
+    words = set()
+    for c in components:
+        if c.word is not None:
+            words.add(c.word.id)
+    return number_of_components, words
 
 
 def _ensure_normalized_pinyin(pinyin: str) -> str:

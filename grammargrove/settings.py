@@ -157,9 +157,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'index/static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Stripe
+# API Keys
 
 STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
 SUBSCRIPTION_STRIPE_PRODUCT_ID = os.environ.get("SUBSCRIPTION_STRIPE_PRODUCT_ID", "prod_OBvhD9pdEJEyHZ")
 
 GRECAPTCHA_SECRET_KEY = os.environ.get("GRECAPTCHA_SECRET_KEY", "")
+DEEPL_API_KEY = os.environ.get("DEEPL_API_KEY", "")

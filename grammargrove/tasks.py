@@ -18,20 +18,28 @@ try:
     @cron(33, -1, -1, -1, -1)
     def scavenge_unparsed_examples(num):
         from grammarrules.parse import get_unparsed_examples
+        from grammarrules.validate import get_grammar_rules_to_validate
         from ops.featureflags import get_boolean_feature_flag
         from ops.models import FeatureFlagName
         from django.db import close_old_connections
         close_old_connections()
-        if not get_boolean_feature_flag(FeatureFlagName.GrammarRuleScavengerEnabled):
+        if get_boolean_feature_flag(FeatureFlagName.GrammarRuleScavengerEnabled):
+            unparsed_examples = get_unparsed_examples()
+            logging.warn(f"Scavenging {len(unparsed_examples)} examples")
+            for example in unparsed_examples:
+                parse_grammar_rule_example.spool({
+                    b"grammar_rule_example_id": str(example.grammar_rule_example_prompt.id).encode("utf-8"),
+                    b"grammar_rule_example_line_idx": str(example.line_idx).encode("utf-8")
+                })
+        else:
             logging.warning("Grammar rule example scavenger is disabled")
-            return
-        unparsed_examples = get_unparsed_examples()
-        logging.warn(f"Scavenging {len(unparsed_examples)} examples")
-        for example in unparsed_examples:
-            parse_grammar_rule_example.spool({
-                b"grammar_rule_example_id": str(example.grammar_rule_example_prompt.id).encode("utf-8"),
-                b"grammar_rule_example_line_idx": str(example.line_idx).encode("utf-8")
+        if get_boolean_feature_flag(FeatureFlagName.GrammarRuleValidationEnabled):
+            grammar_rules_to_validate = get_grammar_rules_to_validate()
+            do_validation_for_grammar_rule_examples.spool({
+                b"grammar_rule_example_ids": ",".join(grammar_rules_to_validate).encode("utf-8")
             })
+        else:
+            logging.warning("Grammar rule example validation scavenger is disabled")
 
 
     @cron(10, -1, -1, -1, -1)
@@ -196,4 +204,31 @@ def parse_grammar_rule_example(args: Dict[str, str]):
         except Exception as e:
             logging.warn(f"Got exception {e}")
         return uwsgi.SPOOL_OK
+
+
+@spool(pass_arguments=True)
+def do_validation_for_grammar_rule_examples(args: Dict[str, str]):
+    import uwsgi
+    from grammarrules.validate import (
+        validate_grammar_rule_examples
+    )
+    from ops.featureflags import get_boolean_feature_flag
+    from ops.models import FeatureFlagName
+    from django.db import close_old_connections
+    close_old_connections()
+    if not get_boolean_feature_flag(FeatureFlagName.GrammarRuleValidationEnabled):
+        logging.warning("Validation is not enabled")
+        return uwsgi.SPOOL_OK
+    key = b"grammar_rule_example_ids"
+    if key not in args:
+        logging.warning("key is not in args")
+        return uwsgi.SPOOL_OK
+    grammar_rule_example_ids = args[key].decode("utf-8").split(",")
+    try:
+        logging.warn(f"Validating examples {grammar_rule_example_ids}")
+        validate_grammar_rule_examples(grammar_rule_example_ids)
+        logging.warn(f"Validated examples {grammar_rule_example_ids}")
+    except Exception as e:
+        logging.warn(f"Got exception {e}")
+    return uwsgi.SPOOL_OK
 
