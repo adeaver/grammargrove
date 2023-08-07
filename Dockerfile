@@ -31,7 +31,10 @@ RUN groupadd $SERVICE_USER && useradd -m -g $SERVICE_USER -l $SERVICE_USER
 
 RUN apt-get update -y && apt-get install -y postgresql
 RUN pip3 install poetry
-RUN pip3 install uwsgi
+
+COPY pyproject.toml .
+COPY poetry.lock . 
+RUN poetry install -vvv
 
 COPY . .
 RUN rm -rf ./frontend
@@ -41,7 +44,6 @@ COPY --from=frontend-builder /app/dist/assets/index.css /app/index.css
 RUN mkdir -p /var/log/uwsgi
 RUN mkdir -p /var/uwsgi
 
-RUN poetry install
 RUN poetry run ./manage.py collectstatic --noinput
 
 CMD [ "scripts/runserver" ]
