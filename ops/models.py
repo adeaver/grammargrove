@@ -46,10 +46,3 @@ class FeatureFlagName(models.TextChoices):
             raise ValueError(f"{self} does not have a type")
 
 
-class FeatureFlag(models.Model):
-    id = models.TextField(primary_key=True, editable=False, choices=FeatureFlagName.choices)
-    enabled = models.BooleanField(null=True)
-
-
-class FeatureFlagAdmin(admin.ModelAdmin):
-    list_display = ("id", "enabled")

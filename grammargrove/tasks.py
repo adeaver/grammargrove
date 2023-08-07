@@ -15,15 +15,14 @@ try:
 
     django.setup()
 
-    @cron(33, -1, -1, -1, -1)
+    @cron(-1, -1, -1, -1, -1)
     def scavenge_unparsed_examples(num):
         from grammarrules.parse import get_unparsed_examples
         from grammarrules.validate import get_grammar_rules_to_validate
-        from ops.featureflags import get_boolean_feature_flag
-        from ops.models import FeatureFlagName
+        from ops.featureflags import FeatureFlags
         from django.db import close_old_connections
         close_old_connections()
-        if get_boolean_feature_flag(FeatureFlagName.GrammarRuleScavengerEnabled):
+        if FeatureFlags.GrammarRuleScavengerEnabled.flag().get():
             unparsed_examples = get_unparsed_examples()
             logging.warn(f"Scavenging {len(unparsed_examples)} examples")
             for example in unparsed_examples:
@@ -33,8 +32,10 @@ try:
                 })
         else:
             logging.warning("Grammar rule example scavenger is disabled")
-        if get_boolean_feature_flag(FeatureFlagName.GrammarRuleValidationEnabled):
-            grammar_rules_to_validate = get_grammar_rules_to_validate()
+        if FeatureFlags.GrammarRuleValidationEnabled.flag().get():
+            grammar_rules_to_validate = get_grammar_rules_to_validate(
+                limit=FeatureFlags.NumberOfValidationExamplesPerCycle.flag().get()
+            )
             do_validation_for_grammar_rule_examples.spool({
                 b"grammar_rule_example_ids": ",".join(grammar_rules_to_validate).encode("utf-8")
             })
@@ -44,8 +45,7 @@ try:
 
     @cron(10, -1, -1, -1, -1)
     def start_grammar_rule_fetches(num):
-        from ops.featureflags import get_boolean_feature_flag
-        from ops.models import FeatureFlagName
+        from ops.featureflags import FeatureFlags
         from grammarrules.models import GrammarRule
         from grammarrules.examples import (
             is_over_daily_usage_limit,
@@ -56,7 +56,7 @@ try:
         if is_over_daily_usage_limit():
             logging.warn(f"ChatGPT usage is over the daily limit, skipping")
             return
-        if not get_boolean_feature_flag(FeatureFlagName.GrammarRuleFetchesEnabled):
+        if not FeatureFlags.GrammarRuleFetchesEnabled.flag().get():
             logging.warn("Grammar fetching job is disabled")
             return
         rules: List[GrammarRule] = (
@@ -212,11 +212,10 @@ def do_validation_for_grammar_rule_examples(args: Dict[str, str]):
     from grammarrules.validate import (
         validate_grammar_rule_examples
     )
-    from ops.featureflags import get_boolean_feature_flag
-    from ops.models import FeatureFlagName
+    from ops.featureflags import FeatureFlags
     from django.db import close_old_connections
     close_old_connections()
-    if not get_boolean_feature_flag(FeatureFlagName.GrammarRuleValidationEnabled):
+    if not FeatureFlags.GrammarRuleValidationEnabled.flag().get():
         logging.warning("Validation is not enabled")
         return uwsgi.SPOOL_OK
     key = b"grammar_rule_example_ids"

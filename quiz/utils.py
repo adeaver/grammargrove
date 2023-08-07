@@ -6,12 +6,11 @@ from usergrammarrules.models import UserGrammarRuleEntry
 from uservocabulary.models import UserVocabularyEntry
 from userpreferences.models import UserPreferences
 from words.models import Word, Definition
-from ops.models import FeatureFlagName
-from ops.featureflags import get_boolean_feature_flag
+from ops.featureflags import FeatureFlags
 
 def get_usable_grammar_rule_examples(user: User) -> QuerySet:
     queryset = get_all_valid_grammar_rules(
-        use_only_high_quality=get_boolean_feature_flag(FeatureFlagName.UseOnlyHighQualityGrammarRuleExamples)
+        use_only_high_quality=FeatureFlags.UseOnlyHighQualityGrammarRuleExamples.flag().get()
     )
     queryset.filter(
         grammar_rule__in=UserGrammarRuleEntry.objects.filter(

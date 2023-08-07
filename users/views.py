@@ -20,8 +20,7 @@ from userpreferences.models import UserPreferences
 
 from grammargrove.tasks import fulfill_login_email
 
-from ops.models import FeatureFlagName
-from ops.featureflags import get_boolean_feature_flag
+from ops.featureflags import FeatureFlags
 
 class SearchEmailAction(Enum):
     RequireLogin = 'require-login'
@@ -122,7 +121,7 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'])
     def search_by_email(self, request: HttpRequest) -> JsonResponse:
         token = request.data["token"]
-        if get_boolean_feature_flag(FeatureFlagName.RecaptchaEnabled):
+        if FeatureFlags.RecaptchaEnabled.flag().get():
             resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data={
                 "response": token,
                 "secret": settings.GRECAPTCHA_SECRET_KEY,

@@ -9,8 +9,8 @@ class OpsConfig(AppConfig):
 
     def ready(self):
         try:
-            from .featureflags import initialize_feature_flags
-            initialize_feature_flags()
+            from .featureflags import FeatureFlags
+            FeatureFlags.initialize()
             logging.warn("Initialized feature flags")
         except Exception as e:
             logging.warn(e)
