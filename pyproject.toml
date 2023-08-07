@@ -21,6 +21,7 @@ stripe = "^5.4.0"
 bs4 = "^0.0.1"
 requests = "^2.31.0"
 deepl = "^1.15.0"
+torch = ">=2.0.0, !=2.0.1"
 semantic-text-similarity = "^1.0.3"
 
 
