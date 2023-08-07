@@ -1,5 +1,6 @@
 frontend/node_modules/**
 grammarrules/data/**
+index/migrations/data/**
 conf/**
 env/**
 Dockerfile.dev
