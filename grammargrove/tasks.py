@@ -15,7 +15,7 @@ try:
 
     django.setup()
 
-    @cron(-1, -1, -1, -1, -1)
+    @cron(33, -1, -1, -1, -1)
     def scavenge_unparsed_examples(num):
         from grammarrules.parse import get_unparsed_examples
         from grammarrules.validate import get_grammar_rules_to_validate
