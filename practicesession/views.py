@@ -11,8 +11,7 @@ from billing.permissions import HasValidSubscription
 from .models import PracticeSession, PracticeSessionQuestion
 from .serializers import PracticeSessionSerializer
 
-from .words import get_user_vocabulary_questions
-from .grammarrules import get_grammar_rule_questions
+from .selection import get_user_vocabulary_questions, get_grammar_rule_questions
 
 TOTAL_NUMBER_OF_QUESTIONS = 6
 
@@ -31,7 +30,7 @@ class PracticeSessionViewSet(viewsets.ModelViewSet):
         num_used = 0
         used: Set[UUID] = set([])
         for idx in range(0, len(user_vocabulary_questions), 2):
-            u = user_vocabulary_questions[idx]
+            u = user_vocabulary_questions[idx].question_id
             used.add(u)
             PracticeSessionQuestion(
                 practice_session=practice_session,
@@ -42,22 +41,22 @@ class PracticeSessionViewSet(viewsets.ModelViewSet):
             self.request.user, TOTAL_NUMBER_OF_QUESTIONS
         )
         for idx in range(0, len(user_grammar_rule_questions), 2):
-            g, e = user_grammar_rule_questions[idx]
-            used.add(g)
+            grammar_rule = user_grammar_rule_questions[idx]
+            used.add(grammar_rule.question_id)
             PracticeSessionQuestion(
                 practice_session=practice_session,
-                user_grammar_rule_entry_id=g,
-                grammar_rule_example_id=e
+                user_grammar_rule_entry_id=grammar_rule.question_id,
+                grammar_rule_example_id=grammar_rule.example_id
             ).save()
             num_used += 1
         if num_used < TOTAL_NUMBER_OF_QUESTIONS:
             unused: List[Tuple[UUID, Optional[UUID]]] = []
             for u in user_vocabulary_questions:
                 if u not in used:
-                    unused.append((u, None))
-            for g, e in user_grammar_rule_questions:
-                if g not in used:
-                    unused.append((g, e))
+                    unused.append((u.question_id, None))
+            for g in user_grammar_rule_questions:
+                if g.question_id not in used:
+                    unused.append((g.question_id, g.example_id))
             shuffle(unused)
             for i, example in unused:
                 if num_used >= TOTAL_NUMBER_OF_QUESTIONS:
