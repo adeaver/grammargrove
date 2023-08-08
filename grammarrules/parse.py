@@ -8,9 +8,11 @@ import re
 import csv
 import jieba
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import QuerySet
 
+from ops.featureflags import FeatureFlags
 from grammargrove.pinyin_utils import PinyinSplitter, convert_to_numeric_form
 from .models import (
     GrammarRuleComponent,
@@ -38,12 +40,13 @@ def parse_example_prompt(
     if not prompt:
         return ParseOutput(grammar_rule_examples=[], retryable=False)
     prompt.parse_version = GrammarRuleExampleParseVersion.current_version()
+    tokenizer = _get_tokenizer(prompt.language_code)
     reader = csv.reader(prompt.response.split("\n"))
     examples: List[GrammarRuleExample] = []
     for idx, row in enumerate(reader):
         if idx == 0:
             continue
-        example = _parse_example_prompt_line(prompt, row, idx, reparse_non_errored)
+        example = _parse_example_prompt_line(tokenizer, prompt, row, idx, reparse_non_errored)
         examples.append(example)
     return ParseOutput(
         grammar_rule_examples=examples,
@@ -60,17 +63,17 @@ def reparse_example_prompt_line_number(
     if not prompt:
         logging.warning(f"Prompt {example_prompt_id} does not exist")
         return None
+    tokenizer = _get_tokenizer(prompt.language_code)
     reader = csv.reader(prompt.response.split("\n"))
     for idx, row in enumerate(reader):
         if idx == line_idx:
-            example = _parse_example_prompt_line(prompt, row, line_idx, reparse_non_errored=True)
+            example = _parse_example_prompt_line(tokenizer, prompt, row, line_idx, reparse_non_errored=True)
             if not example:
                 logging.warning(f"There was an error reparsing line {line_idx} for prompt {example_prompt_id}")
 
 
-
-
 def _parse_example_prompt_line(
+    tokenizer: jieba.Tokenizer,
     prompt: GrammarRuleExamplePrompt,
     row: Tuple[str, str, str],
     line_idx: int,
@@ -220,10 +223,9 @@ def _ensure_normalized_pinyin(pinyin: str) -> str:
         pinyin = pinyin.replace(punc, "")
     return pinyin.lower()
 
-def _fix_language_code(l: str) -> Optional[LanguageCode]:
-    possible_name_parts = l.split(".")
-    possible_name = possible_name_parts[-1]
-    for code in LanguageCode:
-        if code.name == possible_name:
-            return code
-    return None
+def _get_tokenizer(language_code: LanguageCode) -> jieba.Tokenizer:
+    if not FeatureFlags.UseCustomJiebaDictionary.flag().get():
+        return jieba.Tokenizer()
+    elif language_code == LanguageCode.SIMPLIFIED_MANDARIN:
+        return jieba.Tokenizer(dictionary=f"{settings.BASE_DIR}/words/data/jieba_simplified.txt")
+    return ValueError(f"Unsupported tokenizer language code {language_code}")

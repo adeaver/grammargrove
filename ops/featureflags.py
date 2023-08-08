@@ -80,6 +80,7 @@ class FeatureFlags(Enum):
     UseOnlyHighQualityGrammarRuleExamples = BooleanFeatureFlag("use_only_high_quality_grammar_rules_examples_enabled", False)
     NumberOfValidationExamplesPerCycle = IntegerFeatureFlag("number_of_validation_examples_per_cycle", 5)
     HighQualityGrammarExampleValidationScoreMin = IntegerFeatureFlag("high_quality_grammar_example_validation_score_min", 400)
+    UseCustomJiebaDictionary = BooleanFeatureFlag("use_custom_jieba_dictionary", False)
 
     def flag(self) -> _FeatureFlag:
         return self.value
