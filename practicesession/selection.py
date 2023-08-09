@@ -9,6 +9,7 @@ from users.models import User
 from quiz.models import QuizQuestion
 from quiz.query import QuerySetType, get_queryset, get_queryset_for_user_and_type, filter_queryset_by_asking_date
 from quiz.utils import get_usable_grammar_rule_examples
+from usergrammarrules.models import UserGrammarRuleEntry
 
 class _QuestionSelectionBucket(NamedTuple):
     question_ids: List[UUID]
@@ -110,7 +111,7 @@ def _select_questions(
         elif queryset_type == QuerySetType.GrammarRule:
             example = (
                 get_usable_grammar_rule_examples(user).filter(
-                    grammar_rule=QuizQuestion.objects.filter(id=question_id).first().user_grammar_rule_entry.grammar_rule
+                    grammar_rule=UserGrammarRuleEntry.objects.filter(id=question_id).first().grammar_rule
                 )
                 .order_by("?")
                 .first()

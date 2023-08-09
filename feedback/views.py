@@ -28,6 +28,6 @@ class FeedbackViewset(viewsets.ModelViewSet):
         queryset = self.get_queryset()
         responses = queryset.filter(
             response_type = FeedbackType.Pulse,
-            created_at__gt = timezone.now() - timedelta(days=1)
+            created_at__gt = timezone.now() - timedelta(days=3)
         )
         return Response(self.serializer_class(responses, many=True).data)
