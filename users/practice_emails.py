@@ -5,6 +5,8 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db import transaction, IntegrityError
 
+from ops.featureflags import FeatureFlags
+
 from .models import User, UserStatus, PracticeReminderEmail
 from .utils import send_daily_practice_email
 
@@ -35,7 +37,10 @@ def send_outstanding_practice_reminders():
             r.fulfilled = True
             r.expires_at = timezone.now() + timedelta(hours=25)
             r.save()
-            send_daily_practice_email(r)
+            if FeatureFlags.PracticeReminderEmailsEnabled.flag().get():
+                send_daily_practice_email(r)
+            else:
+                logging.warn(f"Daily practice reminders are disabled, consuming...")
 
 
 def _lookup_outstanding_practice_reminder() -> Optional[PracticeReminderEmail]:
